@@ -1,5 +1,18 @@
 # Validation results
 
+## Repository setup verification — 2026-10-09
+
+The imported project was checked from a fresh clone of the private GitHub repository:
+
+- `bun install --frozen-lockfile`, `bun run games:generate`, `bun run typecheck`, `bun run lint`, `bun run test`, and `bun run build` passed.
+- Registry generation confirmed all seven native games and one external game; all 81 unit/component tests passed.
+- Desktop/mobile integration passed all 10 enabled checks using installed Chromium and a temporary test configuration with a 120-second test timeout and 20-second assertion timeout. The original timing limits were insufficient on this server. The two opt-in live public-site checks remained skipped.
+- The supervised development server runs `bun run dev --hostname 0.0.0.0`; its homepage returned HTTP 200. Live API checks confirmed session issuance, private-address rejection, and rejection of foreign-origin session requests.
+- GitHub confirmed private repository visibility and the pushed import commit. Hidden configuration files are included; dependencies, build output, environment secrets, and runtime logs are excluded.
+- This machine is outside Codespaces. The included configuration specifies private port 3000 forwarding, but no Codespace or private browser tunnel was provisioned during these checks.
+
+The results below were included in the original archive.
+
 Verified on the delivered source:
 
 | Check                                                        | Result                                                                       |
