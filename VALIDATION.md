@@ -9,7 +9,17 @@ The imported project was checked from a fresh clone of the private GitHub reposi
 - Desktop/mobile integration passed all 10 enabled checks using installed Chromium and a temporary test configuration with a 120-second test timeout and 20-second assertion timeout. The original timing limits were insufficient on this server. The two opt-in live public-site checks remained skipped.
 - The supervised development server runs `bun run dev --hostname 0.0.0.0`; its homepage returned HTTP 200. Live API checks confirmed session issuance, private-address rejection, and rejection of foreign-origin session requests.
 - GitHub confirmed private repository visibility and the pushed import commit. Hidden configuration files are included; dependencies, build output, environment secrets, and runtime logs are excluded.
-- This machine is outside Codespaces. The included configuration specifies private port 3000 forwarding, but no Codespace or private browser tunnel was provisioned during these checks.
+- Initial validation ran outside Codespaces; the subsequent Codespaces checks are recorded below.
+
+### Codespaces follow-up
+
+- Created `orbit-proxy-games-7vw5xvrv6j6ghwpv7` from this private repository using `.devcontainer/devcontainer.json` on a 2-core, 8-GB machine.
+- Added the standard SSH feature for remote startup verification and launched the dev server in a separate session so it survives lifecycle/SSH shell exit.
+- Bun frozen-lockfile installation and the container configuration test passed. The running code includes commit `8eb9515`.
+- The homepage returned HTTP 200 through GitHub CLI's authenticated tunnel. GitHub reported port 3000 visibility as `private`.
+- Verified the startup script reuses the same server PID on a second invocation, and the server remains running after the SSH connection closes.
+- Private application URL: https://orbit-proxy-games-7vw5xvrv6j6ghwpv7-3000.app.github.dev
+- The Codespace has a 30-minute idle timeout and 72-hour stopped-environment retention period. The unused Codespace created during initial setup was removed.
 
 The results below were included in the original archive.
 
