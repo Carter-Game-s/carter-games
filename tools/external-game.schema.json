@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/external-game",
+  "title": "ExternalGameMetadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "slug",
+    "title",
+    "description",
+    "category",
+    "thumbnail",
+    "supportsTouch",
+    "supportsKeyboard",
+    "supportsFullscreen",
+    "sourcePath",
+    "version",
+    "sandbox"
+  ],
+  "properties": {
+    "kind": {
+      "const": "external"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "\\S"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "pattern": "\\S"
+    },
+    "category": {
+      "enum": ["arcade", "puzzle", "board", "sports", "action", "other"]
+    },
+    "thumbnail": {
+      "type": "string",
+      "pattern": "^/external-games/[A-Za-z0-9_-]+/[^?#%]+$"
+    },
+    "featured": {
+      "type": "boolean"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "\\S"
+      }
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "description"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "description": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "keys": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          }
+        }
+      }
+    },
+    "supportsTouch": {
+      "type": "boolean"
+    },
+    "supportsKeyboard": {
+      "type": "boolean"
+    },
+    "supportsFullscreen": {
+      "type": "boolean"
+    },
+    "sourcePath": {
+      "type": "string",
+      "pattern": "^/external-games/[A-Za-z0-9_-]+/$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-(?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "sandbox": {
+      "const": "allow-scripts"
+    }
+  }
+}

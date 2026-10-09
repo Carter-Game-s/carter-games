@@ -1,0 +1,44 @@
+{
+  "name": "orbit-proxy-games",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "games:generate": "bun tools/generate-game-registry.ts",
+    "predev": "bun run games:generate",
+    "dev": "bun run games:generate && next dev --webpack",
+    "prebuild": "bun run games:generate",
+    "build": "bun run games:generate && next build --webpack",
+    "start": "next start --hostname 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "validate:games": "bun tools/validate-games.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "next": "^16.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "lucide-react": "^0.468.0",
+    "cheerio": "^1.1.0",
+    "ipaddr.js": "^2.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@tailwindcss/postcss": "^4.1.0",
+    "@testing-library/jest-dom": "^6.6.0",
+    "@testing-library/react": "^16.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^16.2.0",
+    "jsdom": "^26.0.0",
+    "prettier": "3",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

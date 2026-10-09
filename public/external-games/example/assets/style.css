@@ -1,0 +1,30 @@
+body {
+  background: #111917;
+  color: #eef3eb;
+  font: 16px Arial;
+  text-align: center;
+  margin: 25px;
+}
+button {
+  background: #28392c;
+  color: #eff4ea;
+  border: 1px solid #56764a;
+  border-radius: 12px;
+  padding: 15px;
+  cursor: pointer;
+}
+main {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: 360px;
+  margin: 25px auto;
+}
+main button {
+  aspect-ratio: 1;
+  font-size: 22px;
+}
+.target {
+  background: #b9f573;
+  color: #142009;
+}

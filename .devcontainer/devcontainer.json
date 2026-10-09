@@ -1,0 +1,17 @@
+{
+  "name": "Next.js Proxy & Games",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Proxy & Games",
+      "onAutoForward": "openBrowser",
+      "visibility": "private"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postStartCommand": "bash .devcontainer/start.sh",
+  "features": {
+    "ghcr.io/shyim/devcontainers-features/bun:0": {}
+  }
+}
