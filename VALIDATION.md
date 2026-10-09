@@ -23,6 +23,14 @@ The imported project was checked from a fresh clone of the private GitHub reposi
 
 The results below were included in the original archive.
 
+### Production forwarded-origin correction
+
+- Captured sanitized headers through the actual private forwarding URL: GitHub rewrites the matching browser Origin to `http://localhost:3000`, while preserving the configured forwarded hostname and HTTPS protocol. Foreign origins remain unchanged.
+- Session issuance accepts this rewrite only with the configured Codespace metadata, exact local origin/host, expected forwarded hostname, HTTPS forwarding, and `Sec-Fetch-Site: same-origin`. Missing or incorrect metadata and foreign/cross-site origins remain rejected.
+- All 83 tests, lint, typecheck, and the production build passed. Restarted with `bun run start` and explicitly inherited Codespaces hostname variables.
+- Verified the actual private HTTPS URL with authenticated requests: legitimate session HTTP 200; foreign-origin and cross-site requests HTTP 403.
+- Verified the supplied `/browser?url=https%3A%2F%2Fexample.com` page in Chromium through the actual private HTTPS forwarding layer: the public site's content is visible inside the sandboxed iframe, with no browser JavaScript errors. Temporary header diagnostics were stopped and removed from the production process.
+
 Verified on the delivered source:
 
 | Check                                                        | Result                                                                       |
