@@ -184,3 +184,36 @@ it("uses the configured Codespace HTTPS origin despite internal HTTP headers", a
     ),
   ).toBe(false);
 });
+
+it("accepts only GitHub's matching-origin rewrite with complete forwarding metadata", async () => {
+  vi.stubEnv("CODESPACE_NAME", "my-space");
+  vi.stubEnv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN", "app.github.dev");
+  const headers = {
+    host: "localhost:3000",
+    origin: "http://localhost:3000",
+    "x-forwarded-host": "my-space-3000.app.github.dev",
+    "x-forwarded-proto": "https",
+    "sec-fetch-site": "same-origin",
+  };
+  const request = (overrides: Record<string, string> = {}) =>
+    new Request("http://localhost:3000/api/proxy", {
+      method: "POST",
+      headers: { ...headers, ...overrides },
+    });
+  expect((await POST(request())).status).toBe(200);
+  const invalidHeaders: Record<string, string>[] = [
+    { origin: "https://evil.example" },
+    { origin: "http://127.0.0.1:3000" },
+    { origin: "http://localhost:3001" },
+    { host: "evil.example" },
+    { "x-forwarded-host": "other-space-3000.app.github.dev" },
+    { "x-forwarded-proto": "http" },
+    { "x-forwarded-host": "" },
+    { "sec-fetch-site": "cross-site" },
+    { "sec-fetch-site": "" },
+    { origin: "" },
+  ];
+  for (const overrides of invalidHeaders) {
+    expect((await POST(request(overrides))).status).toBe(403);
+  }
+});
