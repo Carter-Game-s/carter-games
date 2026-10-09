@@ -1,5 +1,13 @@
 /** Recover the visible origin when Next.js or Codespaces normalizes the internal URL. */
 export function applicationOrigin(request: Request): string {
+  // Codespaces terminates HTTPS before forwarding to this HTTP server.
+  // Use trusted deployment metadata rather than forwarded request headers.
+  if (process.env.CODESPACE_NAME) {
+    const domain =
+      process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN || "app.github.dev";
+    return new URL(`https://${process.env.CODESPACE_NAME}-3000.${domain}`)
+      .origin;
+  }
   const internal = new URL(request.url);
   const host =
     request.headers.get("x-forwarded-host") || request.headers.get("host");

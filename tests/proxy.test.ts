@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { it, expect, vi, afterEach } from "vitest";
+import { it, expect, vi, beforeEach, afterEach } from "vitest";
 import dns from "node:dns/promises";
 import {
   isPublicAddress,
@@ -13,6 +13,7 @@ import {
 import { rewriteHTML, rewriteCSS } from "../src/lib/proxy/rewrite";
 import { searchTarget } from "../src/lib/search";
 import { GET, POST } from "../src/app/api/proxy/route";
+beforeEach(() => vi.stubEnv("CODESPACE_NAME", ""));
 afterEach(() => vi.unstubAllEnvs());
 it.each([
   "127.0.0.1",
@@ -151,4 +152,35 @@ it("accepts the visible forwarded origin and rejects a different browser origin"
     },
   });
   expect(sameOrigin(bad)).toBe(false);
+});
+
+it("uses the configured Codespace HTTPS origin despite internal HTTP headers", async () => {
+  vi.stubEnv("CODESPACE_NAME", "my-space");
+  vi.stubEnv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN", "app.github.dev");
+  const headers = {
+    host: "localhost:3000",
+    "x-forwarded-host": "localhost:3000",
+    "x-forwarded-proto": "http",
+    origin: "https://my-space-3000.app.github.dev",
+    "sec-fetch-site": "same-origin",
+  };
+  const request = (overrides: Record<string, string> = {}) =>
+    new Request("http://localhost:3000/api/proxy", {
+      method: "POST",
+      headers: { ...headers, ...overrides },
+    });
+  expect((await POST(request())).status).toBe(200);
+  expect(
+    (await POST(request({ origin: "https://other.example" }))).status,
+  ).toBe(403);
+  expect(sameOrigin(request({ "sec-fetch-site": "cross-site" }))).toBe(false);
+  expect(
+    sameOrigin(
+      request({
+        origin: "https://evil.example",
+        "x-forwarded-host": "evil.example",
+        "x-forwarded-proto": "https",
+      }),
+    ),
+  ).toBe(false);
 });
