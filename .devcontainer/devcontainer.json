@@ -12,6 +12,7 @@
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "postStartCommand": "bash .devcontainer/start.sh",
   "features": {
-    "ghcr.io/shyim/devcontainers-features/bun:0": {}
+    "ghcr.io/shyim/devcontainers-features/bun:0": {},
+    "ghcr.io/devcontainers/features/sshd:1": {}
   }
 }
