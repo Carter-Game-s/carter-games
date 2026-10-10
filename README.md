@@ -38,7 +38,7 @@ The Bun OCI feature manifest for tag `0` was checked successfully during develop
 
 ## Browse & search
 
-The homepage accepts either a search or a direct HTTP(S) URL. Google, Bing, and DuckDuckGo use ordinary search URLs, with no API credentials. Recent searches provide local suggestions. Press **Ctrl/⌘ K** to focus search; **Ctrl/⌘ L** focuses the browser address bar.
+The homepage accepts either a search or a direct HTTP(S) URL. Bing is the default because its HTML results work through the read-only proxy. Google and DuckDuckGo remain selectable; DuckDuckGo uses its non-JavaScript HTML endpoint. Existing Google or DuckDuckGo searches offer **Search with Bing**, preserving the query when a provider requires scripts, redirects to an unavailable host, or presents a challenge. Search uses ordinary URLs with no API credentials. Recent searches provide local suggestions. Press **Ctrl/⌘ K** to focus search; **Ctrl/⌘ L** focuses the browser address bar.
 
 The browser supports independent tabs, per-tab back/forward stacks, refresh, a home control, loading feedback, errors, and recent browsing history. In-page links update the application's browser stack. Use **Open directly** (the external-link icon) whenever a provider or website does not work through the proxy. Back and forward operate the browser tab's content history; application route navigation remains Next.js navigation.
 

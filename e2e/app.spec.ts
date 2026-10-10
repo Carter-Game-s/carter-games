@@ -29,9 +29,7 @@ test("homepage, search and direct URL navigation", async ({ page }) => {
   await page.getByLabel("Search the web or enter a URL").fill("hello world");
   await page.getByRole("button", { name: "Search", exact: true }).click();
   await expect(page).toHaveURL(/browser\?url=/);
-  await expect(page.getByLabel("Browser address")).toHaveValue(
-    /duckduckgo.com/,
-  );
+  await expect(page.getByLabel("Browser address")).toHaveValue(/bing.com/);
   await page.getByLabel("Browser address").fill("https://example.com");
   await page.getByRole("button", { name: "Go", exact: true }).click();
   await expect(page.getByLabel("Browser address")).toHaveValue(

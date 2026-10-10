@@ -11,7 +11,7 @@ import {
   ExternalLink,
   Globe,
 } from "lucide-react";
-import { searchTarget } from "@/lib/search";
+import { searchQuery, searchTarget, searchURL } from "@/lib/search";
 import { useStorage } from "@/lib/storage/use-storage";
 import { defaultSettings } from "@/lib/storage/settings";
 import { read, write } from "@/lib/storage";
@@ -42,6 +42,8 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
   const nextId = useRef(2);
   const tab = tabs.find((t) => t.id === active) ?? tabs[0];
   const url = tab.entries[tab.index] ?? "";
+  const query = searchQuery(url);
+  const bingSearch = query ? searchURL(query, "bing") : "";
   const session = useCallback(async () => {
     try {
       const res = await fetch("/api/proxy", { method: "POST" });
@@ -243,6 +245,11 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
             />
             <button className="primary">Go</button>
           </form>
+          {bingSearch && bingSearch !== url && (
+            <button onClick={() => navigate(bingSearch)}>
+              Search with Bing
+            </button>
+          )}
           {url && (
             <a
               className="button icon-button"

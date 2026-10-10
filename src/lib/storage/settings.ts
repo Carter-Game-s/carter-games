@@ -7,7 +7,7 @@ export type Settings = {
   reducedMotion: boolean;
 };
 export const defaultSettings: Settings = {
-  engine: "duckduckgo",
+  engine: "bing",
   theme: "dark",
   showRecent: true,
   showQuick: true,
