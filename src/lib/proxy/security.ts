@@ -129,11 +129,12 @@ export function sameOrigin(request: Request) {
   if (site && site !== "same-origin") return false;
   if (origin === own) return true;
   // GitHub's forwarding layer rewrites only matching browser origins to
-  // its local HTTP destination. Foreign browser origins remain unchanged.
+  // its local destination, with either scheme. Foreign origins stay unchanged.
   return (
     !!process.env.CODESPACE_NAME &&
     site === "same-origin" &&
-    origin === "http://localhost:3000" &&
+    (origin === "http://localhost:3000" ||
+      origin === "https://localhost:3000") &&
     request.headers.get("host") === "localhost:3000" &&
     request.headers.get("x-forwarded-host") === new URL(own).host &&
     request.headers.get("x-forwarded-proto") === "https"

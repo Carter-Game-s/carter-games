@@ -25,6 +25,8 @@ The results below were included in the original archive.
 
 ### Production forwarded-origin correction
 
+The user's subsequent Retry captured `Origin: https://localhost:3000` with the exact expected forwarded host, HTTPS forwarding, and `Sec-Fetch-Site: same-origin`. Both HTTP and HTTPS localhost origins are now covered by the regression, retaining all other checks. All 87 tests, lint, and typecheck passed after this correction.
+
 - Captured sanitized headers through the actual private forwarding URL: GitHub rewrites the matching browser Origin to `http://localhost:3000`, while preserving the configured forwarded hostname and HTTPS protocol. Foreign origins remain unchanged.
 - Session issuance accepts this rewrite only with the configured Codespace metadata, exact local origin/host, expected forwarded hostname, HTTPS forwarding, and `Sec-Fetch-Site: same-origin`. Missing or incorrect metadata and foreign/cross-site origins remain rejected.
 - All 83 tests, lint, typecheck, and the production build passed. Restarted with `bun run start` and explicitly inherited Codespaces hostname variables.
