@@ -31,6 +31,14 @@ The results below were included in the original archive.
 - Verified the actual private HTTPS URL with authenticated requests: legitimate session HTTP 200; foreign-origin and cross-site requests HTTP 403.
 - Verified the supplied `/browser?url=https%3A%2F%2Fexample.com` page in Chromium through the actual private HTTPS forwarding layer: the public site's content is visible inside the sandboxed iframe, with no browser JavaScript errors. Temporary header diagnostics were stopped and removed from the production process.
 
+### Search correction — 2026-10-10
+
+- Provider probes from the Codespace found that the default DuckDuckGo JavaScript page returned no results, its HTML endpoint presented a challenge, and Google redirected to a host outside the allowlist. Bing returned 10 HTML results through the protected proxy.
+- Bing is now the default provider. DuckDuckGo uses its HTML endpoint, and existing Google/DuckDuckGo searches expose a query-preserving **Search with Bing** fallback. Provider selection remains available.
+- All 87 tests, lint, typecheck, and the Codespace production build passed. The Codespace performed `git pull --ff-only` and restarted using `bun run start` with explicit hostname metadata.
+- Real authenticated Chromium checks through the private HTTPS URL confirmed homepage search rendered 10 Bing results on desktop and mobile. Both viewport sizes also switched a saved DuckDuckGo search to visible Bing results, with no browser JavaScript errors or horizontal overflow.
+- Forwarded session issuance remained HTTP 200 for the correct origin and HTTP 403 for foreign-origin/cross-site requests. Proxy protections and all seven native games were preserved.
+
 Verified on the delivered source:
 
 | Check                                                        | Result                                                                       |
