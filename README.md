@@ -114,4 +114,3 @@ The pack is several gigabytes. Its original HTML files download from the pinned 
 Orbit does not preload games at startup. Existing caches remain usable, and games are still playable directly in the browser. Bulk preloading is maintained separately in [the private VPS preloader repository](https://github.com/carteraccs/orbit-games-preloader).
 
 Imported games retain an opaque sandbox without `allow-same-origin` or navigation permissions. Their CSP permits embedded data/blob assets, WebAssembly, and workers, while blocking external network requests, forms, camera, microphone, and geolocation. A bounded storage bridge saves localStorage values only under that game's own application key; the original game's scripts cannot read application storage. Games that require unavailable browser APIs, external servers, or broken upstream assets can still fail; the catalog and integrity checks do not claim exhaustive gameplay verification.
-
