@@ -1,8 +1,54 @@
 /* Application-owned compatibility layer. It runs only in opaque game sandboxes. */
-(function bootstrap(seed) {
+(function bootstrap(seed, offlinePoki, offlineGD) {
   "use strict";
   if (window.__orbitGameRuntime) return;
   window.__orbitGameRuntime = true;
+  // Service workers cannot run in an opaque sandbox. Hide the unsupported API
+  // so Construct games skip their optional offlineClient.js registration.
+  if (typeof navigator !== "undefined") {
+    Object.defineProperty(navigator, "serviceWorker", { value: undefined });
+  }
+  offlineGD = offlineGD || location.pathname.endsWith("/pack-eggy-car");
+  if (offlineGD) {
+    let options = {};
+    const resume = () => {
+      options.onEvent?.({ name: "SDK_GAME_START" });
+      return Promise.resolve();
+    };
+    window.gdsdk = { showBanner: resume, play: resume, customLog() {} };
+    Object.defineProperty(window, "GD_OPTIONS", {
+      get: () => options,
+      set(value) {
+        options = value || {};
+        if (options.onEvent)
+          setTimeout(() => options.onEvent?.({ name: "SDK_READY" }), 0);
+      },
+    });
+  }
+  offlinePoki = offlinePoki || location.pathname.endsWith("/pack-drive-mad");
+  if (offlinePoki) {
+    // The archived SDK expects advertising and cookie access from its original
+    // host. Complete its lifecycle locally without contacting that host or
+    // granting this opaque sandbox access to application cookies.
+    const sdk = {
+      init: () => Promise.resolve(),
+      commercialBreak: () => Promise.resolve(),
+      rewardedBreak: () => Promise.resolve(false),
+      customEvent() {},
+      gameLoadingStart() {},
+      gameLoadingFinished() {},
+      gameplayStart() {},
+      gameplayStop() {},
+    };
+    Object.defineProperty(window, "PokiSDK", {
+      get: () => sdk,
+      set() {},
+    });
+    Object.defineProperty(document, "cookie", {
+      get: () => "",
+      set() {},
+    });
+  }
   let initial = seed || {};
   if (!seed && location.hash.startsWith("#orbit-save=")) {
     try {
@@ -111,7 +157,7 @@
           const key = local.key(i);
           values[key] = local.getItem(key);
         }
-        const source = `(${bootstrap.toString()})(${JSON.stringify(values).replace(/</g, "\\u003c")});`;
+        const source = `(${bootstrap.toString()})(${JSON.stringify(values).replace(/</g, "\\u003c")}, ${Boolean(offlinePoki)}, ${Boolean(offlineGD)});`;
         parts = ["<script>" + source + "<" + "/script>", ...parts];
       }
       super(parts, options);
