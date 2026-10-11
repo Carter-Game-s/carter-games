@@ -37,8 +37,68 @@ export async function cacheGame(slug: string, body: Buffer) {
     await unlink(temp).catch(() => {});
   }
 }
+export async function loadVPSGame(slug: string): Promise<Buffer> {
+  if (!Object.hasOwn(packGames, slug)) throw new Error("Unknown game.");
+  const base = new URL(process.env.GAME_ASSET_BASE_URL || "");
+  if (
+    base.username ||
+    base.password ||
+    base.search ||
+    base.hash ||
+    !(
+      base.protocol === "https:" ||
+      (base.protocol === "http:" &&
+        base.hostname === "127.0.0.1" &&
+        base.port === "18080")
+    )
+  )
+    throw new Error("Invalid game asset service configuration.");
+  const token = process.env.GAME_ASSET_TOKEN;
+  if (!token) throw new Error("Missing game asset service credential.");
+  const response = await fetch(
+    new URL(
+      `games/${slug}`,
+      base.href.endsWith("/") ? base.href : base.href + "/",
+    ),
+    {
+      redirect: "error",
+      signal: AbortSignal.timeout(60000),
+      cache: "no-store",
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  if (!response.ok || !response.body)
+    throw new Error(`Asset service returned HTTP ${response.status}.`);
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.length;
+      if (size > maxBytes)
+        throw new Error("Game exceeds the download size limit.");
+      chunks.push(value);
+    }
+  } finally {
+    await reader.cancel();
+  }
+  const body = Buffer.concat(chunks);
+  verifyGame(slug, body);
+  return body;
+}
 async function load(slug: string): Promise<Buffer> {
   const game = packGames[slug];
+  if (process.env.GAME_ASSET_BASE_URL) {
+    try {
+      return await loadVPSGame(slug);
+    } catch {
+      console.warn(
+        "VPS game asset unavailable; using the existing game fallback.",
+      );
+    }
+  }
   try {
     const body = await unzip(
       await readFile(path.join(cache, game.blob + ".gz")),

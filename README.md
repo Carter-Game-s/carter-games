@@ -114,3 +114,9 @@ The pack is several gigabytes. Its original HTML files download from the pinned 
 Orbit does not preload games at startup. Existing caches remain usable, and games are still playable directly in the browser. Bulk preloading is maintained separately in [the private VPS preloader repository](https://github.com/carteraccs/orbit-games-preloader).
 
 Imported games retain an opaque sandbox without `allow-same-origin` or navigation permissions. Their CSP permits embedded data/blob assets, WebAssembly, and workers, while blocking external network requests, forms, camera, microphone, and geolocation. A bounded storage bridge saves localStorage values only under that game's own application key; the original game's scripts cannot read application storage. Games that require unavailable browser APIs, external servers, or broken upstream assets can still fail; the catalog and integrity checks do not claim exhaustive gameplay verification.
+
+## Private VPS game assets
+
+When `GAME_ASSET_BASE_URL` and server-only `GAME_ASSET_TOKEN` are configured, imported games are fetched from the authenticated VPS service and still verified against their original Git blob hashes. Remote assets are not bulk downloaded into Codespaces. Existing local caches and the pinned GitHub source remain fallback paths if the VPS is unavailable. Browser sandbox protections are unchanged.
+
+For the private SSH deployment, the asset service is reached at `http://127.0.0.1:18080` through a restricted SSH account. The tunnel starts with the application and reconnects automatically. Its private key, pinned host key, and API credential are provisioned outside Git. The VPS API listens only on loopback, and port 3000 stays private.

@@ -1,14 +1,19 @@
 // @vitest-environment node
-import { it, expect } from "vitest";
+import { it, expect, vi, afterEach } from "vitest";
 import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import {
   packGames,
   loadGame,
   verifyGame,
+  loadVPSGame,
 } from "../src/lib/offline-games/assets";
 import manifest from "../src/lib/offline-games/manifest.json";
 import { GET } from "../src/app/api/offline-games/[slug]/route";
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.restoreAllMocks();
+});
 
 it("imports all 352 original files once and pins their immutable Git hashes", async () => {
   expect(Object.keys(packGames)).toHaveLength(352);
@@ -37,6 +42,40 @@ it("imports all 352 original files once and pins their immutable Git hashes", as
       expect(logo).not.toMatch(/<script|(?:src|href)=["']https?:\/\//g);
     }),
   );
+});
+
+it("authenticates only the configured VPS service, rejects redirects, and verifies game bytes", async () => {
+  vi.stubEnv("GAME_ASSET_BASE_URL", "http://127.0.0.1:18080");
+  vi.stubEnv("GAME_ASSET_TOKEN", "fixture-token");
+  const game = packGames["pack-2048"];
+  const previous = game.blob;
+  const body = Buffer.from("<!doctype html><title>Fixture</title>");
+  const request = vi
+    .spyOn(globalThis, "fetch")
+    .mockResolvedValue(new Response(body));
+  try {
+    game.blob = createHash("sha1")
+      .update(`blob ${body.length}\0`)
+      .update(body)
+      .digest("hex");
+    expect(await loadVPSGame("pack-2048")).toEqual(body);
+    expect(request).toHaveBeenCalledWith(
+      new URL("http://127.0.0.1:18080/games/pack-2048"),
+      expect.objectContaining({
+        redirect: "error",
+        headers: { Authorization: "Bearer fixture-token" },
+      }),
+    );
+    request.mockResolvedValueOnce(new Response("changed file"));
+    await expect(loadVPSGame("pack-2048")).rejects.toThrow("integrity");
+    request.mockClear();
+    vi.stubEnv("GAME_ASSET_BASE_URL", "http://evil.example/");
+    await expect(loadVPSGame("pack-2048")).rejects.toThrow("configuration");
+    await expect(loadVPSGame("constructor")).rejects.toThrow("Unknown game");
+    expect(request).not.toHaveBeenCalled();
+  } finally {
+    game.blob = previous;
+  }
 });
 it("rejects arbitrary file paths and corrupted game bytes before execution", async () => {
   await expect(loadGame("../../etc/passwd")).rejects.toThrow("Unknown game");
