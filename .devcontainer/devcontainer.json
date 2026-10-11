@@ -1,10 +1,10 @@
 {
-  "name": "Next.js Proxy & Games",
+  "name": "Carter Game's",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
   "forwardPorts": [3000],
   "portsAttributes": {
     "3000": {
-      "label": "Proxy & Games",
+      "label": "Carter Game's",
       "onAutoForward": "openBrowser",
       "visibility": "private"
     }

@@ -1,7 +1,10 @@
 {
-  "name": "orbit-proxy-games",
+  "name": "carter-games",
   "version": "1.0.0",
   "private": true,
+  "description": "Carter Game's: browser games and read-only browsing, created by Carter with AI assistance.",
+  "license": "MIT",
+  "author": "Carter (carteraccs)",
   "scripts": {
     "games:generate": "bun tools/generate-game-registry.ts",
     "games:import": "bun tools/import-offline-games.ts && bun run games:generate",

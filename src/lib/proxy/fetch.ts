@@ -52,7 +52,7 @@ export async function fetchPublic(raw: string): Promise<Upstream> {
           agent: false,
           lookup: createPinnedLookup(address),
           headers: {
-            "User-Agent": "OrbitReadOnlyProxy/1.0",
+            "User-Agent": "CarterGamesReadOnlyProxy/1.0",
             Accept: "text/html,text/css,image/*,font/*;q=0.8,*/*;q=0.1",
             "Accept-Encoding": "gzip, deflate, br",
           },

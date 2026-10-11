@@ -1,4 +1,10 @@
-# Orbit · Proxy & Games
+# Carter Game's
+
+Created by **Carter (carteraccs)** with **AI assistance from OpenAI Codex**. Carter directed the project; Codex helped with implementation, debugging, tests, documentation, and deployment. This credit applies to the application work, not to authorship of imported third-party games.
+
+The original application code is [MIT licensed](LICENSE). Imported games and dependencies retain their own terms; see [THIRD_PARTY.md](THIRD_PARTY.md). The source game pack has no declared repository license, so its games are not represented as MIT-licensed or cleared for redistribution.
+
+For contributors, see [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and [open source release preparation](OPEN_SOURCE.md). The repository is being prepared for public release. Its existing repository name remains in use for deployment compatibility. `private: true` in package.json prevents accidental npm publication; it does not control GitHub visibility.
 
 A complete Next.js 16 / React 19 / strict TypeScript application with Tailwind CSS, Lucide icons, Bun, a guarded read-only web proxy, API-free search, seven native games, Color Tap, and 352 imported single-file games with individual SVG logos. No account, database, or paid API is required. Settings, favorites, recent searches, browsing history, 2048 saves, and high scores are stored on the current device.
 
@@ -23,7 +29,7 @@ bun run start
 ## GitHub Codespaces
 
 1. Upload the contents of this folder to a GitHub repository, including `.devcontainer`, `bun.lock`, `src`, `public`, and `tools`.
-2. On GitHub choose **Code → Codespaces → Create codespace on main**.
+2. On GitHub choose **Code → Codespaces → Create codespace on the default branch**.
 3. Container creation installs Bun through `ghcr.io/shyim/devcontainers-features/bun:0`, then `.devcontainer/setup.sh` installs dependencies from the lockfile. The setup script also provides an idempotent official Bun installer fallback if Bun is absent.
 4. `.devcontainer/start.sh` starts Next.js in the background on `0.0.0.0:3000`, returning promptly so the Codespace can finish opening. On restart it reuses installed dependencies and avoids a second server if port 3000 already listens.
 5. The **Ports** panel automatically forwards 3000. Click its **Open in Browser** globe icon if the browser does not open automatically. Use the `https://<codespace>-3000.app.github.dev` forwarded address, not the localhost address on your phone.
@@ -111,7 +117,7 @@ All 352 games from [carteraccs/Offline-HTML-Games-Pack](https://github.com/carte
 
 The pack is several gigabytes. Its original HTML files download from the pinned public repository on first play, pass a Git blob integrity check, and are gzip-cached in ignored `.game-cache/`. Game binaries and generated runtime caches are not duplicated into this application repository. First play requires outbound GitHub access; cached games work without another upstream download. Downloads are bounded, deduplicated, and limited to four concurrent games.
 
-Orbit does not preload games at startup. Existing caches remain usable, and games are still playable directly in the browser. Bulk preloading is maintained separately in [the private VPS preloader repository](https://github.com/carteraccs/orbit-games-preloader).
+Carter Game's does not preload games at startup. Existing caches remain usable, and games are still playable directly in the browser. An optional separately deployed VPS asset service can provide pre-cached games. Local development works without it.
 
 Imported games retain an opaque sandbox without `allow-same-origin` or navigation permissions. Their CSP permits embedded data/blob assets, WebAssembly, and workers, while blocking external network requests, forms, camera, microphone, and geolocation. A bounded storage bridge saves localStorage values only under that game's own application key; the original game's scripts cannot read application storage. Games that require unavailable browser APIs, external servers, or broken upstream assets can still fail; the catalog and integrity checks do not claim exhaustive gameplay verification.
 

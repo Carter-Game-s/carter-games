@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { Compass, Home, Globe, Gamepad2, Settings } from "lucide-react";
+import { Home, Globe, Gamepad2, Settings } from "lucide-react";
 import { useStorage } from "@/lib/storage/use-storage";
 import { defaultSettings } from "@/lib/storage/settings";
 const nav = [
@@ -35,10 +35,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
     <>
       <header className="topbar">
         <Link className="brand" href="/">
-          <Compass size={25} />
-          <span>
-            orbit<span className="brand-dot">.</span>
-          </span>
+          <Gamepad2 size={25} aria-hidden="true" />
+          <span>Carter Game&apos;s</span>
         </Link>
         <nav aria-label="Main navigation">
           {nav.map(({ href, name, Icon }) => (
@@ -61,7 +59,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </header>
       <main>{children}</main>
       <footer>
-        Explore a little. Play a little. <span>No accounts. No tracking.</span>
+        <span className="ai-credit">
+          Created by Carter with AI assistance from OpenAI Codex.
+        </span>
+        <span>Your games. Saved on your device.</span>
       </footer>
     </>
   );

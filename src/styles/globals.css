@@ -130,6 +130,7 @@ h3 {
   font-size: 29px;
   font-weight: 700;
   letter-spacing: -1px;
+  white-space: nowrap;
 }
 .brand svg,
 .brand-dot {
@@ -168,6 +169,8 @@ footer {
   border-top: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 .page {
   max-width: 1200px;
@@ -623,6 +626,12 @@ footer {
   .topbar {
     padding: 0 25px;
   }
+  nav a {
+    padding: 12px;
+  }
+  nav a span {
+    display: none;
+  }
   .hero {
     padding-top: 35px;
   }
@@ -634,7 +643,7 @@ footer {
     gap: 10px;
   }
   .brand {
-    font-size: 24px;
+    font-size: 18px;
   }
   .brand svg {
     display: none;
@@ -643,7 +652,7 @@ footer {
     gap: 0;
   }
   nav a {
-    padding: 12px;
+    padding: 9px;
   }
   nav a span {
     display: none;
@@ -705,6 +714,9 @@ footer {
   }
   footer span {
     display: none;
+  }
+  footer .ai-credit {
+    display: block;
   }
 }
 
