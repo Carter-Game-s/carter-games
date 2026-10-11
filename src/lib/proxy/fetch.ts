@@ -2,6 +2,7 @@ import type { LookupFunction } from "node:net";
 import type { LookupAddress } from "node:dns";
 import http from "node:http";
 import https from "node:https";
+import { gunzip, inflate, brotliDecompress } from "node:zlib";
 import { validateURL, resolvePublic } from "./security";
 export type Upstream = { url: URL; status: number; type: string; body: Buffer };
 function boundedNumber(
@@ -53,7 +54,7 @@ export async function fetchPublic(raw: string): Promise<Upstream> {
           headers: {
             "User-Agent": "OrbitReadOnlyProxy/1.0",
             Accept: "text/html,text/css,image/*,font/*;q=0.8,*/*;q=0.1",
-            "Accept-Encoding": "identity",
+            "Accept-Encoding": "gzip, deflate, br",
           },
         },
         (res) => {
@@ -103,20 +104,34 @@ export async function fetchPublic(raw: string): Promise<Upstream> {
       u = validateURL(new URL(result.headers.location, u).href);
       continue;
     }
-    if (
-      result.headers["content-encoding"] &&
-      result.headers["content-encoding"] !== "identity"
-    )
-      throw new Error("Compressed upstream content is unsupported.");
     if (result.status < 200 || result.status >= 300)
       throw new Error(
         `Website returned HTTP ${result.status}. It may block proxies; open directly.`,
       );
+    let body = result.body;
+    const encoding = result.headers["content-encoding"]?.trim().toLowerCase();
+    if (encoding && encoding !== "identity") {
+      const decoder = { gzip: gunzip, deflate: inflate, br: brotliDecompress }[
+        encoding
+      ] as typeof gunzip | undefined;
+      if (!decoder) throw new Error("Unsupported upstream compression.");
+      try {
+        body = await new Promise<Buffer>((resolve, reject) =>
+          decoder(body, { maxOutputLength: max }, (error, output) =>
+            error ? reject(error) : resolve(output),
+          ),
+        );
+      } catch {
+        throw new Error(
+          "Invalid compressed response or decompressed size limit exceeded.",
+        );
+      }
+    }
     return {
       url: u,
       status: result.status,
       type: result.headers["content-type"] || "application/octet-stream",
-      body: result.body,
+      body,
     };
   }
   throw new Error("Too many redirects.");

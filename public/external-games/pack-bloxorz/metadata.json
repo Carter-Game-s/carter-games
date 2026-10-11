@@ -1,0 +1,23 @@
+{
+  "slug": "pack-bloxorz",
+  "title": "Bloxorz",
+  "description": "Play Bloxorz from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "puzzle",
+  "thumbnail": "/external-games/pack-bloxorz/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "puzzle"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-bloxorz/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

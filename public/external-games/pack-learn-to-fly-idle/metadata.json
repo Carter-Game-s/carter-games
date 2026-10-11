@@ -1,0 +1,23 @@
+{
+  "slug": "pack-learn-to-fly-idle",
+  "title": "Learn To Fly Idle",
+  "description": "Play Learn To Fly Idle from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "arcade",
+  "thumbnail": "/external-games/pack-learn-to-fly-idle/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "arcade"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-learn-to-fly-idle/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

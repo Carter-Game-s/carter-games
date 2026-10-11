@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "games:generate": "bun tools/generate-game-registry.ts",
+    "games:import": "bun tools/import-offline-games.ts && bun run games:generate",
+    "games:cache": "bun tools/cache-offline-games.ts",
     "predev": "bun run games:generate",
     "dev": "bun run games:generate && next dev --webpack",
     "prebuild": "bun run games:generate",

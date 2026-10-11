@@ -56,6 +56,7 @@ it("rejects every DNS answer when any answer is private", async () => {
   );
 });
 it("restricts hosts and protects session issuance", async () => {
+  vi.stubEnv("PROXY_ALLOWED_HOSTS", "example.com");
   expect(() => validateURL("https://arbitrary.example")).toThrow("not enabled");
   expect(
     sameOrigin(
@@ -82,6 +83,22 @@ it("restricts hosts and protects session issuance", async () => {
       )
     ).status,
   ).toBe(403);
+});
+it("allows public website hosts by default without allowing private destinations", () => {
+  vi.stubEnv("PROXY_ALLOWED_HOSTS", "");
+  expect(validateURL("https://www.nasa.gov/news/").hostname).toBe(
+    "www.nasa.gov",
+  );
+  expect(validateURL("https://www.youtube.com/").hostname).toBe(
+    "www.youtube.com",
+  );
+  for (const url of [
+    "http://127.0.0.1",
+    "http://10.0.0.1",
+    "http://localhost",
+    "http://[::1]",
+  ])
+    expect(() => validateURL(url)).toThrow();
 });
 it("signs expiring capabilities and rejects tampering", () => {
   const t = createToken();

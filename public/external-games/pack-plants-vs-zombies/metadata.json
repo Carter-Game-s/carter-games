@@ -1,0 +1,23 @@
+{
+  "slug": "pack-plants-vs-zombies",
+  "title": "Plants Vs Zombies",
+  "description": "Play Plants Vs Zombies from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "action",
+  "thumbnail": "/external-games/pack-plants-vs-zombies/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "action"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-plants-vs-zombies/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

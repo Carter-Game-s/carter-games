@@ -1,0 +1,23 @@
+{
+  "slug": "pack-red-ball-4-vol-2",
+  "title": "Red Ball 4 Vol 2",
+  "description": "Play Red Ball 4 Vol 2 from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "sports",
+  "thumbnail": "/external-games/pack-red-ball-4-vol-2/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "sports"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-red-ball-4-vol-2/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

@@ -132,7 +132,7 @@ export function GamePlayer({ slug }: { slug: string }) {
         ))}
         {m.kind === "external" ? (
           <p>
-            Isolated HTML5 game. Progress inside this sandbox is session-only.
+            Isolated HTML5 game. Imported games keep supported saves on this device.
           </p>
         ) : (
           <p role="status">

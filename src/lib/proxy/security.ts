@@ -4,18 +4,8 @@ import ipaddr from "ipaddr.js";
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 const secret =
   process.env.PROXY_SIGNING_SECRET || randomBytes(32).toString("hex");
-export const defaultHosts = [
-  "example.com",
-  "www.example.com",
-  "en.wikipedia.org",
-  "www.wikipedia.org",
-  "www.google.com",
-  "www.bing.com",
-  "duckduckgo.com",
-  "html.duckduckgo.com",
-];
 export function allowedHosts() {
-  return (process.env.PROXY_ALLOWED_HOSTS ?? defaultHosts.join(","))
+  return (process.env.PROXY_ALLOWED_HOSTS ?? "")
     .split(",")
     .map((h) => h.trim().toLowerCase())
     .filter(Boolean);
@@ -63,7 +53,8 @@ export function validateURL(raw: string): URL {
     throw new Error(
       "Private, loopback, and metadata destinations are blocked.",
     );
-  if (!allowedHosts().includes(host))
+  const hosts = allowedHosts();
+  if (hosts.length && !hosts.includes(host))
     throw new Error(
       "This host is not enabled. Open it directly, or add the exact host to PROXY_ALLOWED_HOSTS.",
     );

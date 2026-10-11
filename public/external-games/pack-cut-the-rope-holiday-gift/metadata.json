@@ -1,0 +1,23 @@
+{
+  "slug": "pack-cut-the-rope-holiday-gift",
+  "title": "Cut The Rope Holiday Gift",
+  "description": "Play Cut The Rope Holiday Gift from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "puzzle",
+  "thumbnail": "/external-games/pack-cut-the-rope-holiday-gift/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "puzzle"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-cut-the-rope-holiday-gift/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

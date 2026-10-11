@@ -5,12 +5,13 @@ import https from "node:https";
 import dns from "node:dns/promises";
 import http from "node:http";
 import type { AddressInfo } from "node:net";
+import { gzipSync, deflateSync, brotliCompressSync } from "node:zlib";
 import { fetchPublic, createPinnedLookup } from "@/lib/proxy/fetch";
 afterEach(() => vi.unstubAllEnvs());
 function network(
   status: number,
   headers: Record<string, string>,
-  body = "safe page",
+  body: string | Buffer = "safe page",
   neverEnd = false,
 ) {
   vi.spyOn(dns, "lookup").mockResolvedValue([
@@ -104,15 +105,42 @@ it("times out stalled requests", async () => {
   network(200, { "content-type": "text/html" }, "", true);
   await expect(fetchPublic("https://example.com")).rejects.toThrow("timed out");
 });
-it("does not bypass HTTP errors or compressed upstream responses", async () => {
+it("does not bypass HTTP errors or invalid compressed responses", async () => {
   network(403, {});
   await expect(fetchPublic("https://example.com")).rejects.toThrow("HTTP 403");
   vi.restoreAllMocks();
   network(200, { "content-encoding": "gzip" });
   await expect(fetchPublic("https://example.com")).rejects.toThrow(
-    "Compressed",
+    "compressed response",
   );
 });
+it.each([
+  ["gzip", gzipSync],
+  ["deflate", deflateSync],
+  ["br", brotliCompressSync],
+] as const)(
+  "decodes %s while limiting decompressed size",
+  async (encoding, compress) => {
+    network(
+      200,
+      { "content-encoding": encoding },
+      compress(Buffer.from("public page")),
+    );
+    expect((await fetchPublic("https://example.com")).body.toString()).toBe(
+      "public page",
+    );
+    vi.restoreAllMocks();
+    vi.stubEnv("PROXY_MAX_BYTES", "100");
+    network(
+      200,
+      { "content-encoding": encoding },
+      compress(Buffer.from("a".repeat(2000))),
+    );
+    await expect(fetchPublic("https://example.com")).rejects.toThrow(
+      "size limit",
+    );
+  },
+);
 
 it("pinned lookup works with a real Node HTTP socket and automatic family selection", async () => {
   // Only the low-level lookup adapter is exercised against a local fixture.

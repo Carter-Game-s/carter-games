@@ -1,0 +1,23 @@
+{
+  "slug": "pack-crazy-cars",
+  "title": "Crazy Cars",
+  "description": "Play Crazy Cars from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "arcade",
+  "thumbnail": "/external-games/pack-crazy-cars/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "arcade"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-crazy-cars/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

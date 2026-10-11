@@ -227,7 +227,7 @@ describe("automatic registry generation", () => {
   it("validates every real native and external game", async () => {
     const result = await generate(process.cwd());
     expect(result.native).toHaveLength(7);
-    expect(result.external).toHaveLength(1);
+    expect(result.external).toHaveLength(353);
     expect(result.native.map((g) => g.metadata.slug)).toEqual([
       "2048",
       "breakout",

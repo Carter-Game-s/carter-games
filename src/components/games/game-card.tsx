@@ -14,7 +14,7 @@ export function GameCard({
   return (
     <article className="game-card">
       <Link href={`/games/${m.slug}`}>
-        <img src={m.thumbnail} alt="" />
+        <img src={m.thumbnail} alt="" loading="lazy" width="320" height="320" />
         <div className="card-body">
           <span className="tag">
             {m.category} · {m.kind === "external" ? "HTML5" : "Original"}

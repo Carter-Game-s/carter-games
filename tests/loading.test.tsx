@@ -84,7 +84,7 @@ it("external player isolates HTML, times out and reloads", async () => {
   expect(screen.getByRole("status")).toBeInTheDocument();
   const { act } = await import("@testing-library/react");
   act(() => vi.advanceTimersByTime(12001));
-  expect(screen.getByRole("alert")).toHaveTextContent("did not load");
+  expect(screen.getByRole("alert")).toHaveTextContent("could not load");
   fireEvent.click(screen.getByRole("button", { name: "Reload game" }));
   expect(screen.getByRole("status")).toBeInTheDocument();
   await act(async () => {
@@ -136,5 +136,34 @@ it("external player reports missing documents rather than accepting a 404 iframe
   if (g.metadata.kind !== "external") throw new Error("fixture");
   render(<ExternalGamePlayer metadata={g.metadata} />);
   fireEvent.load(screen.getByTitle(g.metadata.title));
-  expect(await screen.findByRole("alert")).toHaveTextContent("did not load");
+  expect(await screen.findByRole("alert")).toHaveTextContent("could not load");
+});
+
+it("imported games persist only their own bounded saves and ignore messages from other windows", () => {
+  const g = allGames.find((game) => game.metadata.slug === "pack-2048")!;
+  if (g.metadata.kind !== "external") throw new Error("fixture");
+  render(<ExternalGamePlayer metadata={g.metadata} />);
+  const frame = screen.getByTitle(g.metadata.title) as HTMLIFrameElement;
+  expect(frame.getAttribute("sandbox")).not.toContain("allow-same-origin");
+  expect(frame.getAttribute("src")).toContain("/api/offline-games/pack-2048");
+  const send = (source: Window | null, values: unknown) =>
+    fireEvent(
+      window,
+      new MessageEvent("message", {
+        origin: "null",
+        source,
+        data: { type: "orbit-game-storage", values },
+      }),
+    );
+  send(window, { gameState: "spoof" });
+  expect(read("game:pack-2048:html-save", null)).toBeNull();
+  send(frame.contentWindow, { gameState: "tile state" });
+  expect(read("game:pack-2048:html-save", null)).toEqual({
+    gameState: "tile state",
+  });
+  send(frame.contentWindow, { gameState: "x".repeat(128 * 1024) });
+  expect(read("game:pack-2048:html-save", null)).toEqual({
+    gameState: "tile state",
+  });
+  expect(read("settings", null)).toBeNull();
 });

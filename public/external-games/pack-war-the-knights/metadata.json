@@ -1,0 +1,23 @@
+{
+  "slug": "pack-war-the-knights",
+  "title": "War The Knights",
+  "description": "Play War The Knights from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "action",
+  "thumbnail": "/external-games/pack-war-the-knights/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "action"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-war-the-knights/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

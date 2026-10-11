@@ -1,0 +1,23 @@
+{
+  "slug": "pack-vex-7",
+  "title": "Vex 7",
+  "description": "Play Vex 7 from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "arcade",
+  "thumbnail": "/external-games/pack-vex-7/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "arcade"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-vex-7/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

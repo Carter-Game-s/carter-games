@@ -1,0 +1,23 @@
+{
+  "slug": "pack-blocky-snakes",
+  "title": "Blocky Snakes",
+  "description": "Play Blocky Snakes from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "arcade",
+  "thumbnail": "/external-games/pack-blocky-snakes/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "arcade"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-blocky-snakes/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

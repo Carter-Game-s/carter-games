@@ -1,0 +1,23 @@
+{
+  "slug": "pack-2048",
+  "title": "2048",
+  "description": "Play 2048 from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "puzzle",
+  "thumbnail": "/external-games/pack-2048/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "puzzle"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-2048/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

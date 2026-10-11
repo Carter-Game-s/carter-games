@@ -1,0 +1,23 @@
+{
+  "slug": "pack-monster-tracks",
+  "title": "Monster Tracks",
+  "description": "Play Monster Tracks from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "arcade",
+  "thumbnail": "/external-games/pack-monster-tracks/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "arcade"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-monster-tracks/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

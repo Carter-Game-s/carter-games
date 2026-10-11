@@ -1,0 +1,23 @@
+{
+  "slug": "pack-table-tennis-world-tour",
+  "title": "Table Tennis World Tour",
+  "description": "Play Table Tennis World Tour from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
+  "category": "sports",
+  "thumbnail": "/external-games/pack-table-tennis-world-tour/thumbnail.svg",
+  "tags": [
+    "offline-pack",
+    "sports"
+  ],
+  "supportsTouch": false,
+  "supportsKeyboard": true,
+  "supportsFullscreen": true,
+  "sourcePath": "/external-games/pack-table-tennis-world-tour/",
+  "version": "1.0.0",
+  "sandbox": "allow-scripts",
+  "controls": [
+    {
+      "label": "Controls",
+      "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+    }
+  ]
+}

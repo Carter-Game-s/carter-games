@@ -1,6 +1,6 @@
 # Orbit · Proxy & Games
 
-A complete Next.js 16 / React 19 / strict TypeScript application with Tailwind CSS, Lucide icons, Bun, a guarded read-only web proxy, API-free search, seven native games, and an isolated HTML5 example. No account, database, or paid API is required. Settings, favorites, recent searches, browsing history, 2048 saves, and high scores are stored on the current device.
+A complete Next.js 16 / React 19 / strict TypeScript application with Tailwind CSS, Lucide icons, Bun, a guarded read-only web proxy, API-free search, seven native games, Color Tap, and 352 imported single-file games with individual SVG logos. No account, database, or paid API is required. Settings, favorites, recent searches, browsing history, 2048 saves, and high scores are stored on the current device.
 
 ## Run locally
 
@@ -46,7 +46,7 @@ The browser supports independent tabs, per-tab back/forward stacks, refresh, a h
 
 This is a real server-side **read-only HTTP(S) proxy**, not a VPN, full browser engine, or security bypass. It fetches supported public HTML, CSS, images, and fonts; rewrites links, assets, styles, and srcsets; and follows up to five validated redirects. Site scripts, nested frames, form submissions, media APIs, WebSockets, authentication, and cookies are not supported. Modern JavaScript applications, CAPTCHAs, anti-bot systems, and login-dependent pages may not render correctly. Website HTTP errors are shown rather than circumvented. Remote content is isolated in an opaque-origin iframe.
 
-For safety, destinations are limited to the exact hostnames in `PROXY_ALLOWED_HOSTS`. The default starter list permits example.com, Wikipedia, and the three search providers. A website's redirect and asset hosts must also be explicitly enabled; there is no wildcard or unrestricted mode. An unlisted link is disabled in rewritten HTML; you can type its address and open it directly using the browser toolbar. To permit another public website, copy `.env.example` to `.env.local`, add the exact required hosts, and restart.
+Public HTTP(S) websites on standard ports are enabled by default, including their public redirect and asset hosts. Private, loopback, link-local, metadata, and unsafe DNS destinations remain blocked on every request and redirect. Set `PROXY_ALLOWED_HOSTS` to a comma-separated exact-host list if you want to restrict access; leave it empty for public-web access.
 
 Safeguards include:
 
@@ -57,7 +57,7 @@ Safeguards include:
 - Upstream requests contain a fixed anonymous User-Agent and Accept headers, never user cookies, Authorization, incoming headers, or credentials. Upstream Set-Cookie is not returned.
 - CSP, `nosniff`, no-referrer, disabled forms, and sandboxing isolate rewritten content. Only the application-owned link-navigation script runs.
 
-Rate counters and capabilities are scoped to a single server process, matching Codespaces. Do not scale this implementation to multiple public instances without centralized budgets and a shared signing secret. A public origin can be called by non-browser clients; same-origin checks are not authentication. Keep the Codespaces port private and the exact-host allowlist narrow.
+Rate counters and capabilities are scoped to a single server process, matching Codespaces. Do not scale this implementation to multiple public instances without centralized budgets and a shared signing secret. A public origin can be called by non-browser clients; same-origin checks are not authentication. Keep the Codespaces port private. An optional exact-host allowlist can further restrict destinations.
 
 ## Games
 
@@ -104,3 +104,13 @@ These tests open home, submit searches, navigate direct URLs, reject private add
 - `tests`, `e2e`: automated acceptance coverage.
 
 Generated registries are committed for editor/typechecking convenience and always regenerated before development and builds. No browser filesystem scanning occurs.
+
+## Imported Offline HTML Games Pack
+
+All 352 games from [carteraccs/Offline-HTML-Games-Pack](https://github.com/carteraccs/Offline-HTML-Games-Pack) are inventoried at commit `d52fe447483251e486a2de49132c8240f8369706`. The library contains 360 games total (seven native, Color Tap, and 352 imported). Each imported game has its own title, genre, SVG logo, sandboxed player, and immutable source blob hash. `bun run games:import` regenerates the imported metadata and logos from the checked-in inventory.
+
+The pack is several gigabytes. Its original HTML files download from the pinned public repository on first play, pass a Git blob integrity check, and are gzip-cached in ignored `.game-cache/`. Game binaries and generated runtime caches are not duplicated into this application repository. First play requires outbound GitHub access; cached games work without another upstream download. Downloads are bounded, deduplicated, and limited to four concurrent games.
+
+To pre-cache every game, run `bun run games:cache`. If you already have the pinned pack's offline directory, run `bun run games:cache /absolute/path/to/offline` to verify and cache local files. Cache files survive application rebuilds.
+
+Imported games retain an opaque sandbox without `allow-same-origin` or navigation permissions. Their CSP permits embedded data/blob assets, WebAssembly, and workers, while blocking external network requests, forms, camera, microphone, and geolocation. A bounded storage bridge saves localStorage values only under that game's own application key; the original game's scripts cannot read application storage. Games that require unavailable browser APIs, external servers, or broken upstream assets can still fail; the catalog and integrity checks do not claim exhaustive gameplay verification.

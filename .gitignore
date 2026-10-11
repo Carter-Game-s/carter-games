@@ -11,6 +11,7 @@ test-results/
 *.log
 *.pid
 coverage/
+.game-cache/
 .DS_Store
 *.pem
 *.key

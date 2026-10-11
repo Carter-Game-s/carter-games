@@ -10,6 +10,7 @@ export default function GamesPage() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<GameCategory | "all">("all");
   const [view, setView] = useState("all");
+  const [visible, setVisible] = useState(24);
   const [favorites] = useStorage<string[]>("favorites", []);
   const [recent] = useStorage<string[]>("recentGames", []);
   const games = filterGames(allGames, query, category).filter((g) =>
@@ -39,12 +40,18 @@ export default function GamesPage() {
           aria-label="Search games"
           placeholder="Find a game…"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setVisible(24);
+          }}
         />
         <select
           aria-label="Game collection"
           value={view}
-          onChange={(e) => setView(e.target.value)}
+          onChange={(e) => {
+            setView(e.target.value);
+            setVisible(24);
+          }}
         >
           <option value="all">All games</option>
           <option value="featured">Featured</option>
@@ -58,7 +65,10 @@ export default function GamesPage() {
             <button
               className={category === c ? "selected" : ""}
               key={c}
-              onClick={() => setCategory(c as GameCategory | "all")}
+              onClick={() => {
+                setCategory(c as GameCategory | "all");
+                setVisible(24);
+              }}
             >
               {c[0].toUpperCase() + c.slice(1)}
             </button>
@@ -66,7 +76,7 @@ export default function GamesPage() {
         )}
       </div>
       <div className="cards">
-        {games.map((g) => (
+        {games.slice(0, visible).map((g) => (
           <GameCard
             key={g.metadata.slug}
             game={g}
@@ -74,6 +84,17 @@ export default function GamesPage() {
           />
         ))}
       </div>
+      <p className="muted mt-4">
+        Showing {Math.min(visible, games.length)} of {games.length} games
+      </p>
+      {games.length > visible && (
+        <button
+          className="mt-4"
+          onClick={() => setVisible((count) => count + 24)}
+        >
+          Show more games
+        </button>
+      )}
       {games.length === 0 && (
         <p className="empty">No games in this collection yet.</p>
       )}

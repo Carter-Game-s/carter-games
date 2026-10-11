@@ -216,29 +216,32 @@ export async function generate(root = process.cwd()) {
   await scan(base);
   const extBase = path.join(root, "public/external-games");
   if (await exists(extBase))
-    for (const e of await readdir(extBase, { withFileTypes: true }))
-      if (e.isDirectory() && !e.name.startsWith(".")) {
-        const dir = path.join(extBase, e.name),
-          file = path.join(dir, "metadata.json");
-        if (!(await exists(file))) fail(dir, "missing metadata.json");
-        if (!(await exists(path.join(dir, "index.html"))))
-          fail(dir, "missing index.html");
-        let data: unknown;
-        try {
-          data = JSON.parse(await readFile(file, "utf8"));
-        } catch {
-          fail(file, "invalid JSON");
-        }
-        external.push({
-          metadata: (await validateMetadata(
-            data,
+    await Promise.all(
+      (await readdir(extBase, { withFileTypes: true })).map(async (e) => {
+        if (e.isDirectory() && !e.name.startsWith(".")) {
+          const dir = path.join(extBase, e.name),
+            file = path.join(dir, "metadata.json");
+          if (!(await exists(file))) fail(dir, "missing metadata.json");
+          if (!(await exists(path.join(dir, "index.html"))))
+            fail(dir, "missing index.html");
+          let data: unknown;
+          try {
+            data = JSON.parse(await readFile(file, "utf8"));
+          } catch {
+            fail(file, "invalid JSON");
+          }
+          external.push({
+            metadata: (await validateMetadata(
+              data,
+              file,
+              root,
+              e.name,
+            )) as ExternalGameMetadata,
             file,
-            root,
-            e.name,
-          )) as ExternalGameMetadata,
-          file,
-        });
-      }
+          });
+        }
+      }),
+    );
   const seen = new Map<string, string>();
   for (const g of [...native, ...external]) {
     const prev = seen.get(g.metadata.slug);

@@ -271,7 +271,7 @@ footer {
 .game-card img {
   width: 100%;
   aspect-ratio: 1.55;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 .card-body {

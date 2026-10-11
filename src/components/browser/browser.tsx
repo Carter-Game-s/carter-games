@@ -65,8 +65,8 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
     );
     return () => clearInterval(timer);
   }, [session]);
+  useEffect(() => setAddress(url), [url]);
   useEffect(() => {
-    setAddress(url);
     setLoading(!!url);
     setError("");
     if (!url) return;
@@ -305,8 +305,8 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
       )}
       <p className="browser-note">
         Read-only browsing. Sites with logins, interactive scripts, or anti-bot
-        checks may need to open directly. Only configured public hosts are
-        available.
+        checks may need to open directly. Public websites are available;
+        private network destinations are blocked.
       </p>
       {history.length > 0 && (
         <>
