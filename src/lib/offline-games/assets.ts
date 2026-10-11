@@ -14,6 +14,21 @@ const cache = path.join(process.cwd(), ".game-cache", manifest.commit);
 const pending = new Map<string, Promise<Buffer>>();
 const zip = promisify(gzip);
 const unzip = promisify(gunzip);
+export async function preloadProgress(completed: number, failed: string[]) {
+  await mkdir(cache, { recursive: true });
+  const file = path.join(cache, "preload-progress.json");
+  const temp = `${file}.${process.pid}.tmp`;
+  await writeFile(
+    temp,
+    JSON.stringify({
+      completed,
+      total: Object.keys(packGames).length,
+      failed,
+      updatedAt: new Date().toISOString(),
+    }),
+  );
+  await rename(temp, file);
+}
 export function verifyGame(slug: string, body: Buffer) {
   const game = packGames[slug];
   if (!game || body.length > maxBytes)
