@@ -122,7 +122,7 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
       if (e.data.type === "orbit-navigate") navigate(e.data.url);
       if (e.data.type === "orbit-ready") {
         finishLoading();
-        setAddress(e.data.url);
+        if (document.activeElement !== input.current) setAddress(e.data.url);
       }
     };
     window.addEventListener("message", message);
