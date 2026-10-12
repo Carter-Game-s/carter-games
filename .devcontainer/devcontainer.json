@@ -6,7 +6,7 @@
     "3000": {
       "label": "Carter Game's",
       "onAutoForward": "openBrowser",
-      "visibility": "private"
+      "visibility": "public"
     }
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
