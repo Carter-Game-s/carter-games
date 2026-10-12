@@ -1,0 +1,31 @@
+@media (max-width: 1300px) {
+  .header :global(.local-badge) {
+    display: none;
+  }
+}
+@media (max-width: 1100px) {
+  .header nav a span {
+    display: none;
+  }
+  .header nav a {
+    padding: 12px;
+  }
+}
+@media (max-width: 560px) {
+  .header {
+    height: auto;
+    min-height: 98px;
+    padding-top: 14px;
+    padding-bottom: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .header nav {
+    width: 100%;
+    justify-content: center;
+  }
+  .header nav a {
+    padding: 10px 14px;
+  }
+}

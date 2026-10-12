@@ -1,0 +1,126 @@
+.search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--panel);
+  margin: 24px 0;
+}
+.search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0;
+}
+.toolbar button,
+.actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.toolbar button[aria-pressed="true"] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.volume {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-left: auto;
+  font-size: 14px;
+}
+.volume input {
+  width: 110px;
+  accent-color: var(--accent);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 22px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pad {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 25%, #d5ff9d, #75b647);
+  border: 5px solid #426629;
+  box-shadow: 0 7px 0 #2b451b;
+  color: #203314;
+  margin: 8px 0 20px;
+  display: grid;
+  place-items: center;
+}
+.pad:hover {
+  background: radial-gradient(circle at 35% 25%, #eaffcb, #9dd064);
+}
+.pad:active,
+.playing {
+  transform: translateY(5px);
+  box-shadow: 0 2px 0 #2b451b;
+}
+.card h2 {
+  font-size: 15px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.card > span {
+  font-size: 12px;
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 18px;
+}
+.actions a {
+  font-size: 11px;
+  color: var(--muted);
+}
+@media (max-width: 560px) {
+  .search {
+    flex-wrap: wrap;
+  }
+  .search button {
+    width: 100%;
+  }
+  .volume {
+    margin-left: 0;
+  }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .card {
+    padding: 16px 12px;
+  }
+  .actions {
+    flex-direction: column;
+  }
+  .pad {
+    width: 72px;
+    height: 72px;
+  }
+}

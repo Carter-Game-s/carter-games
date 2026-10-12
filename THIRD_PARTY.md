@@ -67,6 +67,12 @@ transitive dependencies. Keep their required notices when distributing bundles.
 | `typescript`                | 5.9.3             | Apache-2.0       | Development |
 | `vitest`                    | 3.2.7             | MIT              | Development |
 
+## Soundboard and chat
+
+Soundboard metadata links to SoundButtonsWorld. Audio plays directly from its public audio endpoints; sound recordings are not copied into this repository or covered by its MIT license. Each sound includes a source link, and ownership remains with the original creators.
+
+The AI SDK and its OpenAI-compatible provider are Apache-2.0 licensed. The optional local chat runtime uses Ollama and Qwen2.5 0.5B; their runtime and model files are installed outside the repository. Qwen2.5 0.5B is Apache-2.0 licensed. See [CHAT_SETUP.md](CHAT_SETUP.md) for configuration.
+
 ## AI assistance
 
 Carter directed the application project with AI assistance from OpenAI Codex.

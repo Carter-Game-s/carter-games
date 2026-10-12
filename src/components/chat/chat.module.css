@@ -1,0 +1,96 @@
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 24px 0 16px;
+}
+.heading button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.conversation {
+  height: min(55vh, 560px);
+  min-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--panel);
+  padding: 24px;
+}
+.empty {
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 40px 0;
+  color: var(--muted);
+}
+.empty h2 {
+  color: var(--text);
+}
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+.message {
+  max-width: 90%;
+  border: 1px solid var(--line);
+  background: var(--raised);
+  padding: 14px 18px;
+  border-radius: 16px;
+  margin-bottom: 14px;
+}
+.message > span {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.message p {
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.65;
+}
+.user {
+  margin-left: auto;
+  background: var(--bg);
+}
+.composer {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin: 16px 0;
+}
+.composer textarea {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  padding: 14px;
+  resize: vertical;
+  max-height: 220px;
+}
+.composer button {
+  height: 52px;
+  display: grid;
+  place-items: center;
+}
+@media (max-width: 560px) {
+  .conversation {
+    padding: 14px;
+  }
+  .message {
+    max-width: 100%;
+  }
+  .heading {
+    flex-wrap: wrap;
+  }
+}

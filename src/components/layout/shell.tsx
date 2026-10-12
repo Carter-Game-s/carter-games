@@ -2,13 +2,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { Home, Globe, Gamepad2, Settings } from "lucide-react";
+import {
+  Home,
+  Globe,
+  Gamepad2,
+  Settings,
+  AudioLines,
+  MessageCircle,
+} from "lucide-react";
 import { useStorage } from "@/lib/storage/use-storage";
 import { defaultSettings } from "@/lib/storage/settings";
+import styles from "./shell.module.css";
 const nav = [
   { href: "/", name: "Home", Icon: Home },
   { href: "/browser", name: "Browser", Icon: Globe },
   { href: "/games", name: "Games", Icon: Gamepad2 },
+  { href: "/soundboard", name: "Soundboard", Icon: AudioLines },
+  { href: "/chat", name: "AI Chat", Icon: MessageCircle },
   { href: "/settings", name: "Settings", Icon: Settings },
 ];
 export function Shell({ children }: { children: React.ReactNode }) {
@@ -33,7 +43,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }, [settings]);
   return (
     <>
-      <header className="topbar">
+      <header className={`topbar ${styles.header}`}>
         <Link className="brand" href="/">
           <Gamepad2 size={25} aria-hidden="true" />
           <span>Carter Game&apos;s</span>

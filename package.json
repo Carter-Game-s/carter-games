@@ -24,12 +24,14 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@ai-sdk/openai-compatible": "^3.0.68",
+    "ai": "^7.0.138",
+    "cheerio": "^1.1.0",
+    "ipaddr.js": "^2.2.0",
+    "lucide-react": "^0.468.0",
     "next": "^16.2.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "lucide-react": "^0.468.0",
-    "cheerio": "^1.1.0",
-    "ipaddr.js": "^2.2.0"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
