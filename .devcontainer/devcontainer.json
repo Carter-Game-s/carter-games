@@ -1,8 +1,13 @@
 {
   "name": "Carter Game's",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
-  "forwardPorts": [3000, 3001],
+  "forwardPorts": [3000, 3001, 8083],
   "portsAttributes": {
+    "8083": {
+      "label": "Private Preloader Admin",
+      "onAutoForward": "silent",
+      "visibility": "private"
+    },
     "3001": {
       "label": "Carter Browser",
       "onAutoForward": "silent",
