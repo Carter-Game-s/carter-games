@@ -14,7 +14,7 @@ export async function readPublishedSource(
   )
     throw new Error("Invalid published game path.");
   if (!game.parts) {
-    const file = path.join(root, game.path);
+    const file = path.join(root, "game-assets", `${slug}.html`);
     if ((await stat(file)).size > 150 * 1024 * 1024)
       throw new Error("Oversized published game.");
     return readFile(file);
@@ -37,7 +37,12 @@ export async function readPublishedSource(
       part.size > 48 * 1024 * 1024
     )
       throw new Error("Invalid published game part.");
-    const file = path.join(root, part.path);
+    const file = path.join(
+      root,
+      "game-assets",
+      slug,
+      `part-${String(index).padStart(3, "0")}`,
+    );
     if ((await stat(file)).size !== part.size)
       throw new Error("Published game part size mismatch.");
     const bytes = await readFile(file);

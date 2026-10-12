@@ -4,6 +4,9 @@ const forwardedHost = process.env.CODESPACE_NAME
   : undefined;
 const config: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingExcludes: {
+    "/*": ["./game-assets/**/*", "./.game-cache/**/*"],
+  },
   allowedDevOrigins: ["127.0.0.1", ...(forwardedHost ? [forwardedHost] : [])],
 };
 export default config;
