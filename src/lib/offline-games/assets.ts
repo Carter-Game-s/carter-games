@@ -7,7 +7,7 @@ import manifest from "./manifest.json";
 
 export const packGames = manifest.games as Record<
   string,
-  { filename: string; blob: string }
+  { filename: string; blob: string; path?: string }
 >;
 const maxBytes = 150 * 1024 * 1024;
 const cache = path.join(process.cwd(), ".game-cache", manifest.commit);
@@ -57,7 +57,7 @@ export async function loadVPSGame(slug: string): Promise<Buffer> {
   if (!token) throw new Error("Missing game asset service credential.");
   const response = await fetch(
     new URL(
-      `games/${slug}`,
+      `games/${slug}?blob=${packGames[slug].blob}`,
       base.href.endsWith("/") ? base.href : base.href + "/",
     ),
     {
@@ -110,8 +110,15 @@ async function load(slug: string): Promise<Buffer> {
     if (!(error instanceof Error && "code" in error && error.code === "ENOENT"))
       throw error;
   }
-  // Only the immutable, inventoried GitHub files can be requested. This endpoint
-  // never accepts a URL, forwards credentials, follows redirects, or evaluates code.
+
+  if (game.path) {
+    if (game.path !== `game-assets/${slug}.html`)
+      throw new Error("Invalid published game path.");
+    const body = await readFile(path.join(process.cwd(), game.path));
+    await cacheGame(slug, body);
+    return body;
+  }
+
   const url = `https://raw.githubusercontent.com/${manifest.repository}/${manifest.commit}/offline/${encodeURIComponent(game.filename)}`;
   const response = await fetch(url, {
     redirect: "error",

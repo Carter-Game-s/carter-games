@@ -1,7 +1,6 @@
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-// This inventory contains Git blob hashes, not executable source code.
 const commit = "d52fe447483251e486a2de49132c8240f8369706";
 const root = process.cwd();
 const lines = (
@@ -36,6 +35,21 @@ const icons: Record<string, string> = {
     '<path d="M108 120q52-61 104 0l-52 89z"/><circle cx="160" cy="125" r="15"/>',
 };
 const manifest: Record<string, { filename: string; blob: string }> = {};
+try {
+  const existing = JSON.parse(
+    await readFile(
+      path.join(root, "src/lib/offline-games/manifest.json"),
+      "utf8",
+    ),
+  ) as {
+    games: Record<string, { filename: string; blob: string; path?: string }>;
+  };
+  for (const [slug, game] of Object.entries(existing.games))
+    if (game.path === `game-assets/${slug}.html`) manifest[slug] = game;
+} catch (error) {
+  if (!(error instanceof Error && "code" in error && error.code === "ENOENT"))
+    throw error;
+}
 for (const line of lines) {
   const match = /^100644 blob ([a-f0-9]{40})\toffline\/(.+\.html?)$/.exec(line);
   if (!match) throw new Error(`Unsafe game inventory entry: ${line}`);

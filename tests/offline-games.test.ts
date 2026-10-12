@@ -60,7 +60,7 @@ it("authenticates only the configured VPS service, rejects redirects, and verifi
       .digest("hex");
     expect(await loadVPSGame("pack-2048")).toEqual(body);
     expect(request).toHaveBeenCalledWith(
-      new URL("http://127.0.0.1:18080/games/pack-2048"),
+      new URL(`http://127.0.0.1:18080/games/pack-2048?blob=${game.blob}`),
       expect.objectContaining({
         redirect: "error",
         headers: { Authorization: "Bearer fixture-token" },
