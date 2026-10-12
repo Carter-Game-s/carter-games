@@ -7,6 +7,14 @@ import { NodeTCPSocket } from "./node_modules/@mercuryworkshop/wisp-js/src/serve
 import { resolveDestination } from "./policy.mjs";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
+if (!process.env.CODESPACE_NAME) {
+  try {
+    const metadata = JSON.parse(await readFile("/workspaces/.codespaces/shared/environment-variables.json", "utf8"));
+    if (typeof metadata.CODESPACE_NAME === "string" && /^[a-z0-9-]+$/.test(metadata.CODESPACE_NAME)) {
+      process.env.CODESPACE_NAME = metadata.CODESPACE_NAME;
+    }
+  } catch {}
+}
 const port = Number(process.env.BROWSER_ENGINE_PORT || 3001);
 const appOrigin = process.env.CODESPACE_NAME
   ? `https://${process.env.CODESPACE_NAME}-3000.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN || "app.github.dev"}`
