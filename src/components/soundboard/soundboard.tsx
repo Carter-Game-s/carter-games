@@ -17,6 +17,9 @@ export function Soundboard() {
   const [submitted, setSubmitted] = useState("");
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(featuredSounds.length);
+  const [mode, setMode] = useState("all");
+  const [category, setCategory] = useState(0);
+  const [jump, setJump] = useState("1");
   const [favoriteOnly, setFavoriteOnly] = useState(false);
   const [volume, setVolume] = useState(0.6);
   const [playing, setPlaying] = useState<number | null>(null);
@@ -24,6 +27,25 @@ export function Soundboard() {
   const [busy, setBusy] = useState(false);
   const audio = useRef<HTMLAudioElement | null>(null);
   const search = useRef<AbortController | null>(null);
+  useEffect(() => {
+    const controller = new AbortController();
+    search.current = controller;
+    setBusy(true);
+    void fetch("/api/sounds?mode=all", { signal: controller.signal })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw Error(data.error);
+        setSounds(data.sounds);
+        setTotal(data.total);
+      })
+      .catch((error) => {
+        if (!controller.signal.aborted) setMessage(error.message);
+      })
+      .finally(() => {
+        if (search.current === controller) setBusy(false);
+      });
+    return () => controller.abort();
+  }, []);
   useEffect(
     () => () => {
       audio.current?.pause();
@@ -62,7 +84,12 @@ export function Soundboard() {
       }
     }
   }
-  async function load(text: string, nextPage = 0) {
+  async function load(
+    text: string,
+    nextPage = 0,
+    nextMode = mode,
+    nextCategory = category,
+  ) {
     search.current?.abort();
     const controller = new AbortController();
     search.current = controller;
@@ -71,7 +98,7 @@ export function Soundboard() {
     setFavoriteOnly(false);
     try {
       const response = await fetch(
-        `/api/sounds?q=${encodeURIComponent(text)}&page=${nextPage}`,
+        `/api/sounds?q=${encodeURIComponent(text)}&page=${nextPage}&mode=${nextMode}&category=${nextCategory}`,
         { signal: controller.signal },
       );
       const data = await response.json();
@@ -80,6 +107,9 @@ export function Soundboard() {
       setTotal(data.total);
       setPage(nextPage);
       setSubmitted(text);
+      setMode(nextMode);
+      setCategory(nextCategory);
+      setJump(String(nextPage + 1));
     } catch (e) {
       if (!controller.signal.aborted) setMessage((e as Error).message);
     } finally {
@@ -119,14 +149,41 @@ export function Soundboard() {
       </form>
       <div className={styles.toolbar}>
         <button
-          aria-pressed={!favoriteOnly}
+          aria-pressed={!favoriteOnly && mode === "all"}
           onClick={() => {
             setQuery("");
-            void load("");
+            void load("", 0, "all");
+          }}
+        >
+          All sounds
+        </button>
+        <button
+          aria-pressed={!favoriteOnly && mode === "featured"}
+          onClick={() => {
+            setQuery("");
+            void load("", 0, "featured", 0);
           }}
         >
           Featured
         </button>
+        <select
+          aria-label="Sound category"
+          value={category}
+          onChange={(e) =>
+            void load(query.trim(), 0, "all", Number(e.target.value))
+          }
+        >
+          <option value="0">All categories</option>
+          <option value="3">Memes</option>
+          <option value="2">Movies</option>
+          <option value="5">Reactions</option>
+          <option value="9">Sound effects</option>
+          <option value="19">Voice recordings</option>
+          <option value="20">Creativity</option>
+          <option value="22">Random roll</option>
+          <option value="13">Anime</option>
+          <option value="1">Games</option>
+        </select>
         <button
           aria-pressed={favoriteOnly}
           onClick={() => {
@@ -159,7 +216,7 @@ export function Soundboard() {
       <p role="status" className="muted">
         {busy
           ? "Finding sounds…"
-          : `${visible.length} sounds${submitted && !favoriteOnly ? ` · ${total} results for “${submitted}”` : ""}`}
+          : `${visible.length} sounds${!favoriteOnly ? ` · ${total.toLocaleString()} ${submitted ? `results for “${submitted}”` : "available"}` : ""}`}
         {playing !== null ? " · Playing" : ""}
       </p>
       {message && (
@@ -214,7 +271,7 @@ export function Soundboard() {
             : "No sounds found. Try a different search."}
         </p>
       )}
-      {submitted && !favoriteOnly && (
+      {!favoriteOnly && total > 24 && (
         <div className={styles.toolbar}>
           <button
             disabled={page === 0 || busy}
@@ -222,13 +279,38 @@ export function Soundboard() {
           >
             Previous sounds
           </button>
-          <span>Page {page + 1}</span>
+          <span>
+            Page {page + 1} of {Math.ceil(total / 24).toLocaleString()}
+          </span>
           <button
             disabled={busy || (page + 1) * 24 >= total}
             onClick={() => void load(submitted, page + 1)}
           >
             Next sounds
           </button>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const next = Number(jump);
+              if (
+                Number.isInteger(next) &&
+                next >= 1 &&
+                next <= Math.ceil(total / 24)
+              )
+                void load(submitted, next - 1);
+            }}
+          >
+            <input
+              aria-label="Sound page number"
+              type="number"
+              min="1"
+              max={Math.ceil(total / 24)}
+              value={jump}
+              onChange={(e) => setJump(e.target.value)}
+              style={{ width: 85 }}
+            />
+            <button disabled={busy}>Go to page</button>
+          </form>
         </div>
       )}
       <p className="muted">

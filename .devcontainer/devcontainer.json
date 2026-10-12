@@ -1,8 +1,13 @@
 {
   "name": "Carter Game's",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
-  "forwardPorts": [3000],
+  "forwardPorts": [3000, 3001],
   "portsAttributes": {
+    "3001": {
+      "label": "Carter Browser",
+      "onAutoForward": "silent",
+      "visibility": "public"
+    },
     "3000": {
       "label": "Carter Game's",
       "onAutoForward": "openBrowser",

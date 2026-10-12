@@ -75,6 +75,10 @@ The AI SDK and its OpenAI-compatible provider are Apache-2.0 licensed. The optio
 
 ## AI assistance
 
+## Interactive browser engine
+
+The independent browser service in `infra/proxy` uses MercuryWorkshop Scramjet 2.0.67-alpha.2, Scramjet Controller 0.0.14, Scramjet Utils 0.0.3, and Epoxy Transport 3.0.1 under AGPL-3.0-only, plus Wisp JS 0.5.0 under LGPL-3.0. The service includes its own license and publicly provides its authored sources and upstream source references at `/source`. These components are credited to MercuryWorkshop; Carter authored the application integration. See [the browser service README](infra/proxy/README.md).
+
 Carter directed the application project with AI assistance from OpenAI Codex.
 The credit describes development assistance, not a third-party game ownership
 claim or a substitute for reviewing code, security, and licensing.

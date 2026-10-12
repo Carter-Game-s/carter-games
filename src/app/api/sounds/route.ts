@@ -11,7 +11,16 @@ export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const query = (params.get("q") || "").trim();
   const page = Number(params.get("page") || 0);
-  if (query.length > 100 || !Number.isInteger(page) || page < 0 || page > 100)
+  const category = Number(params.get("category") || 0);
+  const mode = params.get("mode") || "all";
+  if (
+    query.length > 100 ||
+    !Number.isInteger(page) ||
+    page < 0 ||
+    page > 100000 ||
+    ![0, 1, 2, 3, 5, 9, 13, 19, 20, 22].includes(category) ||
+    !["all", "featured", "trends", "new"].includes(mode)
+  )
     return Response.json({ error: "Invalid search." }, { status: 400 });
   if (
     !allowRequest(
@@ -24,22 +33,23 @@ export async function GET(request: Request) {
       { error: "Too many searches. Try again shortly." },
       { status: 429 },
     );
-  if (!query && page === 0)
+  if (!query && page === 0 && mode === "featured")
     return Response.json({
       sounds: featuredSounds,
       total: featuredSounds.length,
     });
-  const key = `${query}:${page}`;
+  const key = `${query}:${page}:${category}:${mode}`;
   const existing = cache.get(key);
   if (existing && existing.until > Date.now())
     return Response.json(existing.value);
   try {
     const url = new URL(
-      `https://soundbuttonsworld.com/api/memes/${query ? "search" : "trends"}`,
+      `https://soundbuttonsworld.com/api/memes/${query ? "search" : mode === "new" || mode === "trends" ? mode : "getall"}`,
     );
     url.searchParams.set("page", String(page));
     url.searchParams.set("pageSize", "24");
     if (query) url.searchParams.set("q", query);
+    if (category) url.searchParams.set("category", String(category));
     const response = await fetchPublic(url.href);
     if (response.status !== 200 || !response.type.includes("json"))
       throw Error("Unavailable");

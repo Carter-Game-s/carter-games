@@ -1,4 +1,4 @@
-import { Browser } from "@/components/browser/browser";
+import { FullBrowser } from "@/components/browser/full-browser";
 export default async function BrowserPage({
   searchParams,
 }: {
@@ -17,5 +17,8 @@ export default async function BrowserPage({
         safe = u.href;
     }
   } catch {}
-  return <Browser key={safe} initialURL={safe} />;
+  const engineURL = process.env.CODESPACE_NAME
+    ? `https://${process.env.CODESPACE_NAME}-3001.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN || "app.github.dev"}`
+    : process.env.BROWSER_ENGINE_URL || "http://localhost:3001";
+  return <FullBrowser key={safe} initialURL={safe} engineURL={engineURL} />;
 }

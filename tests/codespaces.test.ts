@@ -5,6 +5,8 @@ it("configures Bun, private forwarded port, install on creation and restart-safe
   const c = JSON.parse(readFileSync(".devcontainer/devcontainer.json", "utf8"));
   expect(c.features["ghcr.io/shyim/devcontainers-features/bun:0"]).toEqual({});
   expect(c.forwardPorts).toContain(3000);
+  expect(c.forwardPorts).toContain(3001);
+  expect(c.portsAttributes["3001"].visibility).toBe("public");
   expect(c.portsAttributes["3000"].onAutoForward).toBe("openBrowser");
   expect(c.portsAttributes["3000"].visibility).toBe("public");
   const setup = readFileSync(".devcontainer/setup.sh", "utf8"),
