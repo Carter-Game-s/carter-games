@@ -4,10 +4,11 @@ import path from "node:path";
 import { gzip, gunzip } from "node:zlib";
 import { promisify } from "node:util";
 import manifest from "./manifest.json";
+import { readPublishedSource, type GamePart } from "./published";
 
 export const packGames = manifest.games as Record<
   string,
-  { filename: string; blob: string; path?: string }
+  { filename: string; blob: string; path?: string; parts?: GamePart[] }
 >;
 const maxBytes = 150 * 1024 * 1024;
 const cache = path.join(process.cwd(), ".game-cache", manifest.commit);
@@ -114,7 +115,7 @@ async function load(slug: string): Promise<Buffer> {
   if (game.path) {
     if (game.path !== `game-assets/${slug}.html`)
       throw new Error("Invalid published game path.");
-    const body = await readFile(path.join(process.cwd(), game.path));
+    const body = await readPublishedSource(slug, game);
     await cacheGame(slug, body);
     return body;
   }

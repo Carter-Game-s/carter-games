@@ -6,6 +6,7 @@ import path from "node:path";
 import os from "node:os";
 import { publishGame } from "../tools/publish-game";
 import { generate } from "../tools/generate-game-registry";
+import { readPublishedSource } from "../src/lib/offline-games/published";
 const directories: string[] = [];
 async function fixture() {
   const root = await mkdtemp(path.join(os.tmpdir(), "carter-publish-test-"));
@@ -104,4 +105,41 @@ it("rejects unsafe slugs and non-HTML input without changing the catalog", async
     ),
   );
   expect(manifest.games).toEqual({});
+});
+it("reassembles only pinned local parts and rejects altered or traversing parts", async () => {
+  const { root } = await fixture();
+  const slug = "pack-parts";
+  await mkdir(path.join(root, "game-assets", slug), { recursive: true });
+  const bodies = [
+    Buffer.from("<!doctype html>"),
+    Buffer.from("<html>Game</html>"),
+  ];
+  const parts = bodies.map((body, index) => ({
+    path: `game-assets/${slug}/part-${String(index).padStart(3, "0")}`,
+    size: body.length,
+    blob: createHash("sha1")
+      .update(`blob ${body.length}\0`)
+      .update(body)
+      .digest("hex"),
+  }));
+  for (const [index, part] of parts.entries())
+    await writeFile(path.join(root, part.path), bodies[index]);
+  const game = { path: `game-assets/${slug}.html`, parts };
+  expect(await readPublishedSource(slug, game, root)).toEqual(
+    Buffer.concat(bodies),
+  );
+  await writeFile(
+    path.join(root, parts[0].path),
+    Buffer.from("x".repeat(parts[0].size)),
+  );
+  await expect(readPublishedSource(slug, game, root)).rejects.toThrow(
+    "integrity",
+  );
+  await expect(
+    readPublishedSource(
+      slug,
+      { ...game, parts: [{ ...parts[0], path: "../../secret" }] },
+      root,
+    ),
+  ).rejects.toThrow("Invalid");
 });

@@ -1,4 +1,3 @@
-// GENERATED FILE — manual edits will be overwritten. Run bun run games:generate.
 import type { NativeGameDefinition } from "./types";
 export const nativeGameDefinitions: NativeGameDefinition[] = [
   { metadata: {

@@ -1,4 +1,3 @@
-// GENERATED FILE — manual edits will be overwritten. Run bun run games:generate.
 import type { ExternalGameDefinition } from "./types";
 export const externalGameDefinitions: ExternalGameDefinition[] = [
   {
@@ -3370,6 +3369,32 @@ export const externalGameDefinitions: ExternalGameDefinition[] = [
         {
           "label": "Controls",
           "description": "Use the game's on-screen instructions. Most games use the keyboard and mouse."
+        }
+      ],
+      "kind": "external"
+    }
+  },
+  {
+    "metadata": {
+      "slug": "pack-five-nights-at-epsteins",
+      "title": "Five Nights at Epstein's",
+      "description": "A Unity horror game. Survive the night using the game's on-screen instructions.",
+      "category": "action",
+      "thumbnail": "/external-games/pack-five-nights-at-epsteins/thumbnail.svg",
+      "tags": [
+        "published",
+        "action"
+      ],
+      "supportsTouch": false,
+      "supportsKeyboard": true,
+      "supportsFullscreen": true,
+      "sourcePath": "/external-games/pack-five-nights-at-epsteins/",
+      "version": "1.0.0",
+      "sandbox": "allow-scripts",
+      "controls": [
+        {
+          "label": "Controls",
+          "description": "Use the game's on-screen instructions."
         }
       ],
       "kind": "external"

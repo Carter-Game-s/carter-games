@@ -9,6 +9,7 @@ import {
   loadVPSGame,
 } from "../src/lib/offline-games/assets";
 import manifest from "../src/lib/offline-games/manifest.json";
+import { readPublishedSource } from "../src/lib/offline-games/published";
 import { GET } from "../src/app/api/offline-games/[slug]/route";
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -27,7 +28,7 @@ it("imports all 352 original files once and pins their immutable Git hashes", as
     Object.entries(packGames).map(async ([slug, game]) => {
       if (game.path) {
         expect(game.path).toBe(`game-assets/${slug}.html`);
-        verifyGame(slug, await readFile(game.path));
+        verifyGame(slug, await readPublishedSource(slug, game));
       } else
         expect(inventory).toContain(
           `100644 blob ${game.blob}\toffline/${game.filename}`,

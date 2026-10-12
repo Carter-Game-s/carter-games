@@ -1409,6 +1409,28 @@
     "pack-zrist": {
       "filename": "zrist.html",
       "blob": "af9de1db4ecc9f9e4a6407c212929dd717edebce"
+    },
+    "pack-five-nights-at-epsteins": {
+      "filename": "pack-five-nights-at-epsteins.html",
+      "blob": "fa1c99f86b3b6cc3c949e3b416ba25b555f0fdd4",
+      "path": "game-assets/pack-five-nights-at-epsteins.html",
+      "parts": [
+        {
+          "path": "game-assets/pack-five-nights-at-epsteins/part-000",
+          "size": 50331648,
+          "blob": "8daf60f53565df7a2c5e92b049ab8e76f9d32c07"
+        },
+        {
+          "path": "game-assets/pack-five-nights-at-epsteins/part-001",
+          "size": 50331648,
+          "blob": "9be70abf75f02f4cef68a40ccbcd2d8ab9e8f3be"
+        },
+        {
+          "path": "game-assets/pack-five-nights-at-epsteins/part-002",
+          "size": 49856935,
+          "blob": "fad899b4672409fc7c5bfe303b463233235b5923"
+        }
+      ]
     }
   }
 }

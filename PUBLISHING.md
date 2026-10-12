@@ -14,6 +14,11 @@ Categories are arcade, puzzle, board, sports, action, and other. Optional
 this way, use the same slug with `--replace --version 1.0.1`. Original imported
 game entries cannot be overwritten with this command.
 
+Embedded HTML up to 150 MiB is supported. Above 90 MiB, publication automatically
+splits the file into Git-tracked pieces of at most 48 MiB, pins each piece and the
+complete game, and reassembles it after verification. Commit the generated piece
+directory as well; do not create or edit the pieces manually.
+
 Run the project checks, then commit and push the generated changes to `master`
 and deploy the app normally. Include `game-assets/`, the corresponding
 `public/external-games/` directory, `src/lib/offline-games/manifest.json`, and

@@ -29,7 +29,7 @@ async function exists(p: string) {
 function fail(file: string, message: string): never {
   throw new Error(`${file}: ${message}`);
 }
-// Parse literals only: metadata generation executes neither metadata modules nor game code.
+
 export function parseMetadata(source: string, file: string): unknown {
   const ast = ts.createSourceFile(
     file,
@@ -254,8 +254,7 @@ export async function generate(root = process.cwd()) {
   }
   native.sort((a, b) => a.metadata.slug.localeCompare(b.metadata.slug));
   external.sort((a, b) => a.metadata.slug.localeCompare(b.metadata.slug));
-  const header =
-    "// GENERATED FILE — manual edits will be overwritten. Run bun run games:generate.\n";
+  const header = "";
   const nativeText =
     header +
     'import type { NativeGameDefinition } from "./types";\nexport const nativeGameDefinitions: NativeGameDefinition[] = [\n' +

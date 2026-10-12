@@ -5,7 +5,12 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { generate } from "./generate-game-registry";
 
-export type PublishedGame = { filename: string; blob: string; path?: string };
+export type PublishedGame = {
+  filename: string;
+  blob: string;
+  path?: string;
+  parts?: { path: string; blob: string; size: number }[];
+};
 const categories = ["arcade", "puzzle", "board", "sports", "action", "other"];
 const escape = (value: string) =>
   value.replace(
@@ -132,7 +137,24 @@ export async function publishGame(
     )}<text x="24" y="27" fill="#ffffff88" font-family="Arial,sans-serif" font-size="10" letter-spacing="3">CARTER GAME’S / PLAY</text></svg>\n`;
   await mkdir(directory, { recursive: true });
   await mkdir(path.join(root, "game-assets"), { recursive: true });
-  await writeFile(path.join(root, game.path!), body);
+  if (body.length > 90 * 1024 * 1024) {
+    const parts: NonNullable<PublishedGame["parts"]> = [];
+    await mkdir(path.join(root, "game-assets", slug), { recursive: true });
+    for (let offset = 0; offset < body.length; offset += 48 * 1024 * 1024) {
+      const bytes = body.subarray(offset, offset + 48 * 1024 * 1024);
+      const file = `game-assets/${slug}/part-${String(parts.length).padStart(3, "0")}`;
+      await writeFile(path.join(root, file), bytes);
+      parts.push({
+        path: file,
+        size: bytes.length,
+        blob: createHash("sha1")
+          .update(`blob ${bytes.length}\0`)
+          .update(bytes)
+          .digest("hex"),
+      });
+    }
+    game.parts = parts;
+  } else await writeFile(path.join(root, game.path!), body);
   await writeFile(
     path.join(directory, "metadata.json"),
     JSON.stringify(metadata, null, 2) + "\n",

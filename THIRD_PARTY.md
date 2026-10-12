@@ -27,6 +27,16 @@ Eggy Car and Drive Mad are third-party games. The application includes isolated
 compatibility adapters for their offline startup; that does not transfer
 ownership of their game code or assets to Carter or OpenAI.
 
+## Additional published game
+
+Five Nights at Epstein's uses the Unity build from
+[web-ports/fnae](https://github.com/web-ports/fnae) at commit
+`c9c8b513a27155bf37c4ab3dee74e99b12b895ba`. Its original engine, artwork, audio,
+and video remain third-party property and are excluded from this project's MIT
+license. That revision has no repository license file. The build is embedded
+without external requests; its browser download-cache adapter is disabled for
+the opaque sandbox. Game content and embedded notices are retained.
+
 ## Dependencies
 
 Declared licenses below were read from installed direct-package metadata during
