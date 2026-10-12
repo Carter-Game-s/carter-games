@@ -16,19 +16,22 @@ afterEach(() => {
 });
 
 it("imports all 352 original files once and pins their immutable Git hashes", async () => {
-  expect(Object.keys(packGames)).toHaveLength(352);
+  const originals = Object.entries(packGames).filter(([, game]) => !game.path);
+  expect(originals).toHaveLength(352);
   expect(manifest.commit).toMatch(/^[a-f0-9]{40}$/);
   const inventory = (await readFile("tools/offline-games-tree.txt", "utf8"))
     .trim()
     .split("\n");
-  expect(
-    new Set(Object.values(packGames).map((game) => game.filename)).size,
-  ).toBe(352);
+  expect(new Set(originals.map(([, game]) => game.filename)).size).toBe(352);
   await Promise.all(
     Object.entries(packGames).map(async ([slug, game]) => {
-      expect(inventory).toContain(
-        `100644 blob ${game.blob}\toffline/${game.filename}`,
-      );
+      if (game.path) {
+        expect(game.path).toBe(`game-assets/${slug}.html`);
+        verifyGame(slug, await readFile(game.path));
+      } else
+        expect(inventory).toContain(
+          `100644 blob ${game.blob}\toffline/${game.filename}`,
+        );
       expect(game.filename).toMatch(/^[a-zA-Z0-9_.-]+\.html?$/);
       const metadata = JSON.parse(
         await readFile(`public/external-games/${slug}/metadata.json`, "utf8"),

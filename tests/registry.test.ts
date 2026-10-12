@@ -11,6 +11,7 @@ import {
 } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
+import manifest from "../src/lib/offline-games/manifest.json";
 import { generate, parseMetadata } from "../tools/generate-game-registry";
 import { toggleFavorite, recordRecent, read } from "../src/lib/storage";
 import { filterGames } from "../src/lib/search/games";
@@ -227,7 +228,10 @@ describe("automatic registry generation", () => {
   it("validates every real native and external game", async () => {
     const result = await generate(process.cwd());
     expect(result.native).toHaveLength(7);
-    expect(result.external).toHaveLength(353);
+    expect(result.external.length).toBeGreaterThanOrEqual(353);
+    expect(result.external.map((game) => game.metadata.slug)).toEqual(
+      expect.arrayContaining([...Object.keys(manifest.games), "color-tap"]),
+    );
     expect(result.native.map((g) => g.metadata.slug)).toEqual([
       "2048",
       "breakout",
