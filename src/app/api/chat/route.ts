@@ -1,7 +1,8 @@
 import { streamText, gateway } from "ai";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { parseMessages } from "@/lib/chat/messages";
-import { allowRequest, sameOrigin } from "@/lib/proxy/security";
+import { allowRequest, createToken } from "@/lib/proxy/security";
+import { chatAccess } from "@/lib/chat/access";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -9,12 +10,16 @@ const configured = () =>
   !!(process.env.AI_GATEWAY_API_KEY || process.env.CHAT_BASE_URL);
 export function GET() {
   return Response.json(
-    { available: configured(), local: !!process.env.CHAT_BASE_URL },
+    {
+      available: configured(),
+      local: !!process.env.CHAT_BASE_URL,
+      token: createToken(),
+    },
     { headers: { "Cache-Control": "no-store" } },
   );
 }
 export async function POST(request: Request) {
-  if (!sameOrigin(request))
+  if (!chatAccess(request))
     return Response.json(
       { error: "Same-origin access required. Refresh and retry." },
       { status: 403 },

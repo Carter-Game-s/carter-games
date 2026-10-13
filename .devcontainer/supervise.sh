@@ -2,6 +2,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export PATH="$HOME/.bun/bin:$PATH"
+if [ -z "${CODESPACE_NAME:-}" ] && [ -f /workspaces/.codespaces/shared/environment-variables.json ]; then
+  CODESPACE_NAME="$(node -e 'const fs=require("node:fs");const value=JSON.parse(fs.readFileSync("/workspaces/.codespaces/shared/environment-variables.json","utf8")).CODESPACE_NAME;console.log(typeof value==="string" && /^[a-z0-9-]+$/.test(value)?value:"")')"
+  export CODESPACE_NAME
+fi
 if [ "${1:-}" != --run ]; then
   nohup setsid bash "$0" --run > .devcontainer/supervisor.log 2>&1 < /dev/null &
   exit 0

@@ -13,7 +13,10 @@ it("configures Bun, private forwarded port, install on creation and restart-safe
     start = readFileSync(".devcontainer/start.sh", "utf8");
   expect(setup).toContain("command -v bun");
   expect(setup).toContain("bun install --frozen-lockfile");
-  expect(start).toContain("bun run start");
+  expect(start).toContain("supervise.sh");
+  expect(readFileSync(".devcontainer/supervise.sh", "utf8")).toContain(
+    "bun run start",
+  );
   const scripts = JSON.parse(readFileSync("package.json", "utf8")).scripts;
   expect(scripts.start).toContain("--hostname 0.0.0.0");
   expect(start).toContain("[ ! -d node_modules ]");

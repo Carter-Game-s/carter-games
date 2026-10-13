@@ -11,11 +11,15 @@ export function Chat() {
   const [error, setError] = useState("");
   const [available, setAvailable] = useState<boolean | null>(null);
   const abort = useRef<AbortController | null>(null);
+  const accessToken = useRef("");
   const end = useRef<HTMLDivElement>(null);
   useEffect(() => {
     void fetch("/api/chat")
       .then((r) => r.json())
-      .then((s) => setAvailable(s.available))
+      .then((s) => {
+        setAvailable(s.available);
+        accessToken.current = typeof s.token === "string" ? s.token : "";
+      })
       .catch(() => setAvailable(false));
     return () => abort.current?.abort();
   }, []);
@@ -36,9 +40,24 @@ export function Chat() {
     setError("");
     let reply = "";
     try {
+      const connection = await fetch("/api/chat", {
+        signal: controller.signal,
+        cache: "no-store",
+      });
+      if (
+        !connection.ok ||
+        !connection.headers.get("content-type")?.includes("application/json")
+      )
+        throw Error("Chat connection failed. Refresh this tab and retry.");
+      const status = await connection.json();
+      accessToken.current =
+        typeof status.token === "string" ? status.token : "";
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Carter-Chat-Token": accessToken.current,
+        },
         body: JSON.stringify({
           messages: history,
           stream: !(
@@ -50,8 +69,14 @@ export function Chat() {
         signal: controller.signal,
       });
       if (!response.ok) {
-        const data = await response.json();
-        throw Error(data.error || "Chat unavailable.");
+        let message = `Chat request failed (HTTP ${response.status}). Refresh this tab and retry.`;
+        if (
+          response.headers.get("content-type")?.includes("application/json")
+        ) {
+          const data = await response.json();
+          if (typeof data.error === "string") message = data.error;
+        }
+        throw Error(message);
       }
       if (response.headers.get("content-type")?.includes("application/json")) {
         const data = await response.json();
@@ -118,9 +143,12 @@ export function Chat() {
             <p>Start with a question below.</p>
             <div className={styles.suggestions}>
               {[
-                "Suggest a fun browser game",
-                "Explain how a soundboard works",
-                "Give me a quick coding tip",
+                "Explain fractions with a simple example",
+                "Help me solve a math problem step by step",
+                "Help me understand my homework",
+                "Quiz me on what I’m studying",
+                "Help me outline an essay",
+                "Explain a science topic in simple terms",
               ].map((text) => (
                 <button
                   key={text}
