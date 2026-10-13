@@ -57,7 +57,7 @@ Commit and push the generated assets, metadata, manifest, and registry together.
 
 Imported games use pinned source revisions and Git blob integrity checks. Their runtime cache lives in ignored `.game-cache/`; the app does not bulk-preload the entire library at startup. First play can require an upstream download. An optional authenticated cache service supplies pre-cached versions without changing browser gameplay.
 
-Carter's production preloader remains private. The public [preloader guide](https://github.com/carteraccs/carter-games-preloader-guide) explains how to build a separate service, including verified caching, automatic discovery, secure administration, and deployment.
+Carter's production preloader remains private. The public [preloader guide](https://github.com/Carter-Game-s/carter-games-preloader-guide) explains how to build a separate service, including verified caching, automatic discovery, secure administration, and deployment.
 
 ## Soundboard and AI chat
 
