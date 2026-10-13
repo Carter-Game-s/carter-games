@@ -2,6 +2,8 @@
 
 Browser games, a soundboard, AI chat, and an experimental web browser, created by **Carter (carteraccs)** with **AI assistance from OpenAI Codex**. Carter directed the project; Codex helped with implementation, debugging, testing, documentation, and deployment. Imported games remain credited to their original creators.
 
+The Codespaces startup script supervises the production app, restarts it every 35 minutes, and recovers after repeated failed health checks. This operates while the Codespace is running; it cannot restart a stopped Codespace or override GitHub's idle timeout. Scheduled restarts briefly interrupt active requests.
+
 ## Features
 
 - Seven built-in games: Snake, 2048, Pong, Breakout, Minesweeper, Tic-Tac-Toe, and Sky Hop.

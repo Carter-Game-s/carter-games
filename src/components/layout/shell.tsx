@@ -69,9 +69,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </header>
       <main>{children}</main>
       <footer>
-        <span className="ai-credit">
-          Created by Carter with AI assistance from OpenAI Codex.
-        </span>
         <span>Your games. Saved on your device.</span>
       </footer>
     </>

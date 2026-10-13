@@ -192,10 +192,6 @@ export function Chat() {
           </button>
         )}
       </form>
-      <p className="muted">
-        AI can make mistakes. Chats stay in this tab and clear when you reload.
-        Messages are sent to the connected model.
-      </p>
     </div>
   );
 }
