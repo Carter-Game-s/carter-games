@@ -1,0 +1,10 @@
+[Unit]
+Description=Check Carter Games Codespace every minute
+
+[Timer]
+OnBootSec=30
+OnUnitInactiveSec=60
+Unit=carter-codespace-watch.service
+
+[Install]
+WantedBy=timers.target
