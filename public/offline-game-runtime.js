@@ -33,7 +33,7 @@
     const sdk = {
       init: () => Promise.resolve(),
       commercialBreak: () => Promise.resolve(),
-      rewardedBreak: () => Promise.resolve(false),
+      rewardedBreak: () => Promise.resolve(true),
       customEvent() {},
       gameLoadingStart() {},
       gameLoadingFinished() {},

@@ -58,7 +58,12 @@ it("starts Drive Mad without ads or access to application cookies", async () => 
   game.PokiSDK = {} as typeof game.PokiSDK;
   await expect(game.PokiSDK.init()).resolves.toBeUndefined();
   await expect(game.PokiSDK.commercialBreak()).resolves.toBeUndefined();
-  await expect(game.PokiSDK.rewardedBreak()).resolves.toBe(false);
+  await expect(game.PokiSDK.rewardedBreak()).resolves.toBe(true);
+  const nextLevel = vi.fn();
+  await game.PokiSDK.rewardedBreak().then((success) => {
+    if (success) nextLevel();
+  });
+  expect(nextLevel).toHaveBeenCalledOnce();
   expect(document.cookie).toBe("");
   expect(navigator.serviceWorker).toBeUndefined();
   document.cookie = "session=anything";
