@@ -143,8 +143,8 @@ it.each([
 );
 
 it("pinned lookup works with a real Node HTTP socket and automatic family selection", async () => {
-  // Only the low-level lookup adapter is exercised against a local fixture.
-  // Production fetchPublic still rejects loopback before creating its adapter.
+
+
   const server = http.createServer((_req, res) => res.end("real socket works"));
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   try {

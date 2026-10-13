@@ -70,7 +70,7 @@ export function rewriteHTML(
     $(el).removeAttr("action");
     $(el).find("input,button,textarea,select").attr("disabled", "disabled");
   });
-  // Only this application-owned script runs; upstream JavaScript is intentionally removed.
+
   const script = `(()=>{const current=${JSON.stringify(base.href).replace(/</g, "\\u003c")};parent.postMessage({type:'orbit-ready',url:current},'*');document.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();try{const u=new URL(a.href);const target=u.searchParams.get('url');if(target)parent.postMessage({type:'orbit-navigate',url:target},'*');else if(a.getAttribute('href').startsWith('#'))location.hash=a.getAttribute('href');}catch{}});})()`;
   $("body").prepend(
     '<div style="padding:10px;background:#18261d;color:#d8edcc;font:12px Arial">Read-only proxy · Site scripts and forms are disabled. Some pages require opening directly.</div>',

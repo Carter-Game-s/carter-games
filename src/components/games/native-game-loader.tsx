@@ -1,5 +1,5 @@
 "use client";
-/* eslint-disable react-hooks/static-components -- React.lazy resolves a stable cached plugin component; retry explicitly replaces failed cache entries. */
+/* eslint-disable react-hooks/static-components */
 import {
   Component,
   lazy,

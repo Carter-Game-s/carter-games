@@ -13,7 +13,7 @@ function boundedNumber(
   const n = Number(value);
   return Number.isFinite(n) && n > 0 ? Math.min(n, max) : fallback;
 }
-/** Node 22+ may request all addresses for automatic family selection. */
+
 export function createPinnedLookup(address: LookupAddress): LookupFunction {
   return (_hostname, options, callback) => {
     if (options.all) callback(null, [address]);
@@ -44,7 +44,7 @@ export async function fetchPublic(raw: string): Promise<Upstream> {
       body: Buffer;
     }>((resolve, reject) => {
       const transport = u.protocol === "https:" ? https : http;
-      // Pin the validated address in lookup. The hostname is retained for Host and TLS SNI.
+
       const req = transport.request(
         u,
         {

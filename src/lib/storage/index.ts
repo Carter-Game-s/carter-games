@@ -14,7 +14,7 @@ export function write<T>(key: string, value: T) {
     window.localStorage.setItem(PREFIX + key, JSON.stringify(value));
     window.dispatchEvent(new Event("orbit-storage"));
   } catch {
-    /* Storage can be disabled or full; gameplay remains usable. */
+
   }
 }
 export function remove(key: string) {

@@ -1,10 +1,10 @@
-/* Application-owned compatibility layer. It runs only in opaque game sandboxes. */
+
 (function bootstrap(seed, offlinePoki, offlineGD) {
   "use strict";
   if (window.__orbitGameRuntime) return;
   window.__orbitGameRuntime = true;
-  // Service workers cannot run in an opaque sandbox. Hide the unsupported API
-  // so Construct games skip their optional offlineClient.js registration.
+
+
   if (typeof navigator !== "undefined") {
     Object.defineProperty(navigator, "serviceWorker", { value: undefined });
   }
@@ -27,9 +27,9 @@
   }
   offlinePoki = offlinePoki || location.pathname.endsWith("/pack-drive-mad");
   if (offlinePoki) {
-    // The archived SDK expects advertising and cookie access from its original
-    // host. Complete its lifecycle locally without contacting that host or
-    // granting this opaque sandbox access to application cookies.
+
+
+
     const sdk = {
       init: () => Promise.resolve(),
       commercialBreak: () => Promise.resolve(),
@@ -56,8 +56,8 @@
     } catch {}
   }
   const limit = 128 * 1024;
-  // The pack includes Google Gadget wrappers. In a normal HTML document their
-  // CDATA wrapper prevents the embedded game from parsing correctly.
+
+
   const nativeWrite = document.write.bind(document);
   document.write = (...parts) =>
     nativeWrite(
@@ -146,8 +146,8 @@
     value: storage({}, false),
     configurable: true,
   });
-  // Several bundled games unpack their HTML into a Blob iframe. Carry the same
-  // storage shim into those frames while retaining the inherited CSP sandbox.
+
+
   const NativeBlob = window.Blob;
   window.Blob = class extends NativeBlob {
     constructor(parts, options) {

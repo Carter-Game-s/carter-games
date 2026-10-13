@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
+admin_host="${ADMIN_VPS_HOST:-${GAME_ASSET_VPS_HOST:-}}"
+if [ -z "$admin_host" ] && [ -f .env.local ]; then
+  admin_host="$(node -e 'const fs=require("node:fs");const text=fs.readFileSync(".env.local","utf8");const match=text.match(/^(?:ADMIN_VPS_HOST|GAME_ASSET_VPS_HOST)=(.*)$/m);console.log(match?match[1].trim().replace(/^["\x27]|["\x27]$/g, ""):"")')"
+fi
+if [ -z "$admin_host" ]; then exit 0; fi
+if [[ ! "$admin_host" =~ ^[a-zA-Z0-9.-]+$ ]]; then exit 1; fi
 admin_key="$HOME/.ssh/carter-admin"
 admin_hosts="$HOME/.ssh/carter-admin-known-hosts"
 admin_state="$HOME/.local/state/carter-admin"
@@ -15,7 +21,7 @@ if [ "${1:-}" = --run ]; then
       -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes \
       -o "UserKnownHostsFile=$admin_hosts" -i "$admin_key" \
       -L 127.0.0.1:8083:127.0.0.1:8083 \
-      orbit-assets-tunnel@51.79.45.186 || true
+      "orbit-assets-tunnel@$admin_host" || true
     sleep 5
   done
 else

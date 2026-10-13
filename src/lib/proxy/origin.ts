@@ -1,7 +1,7 @@
-/** Recover the visible origin when Next.js or Codespaces normalizes the internal URL. */
+
 export function applicationOrigin(request: Request): string {
-  // Codespaces terminates HTTPS before forwarding to this HTTP server.
-  // Use trusted deployment metadata rather than forwarded request headers.
+
+
   if (process.env.CODESPACE_NAME) {
     const domain =
       process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN || "app.github.dev";
@@ -23,7 +23,7 @@ export function applicationOrigin(request: Request): string {
       const visible = new URL(`${protocol}://${host}`);
       if (!visible.username && !visible.password) return visible.origin;
     } catch {
-      /* Fall back to the internal, valid request URL. */
+
     }
   }
   return internal.origin;

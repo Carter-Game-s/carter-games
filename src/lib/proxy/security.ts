@@ -119,8 +119,8 @@ export function sameOrigin(request: Request) {
   const own = applicationOrigin(request);
   if (site && site !== "same-origin") return false;
   if (origin === own) return true;
-  // GitHub's forwarding layer rewrites only matching browser origins to
-  // its local destination, with either scheme. Foreign origins stay unchanged.
+
+
   return (
     !!process.env.CODESPACE_NAME &&
     site === "same-origin" &&

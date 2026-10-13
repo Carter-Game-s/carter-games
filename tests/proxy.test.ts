@@ -218,7 +218,7 @@ it("accepts only GitHub's matching-origin rewrite with complete forwarding metad
       headers: { ...headers, ...overrides },
     });
   expect((await POST(request())).status).toBe(200);
-  // The forwarding layer can retain HTTPS in the rewritten local Origin.
+
   expect(
     (await POST(request({ origin: "https://localhost:3000" }))).status,
   ).toBe(200);
