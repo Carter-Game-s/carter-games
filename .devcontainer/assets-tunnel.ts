@@ -5,6 +5,9 @@ import { spawn } from "node:child_process";
 import type { ChildProcess } from "node:child_process";
 import { setTimeout as sleep } from "node:timers/promises";
 const host = process.env.GAME_ASSET_VPS_HOST;
+const assetPort = Number(process.env.GAME_ASSET_VPS_PORT || 8080);
+if (!Number.isInteger(assetPort) || assetPort < 1 || assetPort > 65535)
+  throw new Error("Invalid asset VPS port");
 if (!host || process.env.GAME_ASSET_BASE_URL !== "http://127.0.0.1:18080")
   process.exit(0);
 if (!/^[a-zA-Z0-9.-]+$/.test(host))
@@ -55,7 +58,7 @@ while (true) {
       "-i",
       path.join(sshDir, "orbit-vps-assets"),
       "-L",
-      "127.0.0.1:18080:127.0.0.1:8080",
+      `127.0.0.1:18080:127.0.0.1:${assetPort}`,
       `orbit-assets-tunnel@${host}`,
     ],
     { stdio: ["ignore", "ignore", "inherit"] },
