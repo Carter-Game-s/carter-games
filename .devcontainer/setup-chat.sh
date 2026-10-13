@@ -4,7 +4,14 @@ cd "$(dirname "$0")/.."
 carter_chat_home="$HOME/.local/share/carter-chat"
 mkdir -p "$carter_chat_home/runtime" "$carter_chat_home/models"
 if [ ! -x "$carter_chat_home/runtime/bin/ollama" ]; then
-  curl -fL --retry 2 https://ollama.com/download/ollama-linux-amd64.tar.zst -o "$carter_chat_home/ollama.tar.zst"
+  if ! command -v zstd >/dev/null 2>&1; then
+    sudo apt-get update
+    sudo apt-get install -y zstd
+  fi
+  if [ ! -s "$carter_chat_home/ollama.tar.zst" ]; then
+    curl -fL --retry 2 https://ollama.com/download/ollama-linux-amd64.tar.zst -o "$carter_chat_home/ollama.tar.zst.part"
+    mv "$carter_chat_home/ollama.tar.zst.part" "$carter_chat_home/ollama.tar.zst"
+  fi
   tar --zstd -xf "$carter_chat_home/ollama.tar.zst" -C "$carter_chat_home/runtime" bin lib/ollama
 fi
 export CHAT_BASE_URL=http://127.0.0.1:11434/v1

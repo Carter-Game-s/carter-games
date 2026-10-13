@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+if [ -z "${CHAT_BASE_URL:-}" ] && [ -f .env.local ]; then
+  CHAT_BASE_URL="$(node -e 'const fs=require("node:fs");const match=fs.readFileSync(".env.local","utf8").match(/^CHAT_BASE_URL=(.*)$/m);console.log(match?match[1].trim().replace(/^["\x27]|["\x27]$/g, ""):"")')"
+  export CHAT_BASE_URL
+fi
 if [ "${CHAT_BASE_URL:-}" != "http://127.0.0.1:11434/v1" ]; then exit 0; fi
 carter_chat_runtime="$HOME/.local/share/carter-chat/runtime"
-if [ ! -x "$carter_chat_runtime/bin/ollama" ]; then exit 0; fi
+if [ ! -x "$carter_chat_runtime/bin/ollama" ]; then
+  bash .devcontainer/setup-chat.sh
+  exit 0
+fi
 if curl -fsS --max-time 2 http://127.0.0.1:11434/api/tags >/dev/null; then exit 0; fi
 export OLLAMA_HOST=127.0.0.1:11434
 export OLLAMA_MODELS="$HOME/.local/share/carter-chat/models"
