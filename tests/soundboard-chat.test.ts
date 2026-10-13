@@ -5,13 +5,14 @@ import {
   soundAudioURL,
 } from "@/lib/soundboard/catalog";
 import { parseMessages } from "@/lib/chat/messages";
+import { audioRange } from "@/lib/soundboard/audio";
 
 describe("sound catalog boundaries", () => {
   it("uses playable starter metadata and fixed-host audio URLs", () => {
     expect(featuredSounds.length).toBeGreaterThan(5);
     for (const sound of featuredSounds) {
       expect(soundAudioURL(sound)).toMatch(
-        /^https:\/\/soundbuttonsworld\.com\/uploads\/[a-zA-Z0-9_-]+\.mp3$/,
+        /^\/api\/sounds\/audio\?file=[a-zA-Z0-9_-]+\.mp3$/,
       );
     }
   });
@@ -28,6 +29,26 @@ describe("sound catalog boundaries", () => {
     expect(result.sounds).toHaveLength(1);
     expect(result.sounds[0].filename).toBe("boom.mp3");
     expect(() => parseSounds({ data: "invalid" })).toThrow();
+  });
+});
+describe("Safari media ranges", () => {
+  it("supports initial probes, suffixes and open ranges", () => {
+    expect(audioRange("bytes=0-1", 100)).toEqual({ start: 0, end: 1 });
+    expect(audioRange("bytes=90-", 100)).toEqual({ start: 90, end: 99 });
+    expect(audioRange("bytes=-10", 100)).toEqual({ start: 90, end: 99 });
+    expect(audioRange("bytes=0-999", 100)).toEqual({ start: 0, end: 99 });
+    expect(audioRange(null, 100)).toBeNull();
+  });
+  it("rejects invalid, multiple and unsatisfiable ranges", () => {
+    for (const value of [
+      "bytes=100-",
+      "bytes=9-2",
+      "bytes=-0",
+      "bytes=0-1,4-5",
+      "bytes=-",
+      "bytes=999999999999999999999-",
+    ])
+      expect(() => audioRange(value, 100)).toThrow();
   });
 });
 describe("chat input boundaries", () => {

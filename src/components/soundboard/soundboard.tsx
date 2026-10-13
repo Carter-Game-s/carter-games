@@ -55,16 +55,15 @@ export function Soundboard() {
   );
   function stop() {
     audio.current?.pause();
-    audio.current = null;
     setPlaying(null);
   }
   async function play(sound: Sound) {
     stop();
     setMessage("");
-    const next = new Audio(soundAudioURL(sound));
+    const next = audio.current;
+    if (!next) return;
+    next.src = soundAudioURL(sound);
     next.volume = volume;
-    next.preload = "none";
-    audio.current = next;
     setPlaying(sound.id);
     next.onended = () => {
       if (audio.current === next) setPlaying(null);
@@ -123,6 +122,7 @@ export function Soundboard() {
     : sounds;
   return (
     <div className="page">
+      <audio ref={audio} playsInline preload="none" />
       <div className="eyebrow">Press play. Set the mood.</div>
       <h1>Soundboard.</h1>
       <p className="muted">

@@ -39,24 +39,39 @@ export function Chat() {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({
+          messages: history,
+          stream: !(
+            navigator.maxTouchPoints > 0 &&
+            (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+              /Mac/.test(navigator.platform))
+          ),
+        }),
         signal: controller.signal,
       });
       if (!response.ok) {
         const data = await response.json();
         throw Error(data.error || "Chat unavailable.");
       }
-      const reader = response.body?.getReader();
-      if (!reader) throw Error("No response received.");
-      const decoder = new TextDecoder();
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) {
-          reply += decoder.decode();
-          break;
+      if (response.headers.get("content-type")?.includes("application/json")) {
+        const data = await response.json();
+        if (typeof data.text !== "string" || !data.text.trim())
+          throw Error("No response received. Try again.");
+        reply = data.text;
+      } else if (!response.body?.getReader) {
+        reply = await response.text();
+      } else {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) {
+            reply += decoder.decode();
+            break;
+          }
+          reply += decoder.decode(value, { stream: true });
+          setMessages([...history, { role: "assistant", content: reply }]);
         }
-        reply += decoder.decode(value, { stream: true });
-        setMessages([...history, { role: "assistant", content: reply }]);
       }
       if (!reply.trim()) throw Error("No response received. Try again.");
       setMessages([...history, { role: "assistant", content: reply }]);

@@ -39,6 +39,7 @@ export async function POST(request: Request) {
       { status: 429 },
     );
   let messages;
+  let streaming = true;
   try {
     if (Number(request.headers.get("content-length") || 0) > 80000)
       throw Error("Message is too large.");
@@ -58,6 +59,7 @@ export async function POST(request: Request) {
     }
     const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
     messages = parseMessages(body.messages);
+    streaming = body.stream !== false;
   } catch (e) {
     return Response.json(
       { error: (e as Error).message || "Invalid messages." },
@@ -83,6 +85,16 @@ export async function POST(request: Request) {
       abortSignal: AbortSignal.any([request.signal, generation.signal]),
       timeout: 110000,
     });
+    if (!streaming) {
+      const text = await result.text;
+      if (!text.trim()) throw Error("No response");
+      return Response.json(
+        { text },
+        {
+          headers: { "Cache-Control": "no-store" },
+        },
+      );
+    }
     const iterator = result.textStream[Symbol.asyncIterator]();
     const first = await iterator.next();
     if (first.done) throw Error("No response");
@@ -112,6 +124,7 @@ export async function POST(request: Request) {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff",
+        "X-Accel-Buffering": "no",
       },
     });
   } catch {

@@ -54,6 +54,6 @@ export function parseSounds(value: unknown): {
   };
 }
 export const soundAudioURL = (sound: Sound) =>
-  `https://soundbuttonsworld.com/uploads/${sound.filename}`;
+  `/api/sounds/audio?file=${encodeURIComponent(sound.filename)}`;
 export const soundSourceURL = (sound: Sound) =>
   `https://soundbuttonsworld.com/sound-button/${sound.slug}`;
