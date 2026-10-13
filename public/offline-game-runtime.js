@@ -40,6 +40,13 @@
       gameplayStart() {},
       gameplayStop() {},
     };
+    const reward = sdk.rewardedBreak;
+    Object.defineProperty(sdk, "rewardedBreak", {
+      get: () => reward,
+      set() {},
+      enumerable: true,
+      configurable: false,
+    });
     Object.defineProperty(window, "PokiSDK", {
       get: () => sdk,
       set() {},

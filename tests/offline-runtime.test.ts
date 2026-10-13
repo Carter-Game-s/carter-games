@@ -56,6 +56,7 @@ it("starts Drive Mad without ads or access to application cookies", async () => 
     };
   };
   game.PokiSDK = {} as typeof game.PokiSDK;
+  Object.assign(game.PokiSDK, { rewardedBreak: () => Promise.resolve(false) });
   await expect(game.PokiSDK.init()).resolves.toBeUndefined();
   await expect(game.PokiSDK.commercialBreak()).resolves.toBeUndefined();
   await expect(game.PokiSDK.rewardedBreak()).resolves.toBe(true);
