@@ -14,7 +14,7 @@
     "prebuild": "bun run games:generate",
     "build": "bun run games:generate && next build --webpack",
     "prestart": "bash .devcontainer/start-assets-tunnel.sh",
-    "start": "next start --hostname 0.0.0.0",
+    "start": "bash .devcontainer/start.sh",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
