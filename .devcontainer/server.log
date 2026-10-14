@@ -1,0 +1,182 @@
+$ bash .devcontainer/start-assets-tunnel.sh
+$ next start --hostname 0.0.0.0
+▲ Next.js 16.4.0
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+✓ Ready in 202ms
+✓ Running next.config.ts took 45ms
+$ bash .devcontainer/start-assets-tunnel.sh
+$ next start --hostname 0.0.0.0
+▲ Next.js 16.4.0
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+✓ Ready in 262ms
+✓ Running next.config.ts took 49ms
+error: script "start" exited with code 143
+$ bash .devcontainer/start-assets-tunnel.sh
+$ next start --hostname 0.0.0.0
+▲ Next.js 16.4.0
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+✓ Ready in 190ms
+✓ Running next.config.ts took 72ms
+error: script "start" exited with code 143
+$ bash .devcontainer/start-assets-tunnel.sh
+$ next start --hostname 0.0.0.0
+▲ Next.js 16.4.0
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+✓ Ready in 180ms
+✓ Running next.config.ts took 63ms
+error: script "start" exited with code 143
+$ bash .devcontainer/start-assets-tunnel.sh
+$ next start --hostname 0.0.0.0
+▲ Next.js 16.4.0
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+✓ Ready in 174ms
+✓ Running next.config.ts took 44ms
+error: script "start" exited with code 143
+$ bash .devcontainer/start-assets-tunnel.sh
+$ next start --hostname 0.0.0.0
+▲ Next.js 16.4.0
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+✓ Ready in 182ms
+✓ Running next.config.ts took 50ms
+error: script "start" exited with code 143
+$ bash .devcontainer/start-assets-tunnel.sh
+$ next start --hostname 0.0.0.0
+▲ Next.js 16.4.0git add 
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+✓ Ready in 188ms
+✓ Running next.config.ts took 53ms
+error: script "start" exited with code 143
+$ bash .devcontainer/start-assets-tunnel.sh
+$ next start --hostname 0.0.0.0
+▲ Next.js 16.4.0
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+✓ Ready in 213ms
+✓ Running next.config.ts took 53ms
+$ bash .devcontainer/start-assets-tunnel.sh
+curl: (7) Failed to connect to 127.0.0.1 port 11434 after 0 ms: Could not connect to server
+curl: (7) Failed to connect to 127.0.0.1 port 3001 after 0 ms: Could not connect to server
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+curl: (7) Failed to connect to 127.0.0.1 port 11434 after 2 ms: Could not connect to server
+curl: (7) Failed to connect to 127.0.0.1 port 3001 after 0 ms: Could not connect to server
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
+$ bash .devcontainer/start-assets-tunnel.sh
+$ bash .devcontainer/start.sh
