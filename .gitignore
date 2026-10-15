@@ -20,3 +20,6 @@ coverage/
 *.pfx
 id_rsa*
 id_ed25519*
+
+# Also ignore a dependency symlink used by isolated worktrees.
+/node_modules

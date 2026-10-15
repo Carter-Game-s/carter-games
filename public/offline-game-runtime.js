@@ -172,5 +172,11 @@
       parent.postMessage(event.data, "*");
     }
   });
+  let lastActivity = 0;
+  function activity(){if(Date.now()-lastActivity<1000)return;lastActivity=Date.now();parent.postMessage({type:"orbit-game-active"},"*");}
+  if(typeof document.addEventListener === "function") {
+    document.addEventListener("pointerdown",activity,{passive:true});
+    document.addEventListener("keydown",activity,{passive:true});
+  }
   parent.postMessage({ type: "orbit-game-ready" }, "*");
 })();

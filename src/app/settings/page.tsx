@@ -1,8 +1,17 @@
 "use client";
+import { read as readStorage } from "@/lib/storage";
+import { defaultAppearance, validAppearance } from "@/lib/client/themes";
+function readAppearance() {
+  const v = readStorage("appearance", defaultAppearance);
+  return validAppearance(v) ? v : defaultAppearance;
+}
+import Link from "next/link";
+import { QuickHideSettings } from "@/components/features/quick-hide-settings";
+import { BackupSettings } from "@/components/features/backup-settings";
 import { useState } from "react";
 import { useStorage } from "@/lib/storage/use-storage";
 import { defaultSettings, type Settings } from "@/lib/storage/settings";
-import { clearGames, remove } from "@/lib/storage";
+import { write, clearGames, remove } from "@/lib/storage";
 import type { SearchEngine } from "@/lib/search";
 export default function SettingsPage() {
   const [s, save] = useStorage("settings", defaultSettings);
@@ -11,6 +20,7 @@ export default function SettingsPage() {
     save({ ...s, ...p });
   }
   function clear(kind: string) {
+    if (!confirm("Clear " + kind + "? This cannot be undone.")) return;
     if (kind === "games") clearGames();
     else remove(kind);
     setMessage("Cleared " + kind + ".");
@@ -38,9 +48,13 @@ export default function SettingsPage() {
           <select
             id="theme"
             value={s.theme}
-            onChange={(e) =>
-              patch({ theme: e.target.value as Settings["theme"] })
-            }
+            onChange={(e) => {
+              patch({ theme: e.target.value as Settings["theme"] });
+              if (e.target.value !== "system") {
+                const a = readAppearance();
+                write("appearance", { ...a, selected: e.target.value });
+              }
+            }}
           >
             <option value="dark">Dark</option>
             <option value="light">Light</option>
@@ -65,6 +79,16 @@ export default function SettingsPage() {
           </div>
         ))}
       </section>
+      <div className="feature-actions mt-8">
+        <Link className="button" href="/settings/appearance">
+          Themes &amp; Appearance
+        </Link>
+        <Link className="button" href="/settings/saves">
+          Game save backups
+        </Link>
+      </div>
+      <QuickHideSettings />
+      <BackupSettings />
       <h2 className="mt-8">Start fresh</h2>
       <section className="panel">
         {[

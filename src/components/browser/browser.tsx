@@ -11,6 +11,10 @@ import {
   ExternalLink,
   Globe,
 } from "lucide-react";
+import {
+  useBrowserWorkspace,
+  TabGroupControls,
+} from "@/components/features/browser-workspace";
 import { searchQuery, searchTarget, searchURL } from "@/lib/search";
 import { useStorage } from "@/lib/storage/use-storage";
 import { defaultSettings } from "@/lib/storage/settings";
@@ -58,6 +62,16 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
   }, []);
   const input = useRef<HTMLInputElement>(null);
   const nextId = useRef(2);
+  const workspace = useBrowserWorkspace({
+    tabs,
+    setTabs,
+    active,
+    setActive,
+    initialURL,
+    encode: (t: Tab) => t,
+    decode: (t: Tab) => t,
+  });
+  nextId.current = Math.max(nextId.current, ...tabs.map((t) => t.id + 1));
   const tab = tabs.find((t) => t.id === active) ?? tabs[0];
   const url = tab.entries[tab.index] ?? "";
   const query = searchQuery(url);
@@ -125,8 +139,10 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
           t.id === active
             ? {
                 ...t,
-                entries: [...t.entries.slice(0, t.index + 1), target.url],
-                index: t.index + 1,
+                entries: [...t.entries.slice(0, t.index + 1), target.url].slice(
+                  -50,
+                ),
+                index: Math.min(t.index + 1, 49),
               }
             : t,
         ),
@@ -155,7 +171,7 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
   });
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && ["l", "k"].includes(e.key)) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "l") {
         e.preventDefault();
         input.current?.focus();
         input.current?.select();
@@ -191,31 +207,81 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
   return (
     <div className="browser-page">
       <div className="browser-window">
+        <TabGroupControls
+          {...workspace}
+          tabs={tabs}
+          active={active}
+          select={setActive}
+          setOrder={(ids) =>
+            setTabs((ts) => ids.map((id) => ts.find((t) => t.id === id)!))
+          }
+        />
         <div className="tabs">
-          {tabs.map((t) => (
-            <div
-              key={t.id}
-              className={`tab ${t.id === active ? "active" : ""}`}
+          {workspace.groups.map((g) => (
+            <button
+              className="group-label"
+              style={{ borderColor: g.color }}
+              key={g.id}
+              aria-expanded={!g.collapsed}
+              onClick={() =>
+                workspace.setGroups((gs) =>
+                  gs.map((x) =>
+                    x.id === g.id ? { ...x, collapsed: !x.collapsed } : x,
+                  ),
+                )
+              }
             >
-              <button className="tab-title" onClick={() => setActive(t.id)}>
-                {t.entries[t.index]
-                  ? (() => {
-                      try {
-                        return new URL(t.entries[t.index]).hostname;
-                      } catch {
-                        return "Invalid URL";
-                      }
-                    })()
-                  : "New tab"}
-              </button>
-              <button aria-label="Close tab" onClick={() => close(t.id)}>
-                <X size={12} />
-              </button>
-            </div>
+              {g.name} (
+              {tabs.filter((t) => workspace.assignments[t.id] === g.id).length})
+            </button>
           ))}
+          {tabs
+            .filter(
+              (t) =>
+                !workspace.groups.some(
+                  (g) =>
+                    g.id === workspace.assignments[t.id] &&
+                    g.collapsed &&
+                    t.id !== active,
+                ),
+            )
+            .sort((a, b) => {
+              const rank = (id: number) =>
+                workspace.groups.findIndex(
+                  (g) => g.id === workspace.assignments[id],
+                );
+              return rank(a.id) - rank(b.id);
+            })
+            .map((t) => (
+              <div
+                key={t.id}
+                style={{
+                  borderTop: workspace.assignments[t.id]
+                    ? `3px solid ${workspace.groups.find((g) => g.id === workspace.assignments[t.id])?.color}`
+                    : undefined,
+                }}
+                className={`tab ${t.id === active ? "active" : ""}`}
+              >
+                <button className="tab-title" onClick={() => setActive(t.id)}>
+                  {t.entries[t.index]
+                    ? (() => {
+                        try {
+                          return new URL(t.entries[t.index]).hostname;
+                        } catch {
+                          return "Invalid URL";
+                        }
+                      })()
+                    : "New tab"}
+                </button>
+                <button aria-label="Close tab" onClick={() => close(t.id)}>
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
           <button
             className="icon-button"
             aria-label="New tab"
+            disabled={tabs.length >= 50}
             onClick={() => {
               const id = nextId.current++;
               setTabs((ts) => [...ts, { id, entries: [], index: -1 }]);

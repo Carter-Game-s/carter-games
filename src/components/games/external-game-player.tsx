@@ -5,11 +5,15 @@ import { read, write } from "@/lib/storage";
 import manifest from "@/lib/offline-games/manifest.json";
 export function ExternalGamePlayer({
   metadata,
+  onReady,
 }: {
   metadata: ExternalGameMetadata;
+  onReady?: () => void;
 }) {
   const [attempt, setAttempt] = useState(0);
   const frame = useRef<HTMLIFrameElement>(null);
+  const readyRef = useRef(onReady);
+  readyRef.current = onReady;
   const packed = Object.hasOwn(manifest.games, metadata.slug);
   const [save, setSave] = useState<string | null>(null);
   const check = useRef<AbortController | null>(null);
@@ -28,6 +32,9 @@ export function ExternalGamePlayer({
       check.current?.abort();
     };
   }, [attempt, packed]);
+  useEffect(() => {
+    if (status === "loaded") readyRef.current?.();
+  }, [status]);
   useEffect(() => {
     if (!packed) return;
     const values = read<Record<string, string>>(

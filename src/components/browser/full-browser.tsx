@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -11,6 +11,11 @@ import {
   ExternalLink,
   Globe,
 } from "lucide-react";
+import {
+  useBrowserWorkspace,
+  TabGroupControls,
+} from "@/components/features/browser-workspace";
+import type { SavedTab } from "@/lib/client/browser-session";
 import { searchTarget } from "@/lib/search";
 import { defaultSettings } from "@/lib/storage/settings";
 import { useStorage } from "@/lib/storage/use-storage";
@@ -49,6 +54,20 @@ export function FullBrowser({
   const frames = useRef(new Map<number, HTMLIFrameElement>());
   const input = useRef<HTMLInputElement>(null);
   const nextId = useRef(2);
+  const workspace = useBrowserWorkspace({
+    tabs,
+    setTabs,
+    active,
+    setActive,
+    initialURL,
+    encode: (t: Tab) => ({ id: t.id, entries: t.history, index: t.index }),
+    decode: (t: SavedTab) => ({
+      ...makeTab(t.id, t.entries[t.index] || ""),
+      history: t.entries,
+      index: t.index,
+    }),
+  });
+  nextId.current = Math.max(nextId.current, ...tabs.map((t) => t.id + 1));
   const origin = new URL(engineURL).origin;
   const tab = tabs.find((t) => t.id === active) || tabs[0];
   function command(id: number, action: string, url?: string) {
@@ -59,12 +78,16 @@ export function FullBrowser({
         origin,
       );
   }
-  function newTab(url = "") {
-    const id = nextId.current++;
-    setTabs((previous) => [...previous, makeTab(id, url)]);
-    setActive(id);
-    setAddress(url);
-  }
+  const newTab = useCallback(
+    (url = "") => {
+      if (tabs.length >= 50) return;
+      const id = nextId.current++;
+      setTabs((previous) => [...previous, makeTab(id, url)]);
+      setActive(id);
+      setAddress(url);
+    },
+    [tabs.length],
+  );
   function navigate(raw: string) {
     try {
       const url = searchTarget(raw, settings.engine).url;
@@ -76,8 +99,8 @@ export function FullBrowser({
                 ...t,
                 url,
                 first: t.first || url,
-                history: [...t.history.slice(0, t.index + 1), url],
-                index: t.index + 1,
+                history: [...t.history.slice(0, t.index + 1), url].slice(-50),
+                index: Math.min(t.index + 1, 49),
                 loading: true,
                 error: "",
               }
@@ -132,8 +155,8 @@ export function FullBrowser({
             return {
               ...t,
               url,
-              history: [...t.history.slice(0, t.index + 1), url],
-              index: t.index + 1,
+              history: [...t.history.slice(0, t.index + 1), url].slice(-50),
+              index: Math.min(t.index + 1, 49),
             };
           }),
         );
@@ -164,10 +187,10 @@ export function FullBrowser({
     };
     window.addEventListener("message", receive);
     return () => window.removeEventListener("message", receive);
-  }, [origin, active, settings.engine]);
+  }, [origin, active, settings.engine, newTab]);
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && ["l", "k"].includes(event.key)) {
+      if ((event.ctrlKey || event.metaKey) && event.key === "l") {
         event.preventDefault();
         input.current?.focus();
         input.current?.select();
@@ -186,7 +209,7 @@ export function FullBrowser({
         t.id === active ? { ...t, index, url, loading: true, error: "" } : t,
       ),
     );
-    command(active, delta < 0 ? "back" : "forward");
+    command(active, "navigate", url);
   }
   function close(id: number) {
     const rest = tabs.filter((t) => t.id !== id);
@@ -200,29 +223,80 @@ export function FullBrowser({
   return (
     <div className="browser-page">
       <div className="browser-window">
+        <TabGroupControls
+          {...workspace}
+          tabs={tabs.map((t) => ({
+            id: t.id,
+            entries: t.history,
+            index: t.index,
+          }))}
+          active={active}
+          select={setActive}
+          setOrder={(ids) =>
+            setTabs((ts) => ids.map((id) => ts.find((t) => t.id === id)!))
+          }
+        />
         <div className="tabs">
-          {tabs.map((t) => (
-            <div
-              key={t.id}
-              className={`tab ${t.id === active ? "active" : ""}`}
+          {workspace.groups.map((g) => (
+            <button
+              key={g.id}
+              className="group-label"
+              style={{ borderColor: g.color }}
+              aria-expanded={!g.collapsed}
+              onClick={() =>
+                workspace.setGroups((gs) =>
+                  gs.map((x) =>
+                    x.id === g.id ? { ...x, collapsed: !x.collapsed } : x,
+                  ),
+                )
+              }
             >
-              <button
-                className="tab-title"
-                onClick={() => {
-                  setActive(t.id);
-                  setAddress(t.url);
-                }}
-              >
-                {t.url ? new URL(t.url).hostname : "New tab"}
-              </button>
-              <button aria-label="Close tab" onClick={() => close(t.id)}>
-                <X size={12} />
-              </button>
-            </div>
+              {g.name} (
+              {tabs.filter((t) => workspace.assignments[t.id] === g.id).length})
+            </button>
           ))}
+          {tabs
+            .filter(
+              (t) =>
+                !workspace.groups.some(
+                  (g) =>
+                    g.id === workspace.assignments[t.id] &&
+                    g.collapsed &&
+                    t.id !== active,
+                ),
+            )
+            .sort(
+              (a, b) =>
+                workspace.groups.findIndex(
+                  (g) => g.id === workspace.assignments[a.id],
+                ) -
+                workspace.groups.findIndex(
+                  (g) => g.id === workspace.assignments[b.id],
+                ),
+            )
+            .map((t) => (
+              <div
+                key={t.id}
+                className={`tab ${t.id === active ? "active" : ""}`}
+              >
+                <button
+                  className="tab-title"
+                  onClick={() => {
+                    setActive(t.id);
+                    setAddress(t.url);
+                  }}
+                >
+                  {t.url ? new URL(t.url).hostname : "New tab"}
+                </button>
+                <button aria-label="Close tab" onClick={() => close(t.id)}>
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
           <button
             className="icon-button"
             aria-label="New tab"
+            disabled={tabs.length >= 50}
             onClick={() => newTab()}
           >
             <Plus size={15} />

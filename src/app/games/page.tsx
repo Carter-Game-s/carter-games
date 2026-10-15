@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { Shuffle, Trophy, ChartNoAxesColumn } from "lucide-react";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { allGames } from "@/games/registry";
@@ -34,6 +36,20 @@ export default function GamesPage() {
       <p className="muted">
         Classics you know. High scores to beat. All right here.
       </p>
+      <div className="feature-actions">
+        <Link className="button" href="/games/roulette">
+          <Shuffle size={18} />
+          Surprise Me
+        </Link>
+        <Link className="button" href="/games/achievements">
+          <Trophy size={18} />
+          Achievements
+        </Link>
+        <Link className="button" href="/games/statistics">
+          <ChartNoAxesColumn size={18} />
+          My statistics
+        </Link>
+      </div>
       <div className="library-search mt-8">
         <Search size={20} />
         <input

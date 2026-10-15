@@ -6,6 +6,8 @@ import { getGameBySlug } from "@/games/registry";
 import { gameStorage, recordRecent } from "@/lib/storage";
 import { NativeGameLoader } from "./native-game-loader";
 import { ExternalGamePlayer } from "./external-game-player";
+import { usePlaytime } from "@/lib/client/use-playtime";
+import { recordScore, beginGame } from "@/lib/client/gaming";
 import type { GameRuntime } from "@/games/types";
 export function GamePlayer({ slug }: { slug: string }) {
   const definition = getGameBySlug(slug);
@@ -16,6 +18,8 @@ export function GamePlayer({ slug }: { slug: string }) {
   const [fullscreen, setFullscreen] = useState(false);
   const [error, setError] = useState("");
   const storage = useMemo(() => gameStorage(slug), [slug]);
+  const session = useMemo(() => `${slug}:${crypto.randomUUID()}`, [slug]);
+  usePlaytime(slug, status, definition?.metadata.kind === "external", session);
   useEffect(() => {
     if (!definition) return;
     recordRecent(slug);
@@ -33,13 +37,18 @@ export function GamePlayer({ slug }: { slug: string }) {
       reportScore: (n) => {
         if (!Number.isFinite(n) || n < 0) return;
         setScore(n);
+        if (n > 0) beginGame(slug, session);
+        recordScore(slug, n);
         const high = storage.get("highScore", 0);
         if (n > high) {
           storage.set("highScore", n);
           setBest(n);
         }
       },
-      setStatus,
+      setStatus: (status) => {
+        if (status === "playing") beginGame(slug, session);
+        setStatus(status);
+      },
       requestFullscreen: async () => {
         try {
           if (!stage.current?.requestFullscreen)
@@ -53,7 +62,7 @@ export function GamePlayer({ slug }: { slug: string }) {
         if (document.fullscreenElement) await document.exitFullscreen();
       },
     }),
-    [storage],
+    [storage, slug, session],
   );
   if (!definition)
     return (
@@ -109,7 +118,13 @@ export function GamePlayer({ slug }: { slug: string }) {
         "load" in definition ? (
           <NativeGameLoader definition={definition} runtime={runtime} />
         ) : m.kind === "external" ? (
-          <ExternalGamePlayer metadata={m} />
+          <ExternalGamePlayer
+            metadata={m}
+            onReady={() => {
+              beginGame(slug, session);
+              setStatus("playing");
+            }}
+          />
         ) : null}
         {fullscreen && (
           <button

@@ -1,3 +1,4 @@
+import { themeBootScript } from "@/lib/client/themes";
 import type { Metadata } from "next";
 import { Shell } from "@/components/layout/shell";
 import "@/styles/globals.css";
@@ -15,7 +16,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
       <body>
         <Shell>{children}</Shell>
       </body>
