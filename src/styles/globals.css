@@ -750,3 +750,54 @@ footer {
     font-size: 21px;
   }
 }
+
+.interactive-browser {
+  position: relative;
+  background: var(--bg);
+  padding: 12px;
+}
+.interactive-screen {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #fff;
+  color: #111;
+  touch-action: none;
+  overflow: hidden;
+  outline-offset: 3px;
+}
+.interactive-screen img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+.interactive-text {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.interactive-text input {
+  min-width: 0;
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.interactive-dialog {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 20%;
+  padding: 24px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 12px 60px #0008;
+}
+.interactive-dialog input {
+  width: 100%;
+  padding: 10px;
+}
+.interactive-dialog button {
+  margin: 12px 10px 0 0;
+}

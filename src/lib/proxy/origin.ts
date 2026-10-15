@@ -1,7 +1,4 @@
-
 export function applicationOrigin(request: Request): string {
-
-
   if (process.env.CODESPACE_NAME) {
     const domain =
       process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN || "app.github.dev";
@@ -22,9 +19,7 @@ export function applicationOrigin(request: Request): string {
     try {
       const visible = new URL(`${protocol}://${host}`);
       if (!visible.username && !visible.password) return visible.origin;
-    } catch {
-
-    }
+    } catch {}
   }
   return internal.origin;
 }

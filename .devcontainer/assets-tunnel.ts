@@ -8,27 +8,30 @@ const host = process.env.GAME_ASSET_VPS_HOST;
 const assetPort = Number(process.env.GAME_ASSET_VPS_PORT || 8080);
 if (!Number.isInteger(assetPort) || assetPort < 1 || assetPort > 65535)
   throw new Error("Invalid asset VPS port");
-if (!host || process.env.GAME_ASSET_BASE_URL !== "http://127.0.0.1:18080")
-  process.exit(0);
-if (!/^[a-zA-Z0-9.-]+$/.test(host))
-  throw new Error("Invalid asset VPS hostname");
-const connected = await new Promise<boolean>((resolve) => {
-  const socket = net.connect(18080, "127.0.0.1");
-  socket.setTimeout(2000);
-  socket.on("connect", () => {
-    socket.destroy();
-    resolve(true);
-  });
-  socket.on("error", () => {
-    socket.destroy();
-    resolve(false);
-  });
-  socket.on("timeout", () => {
-    socket.destroy();
-    resolve(false);
-  });
-});
-if (connected) process.exit(0);
+const forwards: { local: number; remote: number }[] = [];
+if (process.env.GAME_ASSET_BASE_URL === "http://127.0.0.1:18080")
+  forwards.push({ local: 18080, remote: assetPort });
+if (process.env.BROWSER_SERVICE_URL === "http://127.0.0.1:18081")
+  forwards.push({ local: 18081, remote: 8081 });
+if (!host || !forwards.length) process.exit(0);
+if (!/^[a-zA-Z0-9.-]+$/.test(host)) throw new Error("Invalid VPS hostname");
+const connected = await Promise.all(
+  forwards.map(
+    ({ local }) =>
+      new Promise<boolean>((resolve) => {
+        const socket = net.connect(local, "127.0.0.1");
+        socket.setTimeout(2000);
+        const finish = (value: boolean) => {
+          socket.destroy();
+          resolve(value);
+        };
+        socket.on("connect", () => finish(true));
+        socket.on("error", () => finish(false));
+        socket.on("timeout", () => finish(false));
+      }),
+  ),
+);
+if (connected.every(Boolean)) process.exit(0);
 const sshDir = path.join(os.homedir(), ".ssh");
 let active: ChildProcess | undefined;
 process.once("SIGTERM", () => {
@@ -57,8 +60,10 @@ while (true) {
       `UserKnownHostsFile=${path.join(sshDir, "orbit-vps-known-hosts")}`,
       "-i",
       path.join(sshDir, "orbit-vps-assets"),
-      "-L",
-      `127.0.0.1:18080:127.0.0.1:${assetPort}`,
+      ...forwards.flatMap(({ local, remote }) => [
+        "-L",
+        `127.0.0.1:${local}:127.0.0.1:${remote}`,
+      ]),
       `orbit-assets-tunnel@${host}`,
     ],
     { stdio: ["ignore", "ignore", "inherit"] },

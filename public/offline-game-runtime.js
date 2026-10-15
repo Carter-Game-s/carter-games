@@ -1,9 +1,7 @@
-
 (function bootstrap(seed, offlinePoki, offlineGD) {
   "use strict";
   if (window.__orbitGameRuntime) return;
   window.__orbitGameRuntime = true;
-
 
   if (typeof navigator !== "undefined") {
     Object.defineProperty(navigator, "serviceWorker", { value: undefined });
@@ -27,9 +25,6 @@
   }
   offlinePoki = offlinePoki || location.pathname.endsWith("/pack-drive-mad");
   if (offlinePoki) {
-
-
-
     const sdk = {
       init: () => Promise.resolve(),
       commercialBreak: () => Promise.resolve(),
@@ -63,7 +58,6 @@
     } catch {}
   }
   const limit = 128 * 1024;
-
 
   const nativeWrite = document.write.bind(document);
   document.write = (...parts) =>
@@ -153,7 +147,6 @@
     value: storage({}, false),
     configurable: true,
   });
-
 
   const NativeBlob = window.Blob;
   window.Blob = class extends NativeBlob {

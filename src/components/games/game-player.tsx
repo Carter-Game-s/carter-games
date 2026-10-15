@@ -132,7 +132,8 @@ export function GamePlayer({ slug }: { slug: string }) {
         ))}
         {m.kind === "external" ? (
           <p>
-            Isolated HTML5 game. Imported games keep supported saves on this device.
+            Isolated HTML5 game. Imported games keep supported saves on this
+            device.
           </p>
         ) : (
           <p role="status">

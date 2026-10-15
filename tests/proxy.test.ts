@@ -55,9 +55,14 @@ it("rejects every DNS answer when any answer is private", async () => {
     "unsafe network",
   );
 });
-it("restricts hosts and protects session issuance", async () => {
+it("allows public hosts regardless of obsolete allowlists and protects session issuance", async () => {
   vi.stubEnv("PROXY_ALLOWED_HOSTS", "example.com");
-  expect(() => validateURL("https://arbitrary.example")).toThrow("not enabled");
+  expect(validateURL("https://arbitrary.example").hostname).toBe(
+    "arbitrary.example",
+  );
+  expect(validateURL("https://metadata.example").hostname).toBe(
+    "metadata.example",
+  );
   expect(
     sameOrigin(
       new Request("https://app.test/api/proxy", {

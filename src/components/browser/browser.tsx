@@ -15,6 +15,7 @@ import { searchQuery, searchTarget, searchURL } from "@/lib/search";
 import { useStorage } from "@/lib/storage/use-storage";
 import { defaultSettings } from "@/lib/storage/settings";
 import { read, write } from "@/lib/storage";
+import { InteractiveBrowser } from "./interactive-browser";
 type Tab = { id: number; entries: string[]; index: number };
 export function Browser({ initialURL = "" }: { initialURL?: string }) {
   const [tabs, setTabs] = useState<Tab[]>([
@@ -30,6 +31,23 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
   const [token, setToken] = useState("");
   const [error, setError] = useState("");
   const [revision, setRevision] = useState(0);
+  const [mode, setMode] = useState("preview");
+  const [interactive, setInteractive] = useState(false);
+  const selectedMode = useRef(false);
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/browser?status=1")
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        setInteractive(!!data.available);
+        if (data.available && !selectedMode.current) setMode("interactive");
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [revision]);
   const [settings] = useStorage("settings", defaultSettings);
   const [history] = useStorage<string[]>("browsing", []);
   const frame = useRef<HTMLIFrameElement>(null);
@@ -65,7 +83,9 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
     );
     return () => clearInterval(timer);
   }, [session]);
-  useEffect(() => setAddress(url), [url]);
+  useEffect(() => {
+    if (document.activeElement !== input.current) setAddress(url);
+  }, [url]);
   useEffect(() => {
     setLoading(!!url);
     setError("");
@@ -77,16 +97,21 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
         60,
       ),
     );
-    const timer = setTimeout(() => {
-      setLoading(false);
-      setError("This page is taking too long. Refresh or open it directly.");
-    }, 15000);
+    const timer = setTimeout(
+      () => {
+        setLoading(false);
+        setError("This page is taking too long. Refresh or open it directly.");
+      },
+      mode === "interactive" ? 45000 : 15000,
+    );
     loadingTimer.current = timer;
     return () => clearTimeout(timer);
-  }, [url, revision, token]);
-  function navigate(raw: string) {
+  }, [url, revision, token, mode]);
+  function navigate(raw: string, updateAddress = true) {
     try {
       const target = searchTarget(raw, settings.engine);
+      if (updateAddress || document.activeElement !== input.current)
+        setAddress(target.url);
       if (target.search)
         write(
           "searches",
@@ -245,7 +270,20 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
             />
             <button className="primary">Go</button>
           </form>
-          {bingSearch && bingSearch !== url && (
+          <select
+            aria-label="Browsing mode"
+            value={mode}
+            onChange={(event) => {
+              selectedMode.current = true;
+              setMode(event.target.value);
+            }}
+          >
+            <option value="preview">Read-only preview</option>
+            <option value="interactive" disabled={!interactive}>
+              Interactive browser
+            </option>
+          </select>
+          {mode === "preview" && bingSearch && bingSearch !== url && (
             <button onClick={() => navigate(bingSearch)}>
               Search with Bing
             </button>
@@ -267,7 +305,17 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
           role="progressbar"
           aria-label={loading ? "Page loading" : "Page loaded"}
         />
-        {url && token ? (
+        {mode === "interactive" && token ? (
+          <InteractiveBrowser
+            url={url}
+            token={token}
+            tab={active}
+            tabs={tabs.map((t) => t.id).join(",")}
+            onNavigate={(next) => navigate(next, false)}
+            onReady={finishLoading}
+            revision={revision}
+          />
+        ) : url && token ? (
           <iframe
             key={`${active}:${url}:${revision}:${token}`}
             ref={frame}
@@ -303,11 +351,6 @@ export function Browser({ initialURL = "" }: { initialURL?: string }) {
           </button>
         </div>
       )}
-      <p className="browser-note">
-        Read-only browsing. Sites with logins, interactive scripts, or anti-bot
-        checks may need to open directly. Public websites are available;
-        private network destinations are blocked.
-      </p>
       {history.length > 0 && (
         <>
           <span className="tag">Recent pages</span>

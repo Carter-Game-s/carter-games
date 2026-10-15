@@ -1,0 +1,25 @@
+[Unit]
+Description=Carter Games local Ollama
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Environment=OLLAMA_HOST=127.0.0.1:11434
+Environment=OLLAMA_MODELS=/root/.local/share/carter-chat/models
+Environment=OLLAMA_NO_CLOUD=1
+Environment=OLLAMA_NUM_PARALLEL=1
+Environment=OLLAMA_MAX_LOADED_MODELS=1
+Environment=OLLAMA_CONTEXT_LENGTH=4096
+Environment=OLLAMA_MAX_QUEUE=4
+ExecStart=/root/.local/share/carter-chat/runtime/bin/ollama serve
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+Nice=5
+CPUAffinity=4 5
+MemoryMax=2G
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

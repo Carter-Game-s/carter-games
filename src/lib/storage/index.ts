@@ -13,9 +13,7 @@ export function write<T>(key: string, value: T) {
   try {
     window.localStorage.setItem(PREFIX + key, JSON.stringify(value));
     window.dispatchEvent(new Event("orbit-storage"));
-  } catch {
-
-  }
+  } catch {}
 }
 export function remove(key: string) {
   try {

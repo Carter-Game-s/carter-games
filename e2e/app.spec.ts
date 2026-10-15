@@ -57,6 +57,10 @@ test("proxy rejects private destinations", async ({ page }) => {
 test("all seven games load and respond on desktop and mobile", async ({
   page,
 }) => {
+  // Advance game time explicitly so a busy runner cannot lose a round
+  // while Playwright is moving between controls.
+  await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
+  let gameTime = Date.parse("2026-01-02T00:00:00Z");
   for (const [slug, title] of [
     ["snake", "Snake"],
     ["2048", "2048"],
@@ -69,10 +73,13 @@ test("all seven games load and respond on desktop and mobile", async ({
     await page.goto("/games/" + slug);
     const region = page.getByRole("region", { name: title, exact: true });
     await expect(region).toBeVisible();
+    await page.clock.pauseAt(gameTime);
+    gameTime += 24 * 60 * 60 * 1000;
     if (["snake", "pong", "breakout", "flappy"].includes(slug)) {
       await activate(
         region.getByRole("button", { name: "Start", exact: true }),
       );
+      await page.clock.runFor(32);
       await expect(region.getByRole("status")).toContainText("playing");
       await activate(
         region.getByRole("button", {
@@ -87,7 +94,9 @@ test("all seven games load and respond on desktop and mobile", async ({
           exact: true,
         }),
       );
+      await page.clock.runFor(100);
       await region.getByRole("button", { name: "Pause", exact: true }).click();
+      await page.clock.runFor(32);
       await expect(region.getByRole("status")).toContainText("paused");
     } else if (slug === "2048") {
       await activate(region.getByLabel("Move left", { exact: true }));
@@ -102,6 +111,7 @@ test("all seven games load and respond on desktop and mobile", async ({
       "scrollWidth",
       await page.locator("body").evaluate((e) => e.clientWidth),
     );
+    await page.clock.resume();
   }
 });
 test("external game stays sandboxed and is playable", async ({ page }) => {
@@ -142,6 +152,6 @@ test("live public-site proxy (requires unrestricted outbound network)", async ({
   await expect(
     page
       .frameLocator('iframe[title="Proxied webpage"]')
-      .getByRole("heading", { name: "Example Domain" }),
+      .getByText(/This domain is for use in documentation examples/),
   ).toBeVisible({ timeout: 20000 });
 });

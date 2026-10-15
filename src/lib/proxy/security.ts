@@ -4,12 +4,6 @@ import ipaddr from "ipaddr.js";
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 const secret =
   process.env.PROXY_SIGNING_SECRET || randomBytes(32).toString("hex");
-export function allowedHosts() {
-  return (process.env.PROXY_ALLOWED_HOSTS ?? "")
-    .split(",")
-    .map((h) => h.trim().toLowerCase())
-    .filter(Boolean);
-}
 export function isPublicAddress(address: string) {
   try {
     let parsed = ipaddr.parse(address);
@@ -47,16 +41,10 @@ export function validateURL(raw: string): URL {
     host === "localhost" ||
     host.endsWith(".localhost") ||
     host.endsWith(".local") ||
-    host.includes("metadata") ||
     (ipaddr.isValid(host) && !isPublicAddress(host))
   )
     throw new Error(
       "Private, loopback, and metadata destinations are blocked.",
-    );
-  const hosts = allowedHosts();
-  if (hosts.length && !hosts.includes(host))
-    throw new Error(
-      "This host is not enabled. Open it directly, or add the exact host to PROXY_ALLOWED_HOSTS.",
     );
   return u;
 }
@@ -119,7 +107,6 @@ export function sameOrigin(request: Request) {
   const own = applicationOrigin(request);
   if (site && site !== "same-origin") return false;
   if (origin === own) return true;
-
 
   return (
     !!process.env.CODESPACE_NAME &&

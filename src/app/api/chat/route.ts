@@ -3,16 +3,16 @@ import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { parseMessages } from "@/lib/chat/messages";
 import { allowRequest, createToken } from "@/lib/proxy/security";
 import { chatAccess } from "@/lib/chat/access";
+import { chatAvailability, chatModel } from "@/lib/chat/provider";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
 const configured = () =>
   !!(process.env.AI_GATEWAY_API_KEY || process.env.CHAT_BASE_URL);
-export function GET() {
+export async function GET() {
   return Response.json(
     {
-      available: configured(),
-      local: !!process.env.CHAT_BASE_URL,
+      ...(await chatAvailability()),
       token: createToken(),
     },
     { headers: { "Cache-Control": "no-store" } },
@@ -78,8 +78,8 @@ export async function POST(request: Request) {
           name: "carter-chat",
           baseURL: process.env.CHAT_BASE_URL,
           apiKey: process.env.CHAT_API_KEY,
-        }).chatModel(process.env.CHAT_MODEL || "qwen2.5:0.5b")
-      : gateway(process.env.CHAT_MODEL || "openai/gpt-5.4-nano");
+        }).chatModel(chatModel())
+      : gateway(chatModel());
     const result = streamText({
       model,
       messages,
