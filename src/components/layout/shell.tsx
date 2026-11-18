@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ClientTools } from "@/components/features/client-tools";
@@ -25,7 +26,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
     <>
       <header className={`topbar ${styles.header}`}>
         <Link className="brand" href="/">
-          <Gamepad2 size={25} aria-hidden="true" />
+          <Image src="/icon.svg" width={32} height={32} alt="" />
           <span>Carter Game&apos;s</span>
         </Link>
         <nav aria-label="Main navigation">
