@@ -27,8 +27,7 @@ export default function SettingsPage() {
   }
   return (
     <div className="page settings">
-      <div className="eyebrow">Make yourself at home</div>
-      <h1>Your preferences.</h1>
+      <h1>Settings</h1>
       <p className="muted">Saved in this browser, on this device.</p>
       <section className="panel">
         <div className="setting-row">

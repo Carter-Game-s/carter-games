@@ -29,28 +29,38 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <span>Carter Game&apos;s</span>
         </Link>
         <nav aria-label="Main navigation">
-          {nav.map(({ href, name, Icon }) => (
-            <Link
-              key={href}
-              aria-label={name}
-              href={href}
-              className={
-                (href === "/" ? path === href : path.startsWith(href))
-                  ? "active"
-                  : ""
-              }
-            >
-              <Icon size={17} />
-              <span>{name}</span>
-            </Link>
-          ))}
+          {nav.map(({ href, name, Icon }) => {
+            const current =
+              href === "/"
+                ? path === href
+                : path === href || path.startsWith(href + "/");
+            const props = {
+              className: current ? "active" : undefined,
+              "aria-current": current ? ("page" as const) : undefined,
+            };
+            const label = (
+              <>
+                <Icon size={16} strokeWidth={1.5} aria-hidden="true" />
+                <span>{name}</span>
+              </>
+            );
+            // The browser can require HTTP authentication at the document boundary.
+            return href === "/browser" ? (
+              <a key={href} href={href} {...props}>
+                {label}
+              </a>
+            ) : (
+              <Link key={href} href={href} {...props}>
+                {label}
+              </Link>
+            );
+          })}
         </nav>
         <ClientTools />
-        <span className="local-badge">Your space. Locally saved.</span>
       </header>
       <main>{children}</main>
       <footer>
-        <span>Your games. Saved on your device.</span>
+        <span>Game progress and preferences are saved on this device.</span>
       </footer>
     </>
   );
