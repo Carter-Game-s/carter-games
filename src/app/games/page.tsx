@@ -31,11 +31,8 @@ export default function GamesPage() {
     );
   return (
     <div className="page">
-      <div className="eyebrow">Press play</div>
-      <h1>A little friendly competition.</h1>
-      <p className="muted">
-        Classics you know. High scores to beat. All right here.
-      </p>
+      <h1>Game library</h1>
+      <p className="muted">Find a game by title, category, or collection.</p>
       <div className="feature-actions">
         <Link className="button" href="/games/roulette">
           <Shuffle size={18} />
@@ -80,6 +77,7 @@ export default function GamesPage() {
           (c) => (
             <button
               className={category === c ? "selected" : ""}
+              aria-pressed={category === c}
               key={c}
               onClick={() => {
                 setCategory(c as GameCategory | "all");

@@ -94,7 +94,8 @@ export function Chat() {
     return () => clearTimeout(timer);
   }, [messages, selected, temporary]);
   useEffect(() => {
-    end.current?.scrollIntoView({ block: "nearest" });
+    const conversation = end.current?.parentElement;
+    if (conversation) conversation.scrollTop = conversation.scrollHeight;
   }, [messages]);
   function stop() {
     abort.current?.abort();
@@ -244,8 +245,7 @@ export function Chat() {
   );
   return (
     <div className="page">
-      <div className="eyebrow">A little help, a little curiosity</div>
-      <h1>Carter AI.</h1>
+      <h1>Carter AI</h1>
       <p className="muted">Ask a question, get game ideas, or just chat.</p>
       <div className="chat-layout">
         <aside className="panel conversation-sidebar">

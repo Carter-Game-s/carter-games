@@ -123,8 +123,7 @@ export function Soundboard() {
   return (
     <div className="page">
       <audio ref={audio} playsInline preload="none" />
-      <div className="eyebrow">Press play. Set the mood.</div>
-      <h1>Soundboard.</h1>
+      <h1>Soundboard</h1>
       <p className="muted">
         Your favorite reactions, sound effects, and meme buttons.
       </p>
