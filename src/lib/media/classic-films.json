@@ -4,7 +4,10 @@
     "title": "Don Juan",
     "description": "In Renaissance Rome, the legendary lover challenges the Borgias while trying to protect Adriana.",
     "released": "1926",
-    "genres": ["Adventure", "Historical"],
+    "genres": [
+      "Adventure",
+      "Historical"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Don_Juan_(1926)_-_16mm_-_Flat_-_Sound.webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -24,7 +27,10 @@
     "title": "Monte Cristo",
     "description": "Wrongfully imprisoned, Edmond Dantès escapes, acquires a fortune, and returns under a new identity to confront the men who betrayed him.",
     "released": "1922",
-    "genres": ["Adventure", "Silent"],
+    "genres": [
+      "Adventure",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Monte_Cristo_(1922).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -44,10 +50,13 @@
     "title": "Moran of the Lady Letty",
     "description": "A San Francisco socialite is kidnapped aboard a ship and meets Moran, a captain's daughter who survived a wreck.",
     "released": "1922",
-    "genres": ["Adventure", "Silent"],
+    "genres": [
+      "Adventure",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Moran_of_the_Lady_Letty_(1922).webm",
     "kind": "movie",
-    "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
+    "rights": "Wikimedia Commons lists this print and its 1922 theatrical poster as public domain.",
     "poster": "/media/moran-of-the-lady-letty.webp",
     "video": {
       "runtime": 4025,
@@ -64,7 +73,10 @@
     "title": "Nosferatu",
     "description": "A real-estate agent travels to Transylvania and discovers that his client is a vampire. This print uses the 1947 English intertitles.",
     "released": "1922",
-    "genres": ["Horror", "Silent"],
+    "genres": [
+      "Horror",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Nosferatu_(1922,_English_titles_1947).webm",
     "kind": "movie",
     "rights": "Wikimedia Commons lists the 1922 film and this edition’s 1947 English intertitles as public domain in the United States. The cover is a frame from the same print.",
@@ -84,7 +96,10 @@
     "title": "Oliver Twist",
     "description": "An orphan flees the workhouse and becomes entangled with Fagin and a gang of child pickpockets in London.",
     "released": "1922",
-    "genres": ["Drama", "Silent"],
+    "genres": [
+      "Drama",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Oliver_Twist_(1922).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -104,7 +119,10 @@
     "title": "One Exciting Night",
     "description": "At a country estate, a young woman faces a forced marriage while strangers, stolen money, and a murder complicate the night.",
     "released": "1922",
-    "genres": ["Mystery", "Silent"],
+    "genres": [
+      "Mystery",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:One_Exciting_Night_(1922).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -124,7 +142,10 @@
     "title": "Our Hospitality",
     "description": "A young man returns to his family's home and falls for a woman from the family sworn to kill him.",
     "released": "1923",
-    "genres": ["Comedy", "Silent"],
+    "genres": [
+      "Comedy",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Our_Hospitality_(1923).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -144,7 +165,10 @@
     "title": "Penrod and Sam",
     "description": "Penrod Schofield and his friend Sam turn everyday life in their Midwestern town into a series of scrapes.",
     "released": "1923",
-    "genres": ["Comedy", "Silent"],
+    "genres": [
+      "Comedy",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Penrod_and_Sam_(1923).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -164,7 +188,10 @@
     "title": "Safety Last!",
     "description": "A department-store clerk takes on a publicity stunt and climbs a skyscraper, with a clock face among the obstacles.",
     "released": "1923",
-    "genres": ["Comedy", "Silent"],
+    "genres": [
+      "Comedy",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Safety_Last_(1923).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -184,7 +211,10 @@
     "title": "Salomé",
     "description": "Salomé dances for Herod and demands the head of John the Baptist in this adaptation of Oscar Wilde.",
     "released": "1923",
-    "genres": ["Drama", "Silent"],
+    "genres": [
+      "Drama",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Salom%C3%A9_(1923).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -204,7 +234,10 @@
     "title": "Saturday Night",
     "description": "Two couples marry across class lines and discover how difficult their new lives are in Cecil B. DeMille's domestic drama.",
     "released": "1922",
-    "genres": ["Drama", "Silent"],
+    "genres": [
+      "Drama",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Saturday_night_(1922).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -224,7 +257,10 @@
     "title": "Sherlock Holmes",
     "description": "John Barrymore plays the detective as he falls for Alice Faulkner and faces Professor Moriarty.",
     "released": "1922",
-    "genres": ["Mystery", "Silent"],
+    "genres": [
+      "Mystery",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Sherlock_Holmes_(1922).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -244,7 +280,10 @@
     "title": "Sherlock Jr.",
     "description": "A projectionist dreams his way into a detective movie after a rival frames him for stealing a pocket watch.",
     "released": "1924",
-    "genres": ["Comedy", "Silent"],
+    "genres": [
+      "Comedy",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Sherlock_Jr.(1924).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -264,10 +303,13 @@
     "title": "Sky High",
     "description": "A border patrol officer tracks smugglers through the Grand Canyon in this Tom Mix western.",
     "released": "1922",
-    "genres": ["Western", "Silent"],
+    "genres": [
+      "Western",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Sky_High_(1922).webm",
     "kind": "movie",
-    "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
+    "rights": "Wikimedia Commons lists this print and its 1922 theatrical poster as public domain.",
     "poster": "/media/sky-high.webp",
     "video": {
       "runtime": 2936,
@@ -284,7 +326,10 @@
     "title": "The Kid",
     "description": "Charlie Chaplin's Tramp raises an abandoned boy, then fights to keep him when the authorities intervene.",
     "released": "1921",
-    "genres": ["Comedy", "Silent"],
+    "genres": [
+      "Comedy",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:The_Kid_(1921).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -304,7 +349,10 @@
     "title": "The Three Musketeers",
     "description": "D'Artagnan joins three royal musketeers and becomes embroiled in a plot involving the queen's diamonds.",
     "released": "1921",
-    "genres": ["Adventure", "Silent"],
+    "genres": [
+      "Adventure",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:The_Three_Musketeers_(film_1921).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -324,7 +372,10 @@
     "title": "The Three Must-Get-Theres",
     "description": "Max Linder spoofs The Three Musketeers as a young swordsman drawn into palace intrigue.",
     "released": "1922",
-    "genres": ["Comedy", "Silent"],
+    "genres": [
+      "Comedy",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:The_Three_Must_Get_Theres_(1922).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -344,7 +395,10 @@
     "title": "The Trap",
     "description": "After losing his mine and the woman he loves, a prospector raises his rival's son and struggles with his desire for revenge.",
     "released": "1922",
-    "genres": ["Drama", "Silent"],
+    "genres": [
+      "Drama",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:The_Trap_(1922).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -364,7 +418,10 @@
     "title": "Timothy's Quest",
     "description": "Two children flee the city and look for a home in the Maine countryside.",
     "released": "1922",
-    "genres": ["Drama", "Silent"],
+    "genres": [
+      "Drama",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:Timothy%27s_Quest_(1922).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",
@@ -384,7 +441,10 @@
     "title": "When Knighthood Was in Flower",
     "description": "Mary Tudor falls for Charles Brandon while her brother, Henry VIII, arranges her marriage to the king of France.",
     "released": "1922",
-    "genres": ["Romance", "Silent"],
+    "genres": [
+      "Romance",
+      "Silent"
+    ],
     "reference": "https://commons.wikimedia.org/wiki/File:When_Knighthood_Was_in_Flower_(1922).webm",
     "kind": "movie",
     "rights": "This print is listed as public domain by Wikimedia Commons. The cover is a frame from the same print.",

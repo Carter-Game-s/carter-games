@@ -125,5 +125,7 @@ player. Third-party embeds manage their own progress and controls.
   [creator’s artwork notice](https://github.com/ncase/wbwwb#made-with-open-culture-for-open-culture).
 
 The additional classic-film entries link to the Wikimedia Commons source
-and rights page for each print. Their WebP covers are frames from those
-prints. The catalog streams the videos from Wikimedia.
+and rights page for each print. Their WebP covers use frames from those prints
+or the original theatrical posters for [Moran of the Lady Letty](https://commons.wikimedia.org/wiki/File:Moran_of_the_Lady_Letty_poster.jpg)
+and [Sky High](https://commons.wikimedia.org/wiki/File:Skyhigh_poster.jpg).
+The catalog streams the videos from Wikimedia.
