@@ -85,7 +85,7 @@ export function ExternalGamePlayer({
           className="external-frame"
           src={
             packed
-              ? `/api/offline-games/${metadata.slug}#orbit-save=${save}`
+              ? `/api/offline-games/${metadata.slug}${attempt ? `?retry=${attempt}` : ""}#orbit-save=${save}`
               : `${metadata.sourcePath}index.html`
           }
           title={metadata.title}
@@ -93,7 +93,7 @@ export function ExternalGamePlayer({
             packed ? "allow-scripts allow-pointer-lock" : "allow-scripts"
           }
           allow="autoplay; fullscreen"
-          loading="lazy"
+          loading="eager"
           referrerPolicy="no-referrer"
           onLoad={() => {
             if (packed) {
@@ -120,8 +120,7 @@ export function ExternalGamePlayer({
       )}
       {packed && status === "loading" && (
         <p className="muted">
-          The first launch downloads the game file. Large games can take a
-          minute.
+          Preparing the game file. Larger games take longer on the first visit.
         </p>
       )}
     </section>

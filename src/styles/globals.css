@@ -1299,3 +1299,61 @@ html[data-theme^="custom-"] .chat-main textarea {
 html[data-animations="true"] body {
   isolation: isolate;
 }
+
+.browser-page,
+.browser-window,
+.addressbar form {
+  min-inline-size: 0;
+}
+.browser-page .addressbar input,
+.browser-page .interactive-text input,
+.browser-page .interactive-dialog input {
+  font-size: 16px;
+  scroll-margin-block: 12px;
+}
+.browser-page .addressbar .icon-button,
+.browser-page .addressbar button,
+.browser-page .addressbar select,
+.browser-page .interactive-text button {
+  min-height: 44px;
+}
+.browser-page .addressbar .icon-button {
+  min-width: 44px;
+}
+.browser-page .addressbar select,
+.browser-page .history button,
+.browser-page .interactive-dialog {
+  max-width: 100%;
+}
+.browser-page .history button,
+.browser-page .interactive-dialog {
+  overflow-wrap: anywhere;
+}
+.browser-page .interactive-dialog {
+  inset: 12px 12px auto;
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  padding: 16px;
+}
+.browser-page .browser-view {
+  height: 65dvh;
+  min-height: min(420px, 58dvh);
+}
+@media (max-width: 720px), (max-height: 520px) {
+  .browser-page .addressbar {
+    flex-wrap: wrap;
+  }
+  .browser-page .addressbar form {
+    flex: 1 1 100%;
+    order: -1;
+  }
+  .browser-page .addressbar input {
+    width: 100%;
+  }
+  .browser-page .interactive-text {
+    flex-wrap: wrap;
+  }
+  .browser-page .interactive-text input {
+    flex-basis: 12rem;
+  }
+}

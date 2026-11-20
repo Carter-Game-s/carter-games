@@ -3,9 +3,10 @@ const metadata = {
   kind: "native",
   slug: "minesweeper",
   title: "Minesweeper",
-  description: "Read the numbers and clear the board without a mine.",
+  description:
+    "Reveal all 71 safe cells on a board with ten mines. Use the numbers to count neighboring mines and flag suspected cells before opening them.",
   category: "puzzle",
-  thumbnail: "/games/minesweeper/thumbnail.svg",
+  thumbnail: "/games/minesweeper/thumbnail.webp",
   featured: false,
   tags: ["classic", "high-score"],
   controls: [

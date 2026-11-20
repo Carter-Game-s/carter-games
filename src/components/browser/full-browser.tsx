@@ -345,6 +345,11 @@ export function FullBrowser({
             <input
               ref={input}
               aria-label="Browser address"
+              inputMode="url"
+              enterKeyHint="go"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               value={address}
               onChange={(event) => setAddress(event.target.value)}
               placeholder="Search or enter a URL"

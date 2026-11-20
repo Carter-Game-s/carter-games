@@ -1,5 +1,13 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile, rename, unlink } from "node:fs/promises";
+import {
+  mkdir,
+  readFile,
+  writeFile,
+  rename,
+  unlink,
+  readdir,
+  stat,
+} from "node:fs/promises";
 import path from "node:path";
 import { gzip, gunzip } from "node:zlib";
 import { promisify } from "node:util";
@@ -15,6 +23,44 @@ const cache = path.join(process.cwd(), ".game-cache", manifest.commit);
 const pending = new Map<string, Promise<Buffer>>();
 const zip = promisify(gzip);
 const unzip = promisify(gunzip);
+let pruning: Promise<void> | undefined;
+function pruneCache() {
+  if (pruning) return pruning;
+  pruning = (async () => {
+    const entries = await readdir(cache);
+    const files = (
+      await Promise.all(
+        entries
+          .filter((name) => /^[a-f0-9]{40}\.gz$/.test(name))
+          .map(async (name) => {
+            const file = path.join(cache, name);
+            const info = await stat(file).catch(() => undefined);
+            return info?.isFile()
+              ? { file, bytes: info.size, modified: info.mtimeMs }
+              : undefined;
+          }),
+      )
+    )
+      .filter((file) => file !== undefined)
+      .sort((a, b) => a.modified - b.modified);
+    let bytes = files.reduce((total, file) => total + file.bytes, 0);
+    for (const file of files) {
+      if (
+        bytes <= 256 * 1024 * 1024 &&
+        Date.now() - file.modified < 14 * 86400 * 1000
+      )
+        break;
+      await unlink(file.file)
+        .then(() => {
+          bytes -= file.bytes;
+        })
+        .catch(() => {});
+    }
+  })().finally(() => {
+    pruning = undefined;
+  });
+  return pruning;
+}
 export function verifyGame(slug: string, body: Buffer) {
   const game = packGames[slug];
   if (!game || body.length > maxBytes)
@@ -34,6 +80,7 @@ export async function cacheGame(slug: string, body: Buffer) {
   try {
     await writeFile(temp, await zip(body));
     await rename(temp, file);
+    await pruneCache().catch(() => {});
   } finally {
     await unlink(temp).catch(() => {});
   }
@@ -89,6 +136,12 @@ export async function loadVPSGame(slug: string): Promise<Buffer> {
   verifyGame(slug, body);
   return body;
 }
+const eviction = setInterval(
+  () => void pruneCache().catch(() => {}),
+  60 * 60 * 1000,
+);
+eviction.unref();
+
 async function load(slug: string): Promise<Buffer> {
   const game = packGames[slug];
   if (process.env.GAME_ASSET_BASE_URL) {
@@ -109,7 +162,10 @@ async function load(slug: string): Promise<Buffer> {
     return body;
   } catch (error) {
     if (!(error instanceof Error && "code" in error && error.code === "ENOENT"))
-      throw error;
+      console.warn(
+        "Cached game failed validation. Retrieving a verified copy:",
+        slug,
+      );
   }
 
   if (game.path) {

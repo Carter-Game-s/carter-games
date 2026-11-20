@@ -3,9 +3,10 @@ const metadata = {
   kind: "native",
   slug: "breakout",
   title: "Breakout",
-  description: "Keep the ball alive and clear every brick.",
+  description:
+    "Bounce the ball off your paddle to clear the brick wall. Steer with the arrow keys or drag on the court. Missing the ball costs a life.",
   category: "arcade",
-  thumbnail: "/games/breakout/thumbnail.svg",
+  thumbnail: "/games/breakout/thumbnail.webp",
   featured: true,
   tags: ["classic", "high-score"],
   controls: [

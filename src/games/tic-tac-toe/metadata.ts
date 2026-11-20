@@ -3,9 +3,10 @@ const metadata = {
   kind: "native",
   slug: "tic-tac-toe",
   title: "Tic-Tac-Toe",
-  description: "Outthink the computer, or challenge a friend.",
+  description:
+    "Place three matching marks in a row, column, or diagonal. Play against the computer or share the board with a friend using the keyboard or touch.",
   category: "board",
-  thumbnail: "/games/tic-tac-toe/thumbnail.svg",
+  thumbnail: "/games/tic-tac-toe/thumbnail.webp",
   featured: false,
   tags: ["classic", "high-score"],
   controls: [

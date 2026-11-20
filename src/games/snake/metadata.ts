@@ -3,9 +3,10 @@ const metadata = {
   kind: "native",
   slug: "snake",
   title: "Snake",
-  description: "Guide the snake, collect food, and avoid collisions.",
+  description:
+    "Steer with the arrow keys or touch directions. Collect food to grow and score, while avoiding the walls and your own body.",
   category: "arcade",
-  thumbnail: "/games/snake/thumbnail.svg",
+  thumbnail: "/games/snake/thumbnail.webp",
   featured: true,
   tags: ["classic", "high-score"],
   controls: [

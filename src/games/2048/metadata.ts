@@ -3,9 +3,10 @@ const metadata = {
   kind: "native",
   slug: "2048",
   title: "2048",
-  description: "Slide, combine, and chase the elusive 2048 tile.",
+  description:
+    "Slide every tile with the arrow keys or on-screen controls. Equal tiles merge, adding their value to your score. Build the 2048 tile before the grid fills.",
   category: "puzzle",
-  thumbnail: "/games/2048/thumbnail.svg",
+  thumbnail: "/games/2048/thumbnail.webp",
   featured: true,
   tags: ["classic", "high-score"],
   controls: [

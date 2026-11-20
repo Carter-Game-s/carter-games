@@ -34,6 +34,7 @@ export function InteractiveBrowser({
   const callbacks = useRef({ onNavigate, onReady });
   const objectURL = useRef("");
   const pressed = useRef(false);
+  const gesture = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   const previousRevision = useRef(revision);
   const pending = useRef(new Map<number, string>());
   const inputQueue = useRef(Promise.resolve());
@@ -250,23 +251,53 @@ export function InteractiveBrowser({
         onPointerDown={(event) => {
           if (event.button !== 0) return;
           event.preventDefault();
-          event.currentTarget.focus();
           event.currentTarget.setPointerCapture(event.pointerId);
+          if (event.pointerType === "touch") {
+            gesture.current = {
+              x: event.clientX,
+              y: event.clientY,
+              moved: false,
+            };
+            return;
+          }
+          event.currentTarget.focus({ preventScroll: true });
           pressed.current = true;
           send("down", position(event));
         }}
         onPointerUp={(event) => {
+          if (gesture.current) {
+            if (!gesture.current.moved) send("click", position(event));
+            gesture.current = null;
+            return;
+          }
           if (!pressed.current) return;
           pressed.current = false;
           send("up", position(event));
         }}
         onPointerCancel={() => {
+          gesture.current = null;
           if (pressed.current) {
             pressed.current = false;
             send("up", { x: 0, y: 0 });
           }
         }}
         onPointerMove={(event) => {
+          const touch = gesture.current;
+          if (touch) {
+            const x = touch.x - event.clientX;
+            const y = touch.y - event.clientY;
+            if (
+              Math.abs(x) + Math.abs(y) >= 8 &&
+              Date.now() - lastMove.current > 100
+            ) {
+              lastMove.current = Date.now();
+              touch.moved = true;
+              touch.x = event.clientX;
+              touch.y = event.clientY;
+              send("scroll", { x, y });
+            }
+            return;
+          }
           if (Date.now() - lastMove.current > 100) {
             lastMove.current = Date.now();
             send("move", position(event));
@@ -332,11 +363,12 @@ export function InteractiveBrowser({
           event.preventDefault();
           send("text", { text });
           setText("");
-          view.current?.focus();
+          view.current?.focus({ preventScroll: true });
         }}
       >
         <input
           aria-label="Type into webpage"
+          enterKeyHint="send"
           placeholder="Type or paste into the focused webpage field"
           value={text}
           onChange={(event) => setText(event.target.value)}

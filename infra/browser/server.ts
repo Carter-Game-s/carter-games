@@ -109,6 +109,7 @@ export class BrowserService {
     try {
       const browser = await this.browserInstance();
       const context = await browser.newContext({
+        locale: "en-US",
         viewport: { width: 1280, height: 720 },
         acceptDownloads: false,
         serviceWorkers: "block",

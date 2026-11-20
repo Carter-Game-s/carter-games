@@ -67,7 +67,7 @@ export function AchievementGallery() {
               {unlocked ? (
                 <>
                   <Trophy size={14} />
-                  Unlocked {new Date(unlocked).toLocaleDateString()}
+                  Unlocked {new Date(unlocked).toLocaleDateString("en-US")}
                 </>
               ) : (
                 <>

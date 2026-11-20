@@ -82,3 +82,33 @@ The independent browser service in `infra/proxy` uses MercuryWorkshop Scramjet 2
 Carter directed the application project with AI assistance from OpenAI Codex.
 The credit describes development assistance, not a third-party game ownership
 claim or a substitute for reviewing code, security, and licensing.
+
+## Movies & TV
+
+The initial catalog streams the original full-length `Sita Sings the Blues`
+from the Internet Archive copy linked by filmmaker Nina Paley. See the
+[watch page](https://www.sitasingstheblues.com/watch.html) and
+[license and soundtrack terms](https://www.sitasingstheblues.com/license.html).
+The [Berlinale program](https://www.berlinale.de/en/2008/programme/20081891.html)
+documents the 2008 screening and runtime. The poster is a WebP conversion of
+Paley's [press kit artwork](https://www.sitasingstheblues.com/press.html).
+
+`The General` streams a [public-domain silent print](<https://commons.wikimedia.org/wiki/File:The_General_(1926).webm>) from Wikimedia Commons. Its [original United Artists poster](<https://commons.wikimedia.org/wiki/File:The_General_(1926)_-_Movie_Poster.png>) is converted to WebP.
+
+`Caminandes` is © Blender Foundation, [Creative Commons Attribution](https://studio.blender.org/remixing/). The series uses the studio’s linked or published streams and a [Blender Foundation thumbnail](https://video.blender.org/w/23f3ef79-15dc-44c5-aa45-cf92e78a4509).
+
+### Catalog management
+
+An administrator with shell access can run `bun tools/manage-media.ts seed`
+to obtain the default catalog, `validate FILE` to check an edited catalog, and
+`sudo bun tools/manage-media.ts publish FILE` to atomically replace the live
+catalog. `list` reads the current catalog. The site reads the catalog on
+request. No public write endpoint or new account permissions are installed.
+
+Review the rights and play each source before publishing. Use direct HTTPS
+links to licensed MP4, WebM, or HLS files, including public or browser-usable
+S3/R2 URLs. HLS streams and external subtitle tracks need CORS headers. Use
+the allowlisted embed formats only when the rightsholder has enabled embeds.
+The player does not proxy video, upload media, or store storage credentials.
+Continue watching is available for sources controlled by the site's video
+player. Third-party embeds manage their own progress and controls.

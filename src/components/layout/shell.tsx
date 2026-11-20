@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ClientTools } from "@/components/features/client-tools";
 import {
   Home,
+  Film,
   Globe,
   Gamepad2,
   Settings,
@@ -16,6 +17,7 @@ const nav = [
   { href: "/", name: "Home", Icon: Home },
   { href: "/browser", name: "Browser", Icon: Globe },
   { href: "/games", name: "Games", Icon: Gamepad2 },
+  { href: "/movies", name: "Movies & TV", Icon: Film },
   { href: "/soundboard", name: "Soundboard", Icon: AudioLines },
   { href: "/chat", name: "AI Chat", Icon: MessageCircle },
   { href: "/settings", name: "Settings", Icon: Settings },

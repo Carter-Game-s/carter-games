@@ -36,7 +36,7 @@
   color: var(--accent);
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 1150px) {
   .header {
     grid-template-columns: 1fr auto;
     gap: 4px 16px;

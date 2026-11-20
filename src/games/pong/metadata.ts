@@ -3,9 +3,10 @@ const metadata = {
   kind: "native",
   slug: "pong",
   title: "Pong",
-  description: "Take on the computer in the original paddle duel.",
+  description:
+    "Move your paddle with the arrow keys or drag it across the court. Return the ball past the computer’s paddle to score and keep it from passing yours.",
   category: "sports",
-  thumbnail: "/games/pong/thumbnail.svg",
+  thumbnail: "/games/pong/thumbnail.webp",
   featured: false,
   tags: ["classic", "high-score"],
   controls: [

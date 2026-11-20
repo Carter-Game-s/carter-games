@@ -215,7 +215,7 @@ export function Soundboard() {
       <p role="status" className="muted">
         {busy
           ? "Finding sounds…"
-          : `${visible.length} sounds${!favoriteOnly ? ` · ${total.toLocaleString()} ${submitted ? `results for “${submitted}”` : "available"}` : ""}`}
+          : `${visible.length} sounds${!favoriteOnly ? ` · ${total.toLocaleString("en-US")} ${submitted ? `results for “${submitted}”` : "available"}` : ""}`}
         {playing !== null ? " · Playing" : ""}
       </p>
       {message && (
@@ -279,7 +279,7 @@ export function Soundboard() {
             Previous sounds
           </button>
           <span>
-            Page {page + 1} of {Math.ceil(total / 24).toLocaleString()}
+            Page {page + 1} of {Math.ceil(total / 24).toLocaleString("en-US")}
           </span>
           <button
             disabled={busy || (page + 1) * 24 >= total}

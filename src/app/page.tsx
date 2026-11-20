@@ -113,7 +113,7 @@ export default function HomePage() {
       </div>
       <Link className="hero-game" href="/games/breakout">
         <Image
-          src="/games/breakout/thumbnail.svg"
+          src="/games/breakout/thumbnail.webp"
           alt=""
           width={420}
           height={240}

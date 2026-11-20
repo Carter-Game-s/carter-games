@@ -4,9 +4,9 @@ export const externalGameDefinitions: ExternalGameDefinition[] = [
     "metadata": {
       "slug": "color-tap",
       "title": "Color Tap",
-      "description": "A self-hosted HTML5 reaction game. Tap the green target before time runs out.",
+      "description": "Start a 20-second round and score by tapping or clicking the green target as it moves around the board.",
       "category": "arcade",
-      "thumbnail": "/external-games/example/thumbnail.svg",
+      "thumbnail": "/external-games/example/thumbnail.webp",
       "tags": [
         "reaction",
         "touch"
@@ -17,6 +17,12 @@ export const externalGameDefinitions: ExternalGameDefinition[] = [
       "sourcePath": "/external-games/example/",
       "version": "1.0.0",
       "sandbox": "allow-scripts",
+      "controls": [
+        {
+          "label": "Pointer or touch",
+          "description": "Start the round, then tap or click the target before the timer expires."
+        }
+      ],
       "kind": "external"
     }
   },

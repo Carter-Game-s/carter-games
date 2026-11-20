@@ -102,7 +102,7 @@ export function SaveManager() {
       {backup && (
         <div className="backup-preview">
           <h3>Preview save contents</h3>
-          <p>Created {new Date(backup.created).toLocaleString()}</p>
+          <p>Created {new Date(backup.created).toLocaleString("en-US")}</p>
           {Object.entries(backup.saves).map(([slug, values]) => (
             <div key={slug}>
               <label>

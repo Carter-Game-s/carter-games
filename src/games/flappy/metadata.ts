@@ -3,9 +3,10 @@ const metadata = {
   kind: "native",
   slug: "flappy",
   title: "Sky Hop",
-  description: "Find your rhythm and fly through the gaps.",
+  description:
+    "Press Space or tap to flap. Guide the bird through the gaps between pipes and score for each pair you pass. A collision ends the run.",
   category: "action",
-  thumbnail: "/games/flappy/thumbnail.svg",
+  thumbnail: "/games/flappy/thumbnail.webp",
   featured: true,
   tags: ["classic", "high-score"],
   controls: [

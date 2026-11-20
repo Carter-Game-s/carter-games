@@ -282,7 +282,7 @@ export function Chat() {
                 >
                   {c.title}
                 </button>
-                <small>{new Date(c.updated).toLocaleDateString()}</small>
+                <small>{new Date(c.updated).toLocaleDateString("en-US")}</small>
                 <button
                   aria-label={`Delete ${c.title}`}
                   onClick={() => {

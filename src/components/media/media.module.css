@@ -1,0 +1,37 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block: 24px;
+}
+.filters input {
+  flex: 1 1 14rem;
+}
+.filters select {
+  max-width: 100%;
+}
+.section {
+  margin-block: 32px;
+}
+.posterCard .poster {
+  aspect-ratio: 2 / 3;
+  object-fit: contain;
+}
+.player {
+  display: grid;
+  gap: 12px;
+  margin-block: 24px;
+}
+.player video,
+.player iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 75svh;
+  background: #000;
+  border: 1px solid var(--line);
+  border-radius: var(--panel-radius);
+}
+.source {
+  text-decoration: underline;
+}
