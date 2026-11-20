@@ -1,8 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
-import { gzip } from "node:zlib";
-import { promisify } from "node:util";
 import { hotGame, rememberGame } from "@/lib/offline-games/hot-cache";
 import { loadGame, packGames } from "@/lib/offline-games/assets";
 export const runtime = "nodejs";
@@ -18,17 +16,8 @@ const headers = {
   "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
 };
 let bootstrap: Promise<{ prefix: string; revision: string }> | undefined;
-const compress = promisify(gzip);
 const inFlight = new Map<string, Promise<Uint8Array<ArrayBuffer>>>();
 
-function acceptsGzip(request: Request) {
-  return (request.headers.get("accept-encoding") ?? "")
-    .split(",")
-    .some((value) => {
-      const [name, quality] = value.trim().toLowerCase().split(/;\s*/, 2);
-      return name === "gzip" && (!quality || Number(quality.split("=")[1]) > 0);
-    });
-}
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> },
@@ -49,14 +38,12 @@ export async function GET(
         bootstrap = undefined;
         throw error;
       }));
-    const encoding = acceptsGzip(request) ? "gzip" : "identity";
-    const key = `${packGames[slug].blob}-${revision}-${encoding}`;
+    const key = `html-${packGames[slug].blob}-${revision}`;
     const etag = `"${key}"`;
     const responseHeaders = {
       ...headers,
       ETag: etag,
       "Cache-Control": "private, max-age=300",
-      ...(encoding === "gzip" ? { "Content-Encoding": "gzip" } : {}),
     };
     if (request.headers.get("if-none-match")?.split(/,\s*/).includes(etag))
       return new Response(null, { status: 304, headers: responseHeaders });
@@ -66,13 +53,12 @@ export async function GET(
       if (!pending) {
         if (inFlight.size >= 3) throw new Error("Game delivery is busy");
         pending = loadGame(slug)
-          .then(async (data) => {
-            const raw = Buffer.from(prefix + data.toString("utf8"));
-            const encoded = new Uint8Array(
-              encoding === "gzip" ? await compress(raw, { level: 3 }) : raw,
+          .then((data) => {
+            const html = new TextEncoder().encode(
+              prefix + data.toString("utf8"),
             );
-            rememberGame(key, encoded);
-            return encoded;
+            rememberGame(key, html);
+            return html;
           })
           .finally(() => inFlight.delete(key));
         inFlight.set(key, pending);
