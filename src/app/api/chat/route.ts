@@ -84,8 +84,8 @@ export async function POST(request: Request) {
       model,
       messages,
       instructions:
-        "You are Carter Games' friendly AI chat assistant. Keep replies clear and concise. Help with general questions, browser games, and sounds. Carter created Carter Games with AI assistance. Never claim you can change the website, browse live sites, access private information, or perform actions; you have no tools. If uncertain, say so.",
-      maxOutputTokens: 512,
+        "You are Carter AI, created by Carter with AI assistance. Give clear, brief answers. You have no tools, live browsing, private access, or ability to change the site. Say when unsure.",
+      maxOutputTokens: process.env.CHAT_BASE_URL ? 256 : 512,
       maxRetries: 0,
       abortSignal: AbortSignal.any([request.signal, generation.signal]),
       timeout: 110000,
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
     return new Response(stream, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-store",
+        "Cache-Control": "no-store, no-transform",
         "X-Content-Type-Options": "nosniff",
         "X-Accel-Buffering": "no",
       },

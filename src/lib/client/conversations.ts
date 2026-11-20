@@ -59,7 +59,11 @@ export function requestHistory(messages: ChatMessage[]) {
   for (const message of [...messages].reverse()) {
     if (!message.content.trim()) continue;
     const content = message.content.slice(0, 4000);
-    if (size + content.length > 16000 || selected.length >= 24) break;
+    if (
+      selected.length &&
+      (size + content.length > 5000 || selected.length >= 10)
+    )
+      break;
     selected.unshift({ ...message, content });
     size += content.length;
   }

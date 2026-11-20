@@ -299,7 +299,7 @@ export const externalGameDefinitions: ExternalGameDefinition[] = [
       "title": "2048",
       "description": "Play 2048 from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
       "category": "puzzle",
-      "thumbnail": "/external-games/pack-2048/thumbnail.svg",
+      "thumbnail": "/external-games/pack-2048/thumbnail.webp",
       "tags": [
         "offline-pack",
         "puzzle"
@@ -4095,7 +4095,7 @@ export const externalGameDefinitions: ExternalGameDefinition[] = [
       "title": "Google Dino",
       "description": "Play Google Dino from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
       "category": "arcade",
-      "thumbnail": "/external-games/pack-google-dino/thumbnail.svg",
+      "thumbnail": "/external-games/pack-google-dino/thumbnail.webp",
       "tags": [
         "offline-pack",
         "arcade"
@@ -8749,7 +8749,7 @@ export const externalGameDefinitions: ExternalGameDefinition[] = [
       "title": "We Become What We Behold",
       "description": "Play We Become What We Behold from the Offline HTML Games Pack. The original single-file game runs in an isolated player.",
       "category": "arcade",
-      "thumbnail": "/external-games/pack-we-become-what-we-behold/thumbnail.svg",
+      "thumbnail": "/external-games/pack-we-become-what-we-behold/thumbnail.webp",
       "tags": [
         "offline-pack",
         "arcade"

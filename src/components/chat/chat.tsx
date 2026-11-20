@@ -48,6 +48,7 @@ export function Chat() {
   const current = useRef({ selected, messages, temporary });
   current.current = { selected, messages, temporary };
   const requestId = useRef(0);
+  const chatToken = useRef("");
   function persist(snapshot = current.current) {
     if (snapshot.temporary || !snapshot.selected || !snapshot.messages.length)
       return;
@@ -79,7 +80,10 @@ export function Chat() {
     const controller = new AbortController();
     void fetch("/api/chat", { signal: controller.signal })
       .then((r) => r.json())
-      .then((s) => setAvailable(s.available))
+      .then((s) => {
+        chatToken.current = typeof s.token === "string" ? s.token : "";
+        setAvailable(s.available);
+      })
       .catch(() => {
         if (!controller.signal.aborted) setAvailable(false);
       });
@@ -156,34 +160,32 @@ export function Chat() {
     setError("");
     let reply = "";
     try {
-      const connection = await fetch("/api/chat", {
-        signal: controller.signal,
-        cache: "no-store",
-      });
-      if (!connection.ok)
-        throw Error("Could not check the AI connection. Retry shortly.");
-      const status = await connection.json();
-      if (!status.available)
-        throw Error(
-          "The configured AI model is currently unavailable. Your message is saved; retry when connected.",
-        );
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Carter-Chat-Token":
-            typeof status.token === "string" ? status.token : "",
-        },
-        body: JSON.stringify({
-          messages: requestHistory(history),
-          stream: !(
-            navigator.maxTouchPoints > 0 &&
-            (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-              /Mac/.test(navigator.platform))
-          ),
-        }),
-        signal: controller.signal,
-      });
+      const send = () =>
+        fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Carter-Chat-Token": chatToken.current,
+          },
+          body: JSON.stringify({
+            messages: requestHistory(history),
+            stream: true,
+          }),
+          signal: controller.signal,
+        });
+      let response = await send();
+      if (response.status === 403) {
+        await response.body?.cancel();
+        const connection = await fetch("/api/chat", {
+          signal: controller.signal,
+          cache: "no-store",
+        });
+        if (!connection.ok) throw Error("Could not refresh the AI connection.");
+        const status = await connection.json();
+        chatToken.current =
+          typeof status.token === "string" ? status.token : "";
+        response = await send();
+      }
       if (!response.ok) {
         let message = `AI request failed (HTTP ${response.status}).`;
         try {

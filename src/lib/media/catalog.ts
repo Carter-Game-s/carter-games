@@ -1,3 +1,5 @@
+import classicFilms from "./classic-films.json";
+
 export type MediaSource = {
   kind: "mp4" | "webm" | "hls" | "embed";
   url: string;
@@ -24,6 +26,11 @@ export type MediaEntry = Entry &
     | { kind: "movie"; video: MediaVideo }
     | { kind: "show"; seasons: { number: number; episodes: Episode[] }[] }
   );
+
+const reviewedClassics: unknown = classicFilms;
+if (!validateCatalog(reviewedClassics)) {
+  throw new Error("Invalid bundled classic film catalog");
+}
 
 export const initialCatalog: MediaEntry[] = [
   {
@@ -126,6 +133,7 @@ export const initialCatalog: MediaEntry[] = [
       },
     ],
   },
+  ...reviewedClassics,
 ];
 
 function record(value: unknown): value is Record<string, unknown> {

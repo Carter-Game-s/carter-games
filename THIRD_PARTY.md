@@ -112,3 +112,18 @@ the allowlisted embed formats only when the rightsholder has enabled embeds.
 The player does not proxy video, upload media, or store storage credentials.
 Continue watching is available for sources controlled by the site's video
 player. Third-party embeds manage their own progress and controls.
+
+### Packed game screenshots
+
+- **2048:** screenshot of the game by Gabriele Cirulli, under the
+  [MIT license](public/external-games/pack-2048/thumbnail-LICENSE.txt).
+- **Google Dino:** screenshot of the Chromium offline game by The Chromium
+  Authors, under the
+  [BSD license](public/external-games/pack-google-dino/thumbnail-LICENSE.txt).
+- **We Become What We Behold:** screenshot of Nicky Case’s artwork, dedicated
+  to the public domain under CC0. See the
+  [creator’s artwork notice](https://github.com/ncase/wbwwb#made-with-open-culture-for-open-culture).
+
+The additional classic-film entries link to the Wikimedia Commons source
+and rights page for each print. Their WebP covers are frames from those
+prints. The catalog streams the videos from Wikimedia.
