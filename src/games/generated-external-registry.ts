@@ -21,6 +21,13 @@ export const externalGameDefinitions: ExternalGameDefinition[] = [
         {
           "label": "Pointer or touch",
           "description": "Start the round, then tap or click the target before the timer expires."
+        },
+        {
+          "label": "Keyboard",
+          "keys": [
+            "1–9"
+          ],
+          "description": "Press the number for the corresponding square when it lights up."
         }
       ],
       "kind": "external"

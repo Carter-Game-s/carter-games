@@ -4,7 +4,7 @@ const metadata = {
   slug: "pong",
   title: "Pong",
   description:
-    "Move your paddle with the arrow keys or drag it across the court. Return the ball past the computer’s paddle to score and keep it from passing yours.",
+    "Move your paddle up and down with the arrow keys or drag it on the court. Return the ball past the computer’s paddle. The first side to seven points wins.",
   category: "sports",
   thumbnail: "/games/pong/thumbnail.webp",
   featured: false,

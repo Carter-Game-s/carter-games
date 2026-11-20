@@ -4,7 +4,7 @@ const metadata = {
   slug: "breakout",
   title: "Breakout",
   description:
-    "Bounce the ball off your paddle to clear the brick wall. Steer with the arrow keys or drag on the court. Missing the ball costs a life.",
+    "Use the arrow keys or drag the paddle to bounce the ball into 40 bricks. Each brick is worth ten points. Clear them all before the ball drops past the paddle.",
   category: "arcade",
   thumbnail: "/games/breakout/thumbnail.webp",
   featured: true,
