@@ -1,3 +1,4 @@
+import { featurePause } from "@/lib/player-chat/server";
 import { featuredSounds, parseSounds } from "@/lib/soundboard/catalog";
 import { allowRequest } from "@/lib/proxy/security";
 import { fetchPublic } from "@/lib/proxy/fetch";
@@ -8,6 +9,8 @@ const cache = new Map<
   { until: number; value: ReturnType<typeof parseSounds> }
 >();
 export async function GET(request: Request) {
+  const paused = featurePause("sounds");
+  if (paused) return paused;
   const params = new URL(request.url).searchParams;
   const query = (params.get("q") || "").trim();
   const page = Number(params.get("page") || 0);

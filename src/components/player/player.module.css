@@ -228,3 +228,113 @@
 .roomNotice strong {
   margin-right: 0.35rem;
 }
+
+.chatIdentity,
+.chatTools,
+.chatHeader p,
+.options,
+.jump {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.chatIdentity {
+  min-width: 0;
+}
+.chatMark {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.chatHeader {
+  background: color-mix(in srgb, var(--accent) 7%, var(--panel));
+}
+.chatHeader p {
+  gap: 0.3rem;
+}
+.chatTools {
+  gap: 0.3rem;
+}
+.chatTools button {
+  border-color: transparent;
+  background: transparent;
+}
+.chatTools button[aria-expanded="true"] {
+  border-color: var(--accent);
+}
+.options {
+  padding: 0.5rem 0.7rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--line);
+}
+.options button {
+  font-size: 0.82rem;
+}
+.messages article {
+  border-bottom: 1px solid var(--line);
+  padding: 0.55rem 0.35rem;
+}
+.messages article:last-child {
+  border-bottom: 0;
+}
+.messages article p {
+  line-height: 1.4;
+}
+.messageHead button {
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  min-height: 28px;
+}
+.empty {
+  min-height: 7rem;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.45rem;
+  color: var(--muted);
+  text-align: center;
+}
+.empty p {
+  margin: 0;
+}
+.jump {
+  align-self: center;
+  margin: 0.25rem 0.5rem;
+  font-size: 0.82rem;
+}
+.compose button {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  justify-content: center;
+}
+.siteNotice {
+  max-width: var(--content-width);
+  margin: 0.75rem auto 0;
+  padding: 0.65rem 1rem;
+  width: calc(100% - 2rem);
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-inline-start: 3px solid var(--accent);
+  border-radius: var(--control-radius);
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+}
+.siteNotice[data-tone="warning"] {
+  border-inline-start-color: #dba85f;
+}
+.siteNotice svg {
+  flex: none;
+}
+.siteNotice p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}

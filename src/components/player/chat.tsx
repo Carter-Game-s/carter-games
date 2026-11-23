@@ -1,6 +1,13 @@
 "use client";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { MessageCircle, X } from "lucide-react";
+import {
+  ArrowDown,
+  Flag,
+  MessageCircle,
+  Send,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 import {
   agreementVersion,
   type PlayerMessage,
@@ -31,6 +38,9 @@ async function act(
 }
 
 export function GlobalChat() {
+  const [menu, setMenu] = useState(false);
+  const [pending, setPending] = useState(0);
+  const composer = useRef<HTMLTextAreaElement>(null);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<PlayerMessage[]>([]);
   const [online, setOnline] = useState(0);
@@ -124,7 +134,13 @@ export function GlobalChat() {
           latest.current = item.id;
           setMessages((items) => [...items, item].slice(-220));
           if (!showing.current) setUnread((n) => n + 1);
+          else if (!follow.current) setPending((n) => n + 1);
         });
+        stream.addEventListener("site-status", ({ data }) =>
+          window.dispatchEvent(
+            new CustomEvent("player-site-status", { detail: JSON.parse(data) }),
+          ),
+        );
         stream.addEventListener("room", ({ data }) =>
           setRoom(JSON.parse(data)),
         );
@@ -222,6 +238,8 @@ export function GlobalChat() {
 
   function toggle(next: boolean) {
     showing.current = next;
+    if (!next) setMenu(false);
+    if (next) setPending(0);
     setOpen(next);
     if (next) {
       setUnread(0);
@@ -351,21 +369,66 @@ export function GlobalChat() {
           }}
         >
           <header className={styles.chatHeader}>
-            <div>
-              <h2>Global Chat</h2>
-              <p>
-                {state} · {online} connected{" "}
-                {online === 1 ? "player" : "players"}
-              </p>
+            <div className={styles.chatIdentity}>
+              <span className={styles.chatMark}>
+                <MessageCircle size={18} aria-hidden="true" />
+              </span>
+              <div>
+                <h2>Global Chat</h2>
+                <p>
+                  {state} · {online} connected{" "}
+                  {online === 1 ? "player" : "players"}
+                </p>
+              </div>
             </div>
-            <button
-              ref={close}
-              onClick={() => toggle(false)}
-              aria-label="Close Global Chat"
-            >
-              <X size={20} />
-            </button>
+            <div className={styles.chatTools}>
+              <button
+                type="button"
+                aria-label="Chat options"
+                aria-expanded={menu}
+                onClick={() => setMenu(!menu)}
+              >
+                <SlidersHorizontal size={17} />
+              </button>
+              <button
+                ref={close}
+                onClick={() => toggle(false)}
+                aria-label="Close Global Chat"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </header>
+          {menu && (
+            <div className={styles.options} aria-label="Chat options">
+              <button
+                onClick={() => {
+                  setDraft("/username ");
+                  setMenu(false);
+                  composer.current?.focus();
+                }}
+              >
+                Change name
+              </button>
+              <button
+                onClick={() => {
+                  setRules(true);
+                  setMenu(false);
+                }}
+              >
+                Player rules
+              </button>
+              <button
+                onClick={() => {
+                  setReporting(true);
+                  setSelected(null);
+                  setMenu(false);
+                }}
+              >
+                Report a message
+              </button>
+            </div>
+          )}
           {(room.locked || room.slow > 0 || room.pinned || warning) && (
             <aside className={styles.roomNotice} aria-label="Chat notices">
               {room.locked && (
@@ -397,6 +460,7 @@ export function GlobalChat() {
               const e = event.currentTarget;
               follow.current =
                 e.scrollHeight - e.scrollTop - e.clientHeight < 45;
+              if (follow.current) setPending(0);
             }}
           >
             {older && messages.length > 0 && (
@@ -404,7 +468,12 @@ export function GlobalChat() {
                 Load older messages
               </button>
             )}
-            {!messages.length && <p>No messages in this view.</p>}
+            {!messages.length && (
+              <div className={styles.empty}>
+                <MessageCircle aria-hidden="true" />
+                <p>No messages in this view.</p>
+              </div>
+            )}
             {messages.map((item) => (
               <article
                 key={item.id}
@@ -422,7 +491,8 @@ export function GlobalChat() {
                         setReporting(true);
                       }}
                     >
-                      Report
+                      <Flag aria-hidden="true" size={13} />
+                      <span className="sr-only">Report</span>
                       <span className="sr-only"> message by {item.name}</span>
                     </button>
                   )}
@@ -431,6 +501,20 @@ export function GlobalChat() {
               </article>
             ))}
           </div>
+          {pending > 0 && (
+            <button
+              className={styles.jump}
+              onClick={() => {
+                if (list.current)
+                  list.current.scrollTop = list.current.scrollHeight;
+                follow.current = true;
+                setPending(0);
+              }}
+            >
+              <ArrowDown size={14} aria-hidden="true" />
+              {pending} new {pending === 1 ? "message" : "messages"}
+            </button>
+          )}
           <div className={styles.chatBottom}>
             {reporting && (
               <div className={styles.report}>
@@ -487,6 +571,7 @@ export function GlobalChat() {
             {error && <p role="alert">{error}</p>}
             <form className={styles.compose} onSubmit={send}>
               <textarea
+                ref={composer}
                 aria-label="Global chat message"
                 placeholder="Message or /help"
                 value={draft}
@@ -505,7 +590,7 @@ export function GlobalChat() {
                 }}
               />
               <button className="primary" disabled={busy || !draft.trim()}>
-                Send
+                <Send size={16} aria-hidden="true" /> <span>Send</span>
               </button>
             </form>
           </div>

@@ -6,9 +6,14 @@ import {
   MessageSquare,
   Radio,
   ShieldCheck,
+  Globe,
   Users,
 } from "lucide-react";
-import type { RoomControls } from "@/lib/player-chat/rules";
+import {
+  siteFeatures,
+  type RoomControls,
+  type SiteStatus,
+} from "@/lib/player-chat/rules";
 import styles from "./moderation.module.css";
 
 type Player = {
@@ -22,6 +27,7 @@ type Overview = {
   asOf: number;
   online: number;
   room: RoomControls;
+  site: SiteStatus;
   players: Player[];
   messages: {
     id: number;
@@ -40,6 +46,7 @@ type Overview = {
     reason: string;
     created: number;
     resolved: number;
+    priority: number;
   }[];
   audit: { action: string; target: string; created: number }[];
   notes: { id: number; user: string; text: string; created: number }[];
@@ -51,6 +58,7 @@ const tabs = [
   ["Reports", Flag],
   ["Players", Users],
   ["Room", Radio],
+  ["Site", Globe],
   ["Activity", Activity],
 ] as const;
 type Tab = (typeof tabs)[number][0];
@@ -99,6 +107,10 @@ export default function ModerationPage() {
   const [filter, setFilter] = useState("all");
   const [selected, setSelected] = useState("");
   const [duration, setDuration] = useState("60");
+  const [siteText, setSiteText] = useState("");
+  const [tone, setTone] = useState("info");
+  const [noticeMinutes, setNoticeMinutes] = useState(60);
+  const [pauseMinutes, setPauseMinutes] = useState(15);
   const [announcement, setAnnouncement] = useState("");
   const [privateText, setPrivateText] = useState("");
   const [error, setError] = useState("");
@@ -108,7 +120,7 @@ export default function ModerationPage() {
   async function request(
     action?: string,
     target?: Value,
-    value?: Value,
+    value?: Value | Record<string, Value>,
     feedback?: string,
   ) {
     if (busy) return;
@@ -296,7 +308,7 @@ export default function ModerationPage() {
           <section className={styles.section} aria-label={tab}>
             <div className={styles.row}>
               <h2>{tab}</h2>
-              {tab !== "Room" && (
+              {tab !== "Room" && tab !== "Site" && (
                 <div className={styles.actions}>
                   <input
                     aria-label={`Search ${tab.toLowerCase()}`}
@@ -410,7 +422,7 @@ export default function ModerationPage() {
                   .map((r) => (
                     <Card
                       key={r.id}
-                      title={r.reason}
+                      title={r.priority ? "Priority · " + r.reason : r.reason}
                       meta={
                         <>
                           {["Open", "Resolved", "Dismissed"][r.resolved]} ·{" "}
@@ -419,6 +431,13 @@ export default function ModerationPage() {
                       }
                       actions={
                         <>
+                          {button(
+                            r.priority ? "Remove priority" : "Mark priority",
+                            "priority",
+                            r.id,
+                            r.priority ? 0 : 1,
+                          )}
+
                           {r.resolved ? (
                             button("Reopen report", "reopen", r.id)
                           ) : (
@@ -577,7 +596,14 @@ export default function ModerationPage() {
                         .filter((n) => n.user === chosen.id)
                         .map((n) => (
                           <p key={n.id}>
-                            {n.text} <small>{time.format(n.created)}</small>
+                            {n.text} <small>{time.format(n.created)}</small>{" "}
+                            {button(
+                              "Delete note",
+                              "note-delete",
+                              n.id,
+                              undefined,
+                              "Delete this internal note?",
+                            )}
                           </p>
                         ))}
                     </Card>
@@ -676,6 +702,130 @@ export default function ModerationPage() {
                     </button>
                   </form>
                 </Card>
+              </div>
+            )}
+            {tab === "Site" && (
+              <div className={styles.players}>
+                <Card
+                  title="Site-wide notice"
+                  meta={
+                    overview.site.notice
+                      ? time.format(overview.site.notice.until)
+                      : "Inactive"
+                  }
+                  actions={
+                    overview.site.notice
+                      ? button("Remove notice", "site-clear")
+                      : undefined
+                  }
+                >
+                  {overview.site.notice && (
+                    <blockquote>{overview.site.notice.text}</blockquote>
+                  )}
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      void request(
+                        "site-notice",
+                        undefined,
+                        { text: siteText, tone, minutes: noticeMinutes },
+                        "Site notice published.",
+                      );
+                    }}
+                  >
+                    <label>
+                      Notice text
+                      <textarea
+                        maxLength={240}
+                        rows={3}
+                        value={siteText}
+                        onChange={(e) => setSiteText(e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      Notice style
+                      <select
+                        value={tone}
+                        onChange={(e) => setTone(e.target.value)}
+                      >
+                        <option value="info">Information</option>
+                        <option value="warning">Warning</option>
+                      </select>
+                    </label>
+                    <label>
+                      Notice duration
+                      <select
+                        value={noticeMinutes}
+                        onChange={(e) =>
+                          setNoticeMinutes(Number(e.target.value))
+                        }
+                      >
+                        <option value={15}>15 minutes</option>
+                        <option value={60}>1 hour</option>
+                        <option value={360}>6 hours</option>
+                        <option value={1440}>1 day</option>
+                      </select>
+                    </label>
+                    <button
+                      className="primary"
+                      disabled={busy || !siteText.trim()}
+                    >
+                      Publish notice
+                    </button>
+                  </form>
+                </Card>
+                <div className={styles.list}>
+                  <Card title="Feature availability">
+                    <p>
+                      Pauses affect all players and expire automatically. The
+                      moderator console stays available.
+                    </p>
+                    <label>
+                      Pause length
+                      <select
+                        value={pauseMinutes}
+                        onChange={(e) =>
+                          setPauseMinutes(Number(e.target.value))
+                        }
+                      >
+                        <option value={5}>5 minutes</option>
+                        <option value={15}>15 minutes</option>
+                        <option value={60}>1 hour</option>
+                        <option value={360}>6 hours</option>
+                      </select>
+                    </label>
+                  </Card>
+                  {(
+                    Object.entries(siteFeatures) as [
+                      keyof typeof siteFeatures,
+                      string,
+                    ][]
+                  ).map(([id, label]) => {
+                    const until = overview.site.pauses[id];
+                    return (
+                      <Card
+                        key={id}
+                        title={label}
+                        meta={
+                          until
+                            ? `Paused until ${time.format(until)}`
+                            : "Available"
+                        }
+                        actions={
+                          until
+                            ? button("Resume " + label, "site-resume", id)
+                            : button(
+                                "Pause " + label,
+                                "site-pause",
+                                id,
+                                pauseMinutes,
+                                `Pause ${label} for all players?`,
+                              )
+                        }
+                      />
+                    );
+                  })}
+                </div>
               </div>
             )}
             {tab === "Activity" && (

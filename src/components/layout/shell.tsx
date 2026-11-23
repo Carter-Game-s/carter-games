@@ -5,6 +5,7 @@ import {
   saveAgreement,
   RulesDialog,
 } from "@/components/player/agreement";
+import { SiteNotice } from "@/components/player/site-notice";
 import { GlobalChat } from "@/components/player/chat";
 import Image from "next/image";
 import Link from "next/link";
@@ -71,6 +72,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </nav>
           <ClientTools />
         </header>
+        {accepted && <SiteNotice />}
         <main>{children}</main>
         <footer>
           <span>

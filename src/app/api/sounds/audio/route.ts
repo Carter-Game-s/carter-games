@@ -1,3 +1,4 @@
+import { featurePause } from "@/lib/player-chat/server";
 import { fetchPublic } from "@/lib/proxy/fetch";
 import { allowRequest } from "@/lib/proxy/security";
 import { audioRange } from "@/lib/soundboard/audio";
@@ -56,6 +57,11 @@ async function load(file: string) {
 }
 
 async function respond(request: Request, head = false) {
+  const paused = featurePause("sounds");
+  if (paused)
+    return head
+      ? new Response(null, { status: paused.status, headers: paused.headers })
+      : paused;
   const file = new URL(request.url).searchParams.get("file") || "";
   if (!/^[a-zA-Z0-9_-]{1,250}\.(mp3|wav|ogg)$/i.test(file))
     return Response.json({ error: "Invalid sound." }, { status: 400 });

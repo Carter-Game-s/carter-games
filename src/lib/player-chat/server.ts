@@ -5,7 +5,13 @@ import {
   timingSafeEqual,
 } from "node:crypto";
 import { DatabaseSync } from "node:sqlite";
-import type { PlayerMessage, RoomControls } from "./rules";
+import {
+  siteFeatures,
+  type PlayerMessage,
+  type RoomControls,
+  type SiteStatus,
+  type SiteFeature,
+} from "./rules";
 
 type User = { id: string; name: string; mute: number; ban: number };
 type Listener = {
@@ -43,6 +49,9 @@ export function db() {
     CREATE TABLE IF NOT EXISTS player_warnings(user TEXT PRIMARY KEY, text TEXT NOT NULL, created INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS player_notes(id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT NOT NULL,
       text TEXT NOT NULL, created INTEGER NOT NULL);
+    CREATE TABLE IF NOT EXISTS site_policy(key TEXT PRIMARY KEY, text TEXT NOT NULL DEFAULT '',
+      tone TEXT NOT NULL DEFAULT 'info', until INTEGER NOT NULL);
+    CREATE TABLE IF NOT EXISTS report_priority(id INTEGER PRIMARY KEY, level INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS moderation(id INTEGER PRIMARY KEY AUTOINCREMENT,
       action TEXT NOT NULL, target TEXT NOT NULL, created INTEGER NOT NULL);
   `);
@@ -371,11 +380,95 @@ export function isAdmin(request: Request) {
   );
 }
 
+export function siteStatus(): SiteStatus {
+  const result: SiteStatus = { notice: null, pauses: {} };
+  if (!process.env.PLAYER_CHAT_DB) return result;
+  const rows = db()
+    .prepare("SELECT key,text,tone,until FROM site_policy WHERE until>?")
+    .all(Date.now());
+  for (const row of rows) {
+    if (row.key === "notice")
+      result.notice = {
+        text: String(row.text),
+        tone: row.tone === "warning" ? "warning" : "info",
+        until: Number(row.until),
+      };
+    else if (
+      typeof row.key === "string" &&
+      Object.hasOwn(siteFeatures, row.key)
+    )
+      result.pauses[row.key as SiteFeature] = Number(row.until);
+  }
+  return result;
+}
+
+export function featurePause(feature: SiteFeature) {
+  if (!process.env.PLAYER_CHAT_DB) return null;
+  const row = db()
+    .prepare("SELECT until FROM site_policy WHERE key=? AND until>?")
+    .get(feature, Date.now());
+  if (!row) return null;
+  return Response.json(
+    { error: `${siteFeatures[feature]} is temporarily paused by moderators.` },
+    {
+      status: 503,
+      headers: {
+        "Cache-Control": "no-store",
+        "Retry-After": String(
+          Math.max(1, Math.ceil((Number(row.until) - Date.now()) / 1000)),
+        ),
+      },
+    },
+  );
+}
+
+function applySitePolicy(
+  action: string,
+  target: unknown,
+  value: unknown,
+  now: number,
+) {
+  if (action === "site-clear") {
+    db().exec("DELETE FROM site_policy WHERE key='notice'");
+    return "Site notice";
+  }
+  if (action === "site-notice") {
+    if (!value || typeof value !== "object")
+      throw new Error("Enter a valid notice.");
+    const { text, tone, minutes } = value as Record<string, unknown>;
+    if (
+      (tone !== "info" && tone !== "warning") ||
+      typeof minutes !== "number" ||
+      ![15, 60, 360, 1440].includes(minutes)
+    )
+      throw new Error("Select a notice style and duration.");
+    db()
+      .prepare(
+        "INSERT OR REPLACE INTO site_policy(key,text,tone,until) VALUES('notice',?,?,?)",
+      )
+      .run(clean(text, 240), tone, now + minutes * 60000);
+    return "Site notice";
+  }
+  if (typeof target !== "string" || !Object.hasOwn(siteFeatures, target))
+    throw new Error("Select a site feature.");
+  if (action === "site-resume")
+    db().prepare("DELETE FROM site_policy WHERE key=?").run(target);
+  else {
+    if (typeof value !== "number" || ![5, 15, 60, 360].includes(value))
+      throw new Error("Select a pause duration.");
+    db()
+      .prepare("INSERT OR REPLACE INTO site_policy(key,until) VALUES(?,?)")
+      .run(target, now + value * 60000);
+  }
+  return siteFeatures[target as SiteFeature];
+}
+
 export function review() {
   const asOf = Date.now();
   return {
     asOf,
     online: connected(),
+    site: siteStatus(),
     room: roomControls(),
     players: db()
       .prepare(
@@ -394,7 +487,7 @@ export function review() {
       .all(),
     reports: db()
       .prepare(
-        "SELECT id,user,message,text,reason,created,resolved FROM reports ORDER BY resolved,id DESC LIMIT 65",
+        "SELECT reports.id,user,message,text,reason,created,resolved, coalesce(report_priority.level,0) AS priority FROM reports LEFT JOIN report_priority USING(id) ORDER BY resolved,priority DESC,id DESC LIMIT 65",
       )
       .all(),
     audit: db()
@@ -413,7 +506,29 @@ export function review() {
 export function moderate(action: string, target: unknown, value: unknown) {
   const now = Date.now();
   let auditTarget = String(target ?? "").slice(0, 36);
-  if (action === "announce") {
+  if (
+    ["site-notice", "site-clear", "site-pause", "site-resume"].includes(action)
+  ) {
+    auditTarget = applySitePolicy(action, target, value, now);
+    broadcast("site-status", siteStatus());
+  } else if (action === "priority") {
+    if (
+      !Number.isSafeInteger(target) ||
+      !db().prepare("SELECT 1 FROM reports WHERE id=?").get(Number(target)) ||
+      (value !== 0 && value !== 1)
+    )
+      throw new Error("Select a report and priority.");
+    db()
+      .prepare("INSERT OR REPLACE INTO report_priority(id,level) VALUES(?,?)")
+      .run(Number(target), value);
+  } else if (action === "note-delete") {
+    if (
+      !Number.isSafeInteger(target) ||
+      !db().prepare("DELETE FROM player_notes WHERE id=?").run(Number(target))
+        .changes
+    )
+      throw new Error("Note not found.");
+  } else if (action === "announce") {
     post(
       { id: "system", name: "System", mute: 0, ban: 0 },
       value,
@@ -568,4 +683,7 @@ export function moderate(action: string, target: unknown, value: unknown) {
   db()
     .prepare("DELETE FROM reports WHERE resolved<>0 AND created<?")
     .run(now - day * 90);
+  db().exec(
+    "DELETE FROM report_priority WHERE id NOT IN (SELECT id FROM reports)",
+  );
 }

@@ -1,3 +1,4 @@
+import { featurePause } from "@/lib/player-chat/server";
 import { streamText, gateway } from "ai";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { parseMessages } from "@/lib/chat/messages";
@@ -24,6 +25,8 @@ export async function POST(request: Request) {
       { error: "Same-origin access required. Refresh and retry." },
       { status: 403 },
     );
+  const paused = featurePause("ai");
+  if (paused) return paused;
   if (!configured())
     return Response.json(
       {

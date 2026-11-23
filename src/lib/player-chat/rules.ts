@@ -28,3 +28,10 @@ export type RoomControls = {
   slow: number;
   pinned: PlayerMessage | null;
 };
+
+export const siteFeatures = { ai: "AI Chat", sounds: "Soundboard" } as const;
+export type SiteFeature = keyof typeof siteFeatures;
+export type SiteStatus = {
+  notice: { text: string; tone: "info" | "warning"; until: number } | null;
+  pauses: Partial<Record<SiteFeature, number>>;
+};
