@@ -130,8 +130,24 @@ export function GlobalChat() {
           timer = setTimeout(() => setRetry((n) => n + 1), 15000);
       }
     }
-    void connect();
+    const offline = () => {
+      controller.abort();
+      stream?.close();
+      clearTimeout(timer);
+      setState("Disconnected");
+    };
+    const online = () => {
+      setState("Reconnecting…");
+      setError("");
+      setRetry((n) => n + 1);
+    };
+    window.addEventListener("offline", offline);
+    window.addEventListener("online", online);
+    if (navigator.onLine) void connect();
+    else offline();
     return () => {
+      window.removeEventListener("offline", offline);
+      window.removeEventListener("online", online);
       controller.abort();
       stream?.close();
       clearTimeout(timer);
