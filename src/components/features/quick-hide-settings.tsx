@@ -119,7 +119,7 @@ export function QuickHideSettings() {
         Restore previous browser session
       </label>
       <p className="muted">
-        Restores Carter tab URLs, order, groups and supported in-app navigation
+        Restores browser tab URLs, order, groups and supported in-app navigation
         entries. External website login state and URLs containing authentication
         parameters are not saved.
       </p>

@@ -36,7 +36,7 @@ export default function HomePage() {
     <section className="hero">
       <div className="hero-copy">
         <h1>Where to next?</h1>
-        <p>Play classic games, or open a site in the Carter browser.</p>
+        <p>Play classic games, or open a site in the GetMoreMath2.0 browser.</p>
         <form
           className="searchbox"
           onSubmit={(e) => {

@@ -84,7 +84,7 @@ it("renders Markdown without executable HTML or unsafe links", () => {
 it("persists real responses, regenerates and keeps temporary chats out of history", async () => {
   render(<Chat />);
   await screen.findByText("AI connected");
-  const input = screen.getByLabelText("Message Carter AI");
+  const input = screen.getByLabelText("Message GetMoreMath2.0 AI");
   fireEvent.change(input, { target: { value: "Hello" } });
   fireEvent.click(screen.getByRole("button", { name: "Send message" }));
   await screen.findByText("reply");
@@ -129,7 +129,7 @@ it("stops the active chat request through its AbortSignal", async () => {
   );
   render(<Chat />);
   await screen.findByText("AI connected");
-  fireEvent.change(screen.getByLabelText("Message Carter AI"), {
+  fireEvent.change(screen.getByLabelText("Message GetMoreMath2.0 AI"), {
     target: { value: "Please explain" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Send message" }));

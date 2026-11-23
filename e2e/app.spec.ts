@@ -1,6 +1,11 @@
 import { test, expect, type Locator } from "@playwright/test";
+import { agreementKey, agreementVersion } from "../src/lib/player-chat/rules";
 let browserErrors: string[] = [];
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(
+    ({ key, version }) => localStorage.setItem(key, version),
+    { key: agreementKey, version: agreementVersion },
+  );
   browserErrors = [];
   page.on("pageerror", (error) => browserErrors.push(error.message));
   page.on("console", (message) => {

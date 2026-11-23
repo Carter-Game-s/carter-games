@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     return Response.json(
       {
         error:
-          "AI chat is awaiting its model connection. Please try again once Carter connects the provider.",
+          "AI chat is awaiting its model connection. Please try again when the provider is connected.",
       },
       { status: 503 },
     );
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
       model,
       messages,
       instructions:
-        "You are Carter AI, created by Carter with AI assistance. Give clear, brief answers. You have no tools, live browsing, private access, or ability to change the site. Say when unsure.",
+        "You are GetMoreMath2.0 AI, created by Carter with AI assistance. Give clear, brief answers. You have no tools, live browsing, private access, or ability to change the site. Say when unsure.",
       maxOutputTokens: process.env.CHAT_BASE_URL ? 256 : 512,
       maxRetries: 0,
       abortSignal: AbortSignal.any([request.signal, generation.signal]),

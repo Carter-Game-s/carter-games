@@ -1,0 +1,214 @@
+.rules {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--panel-radius);
+  width: min(42rem, calc(100% - 24px));
+  max-height: calc(100dvh - 28px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+}
+.rules[open] {
+  display: flex;
+  flex-direction: column;
+}
+.rules::backdrop {
+  background: rgb(0 0 0 / 0.73);
+}
+.rules h2 {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+  font-size: clamp(1.25rem, 4vw, 1.65rem);
+}
+.ruleBody {
+  padding: 0 1.25rem 1rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.ruleBody p,
+.ruleBody li {
+  margin: 0.65em 0;
+  line-height: 1.45;
+}
+.ruleBody ol {
+  list-style: decimal;
+  margin-left: 1.6rem;
+}
+.ruleBody h3 {
+  margin: 1rem 0 0.45rem;
+}
+.ruleBody kbd {
+  padding: 0.12em 0.45em;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.85rem 1.25rem max(0.85rem, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+}
+.actions button {
+  min-height: 44px;
+}
+.launch {
+  position: fixed;
+  z-index: 35;
+  right: max(0.9rem, env(safe-area-inset-right));
+  bottom: max(0.9rem, env(safe-area-inset-bottom));
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--line);
+}
+.launch span {
+  position: absolute;
+  top: -0.42rem;
+  left: -0.45rem;
+  padding: 0 0.35rem;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  font-size: 0.75rem;
+}
+.chat {
+  z-index: 36;
+  position: fixed;
+  bottom: calc(max(0.9rem, env(safe-area-inset-bottom)) + 58px);
+  right: max(0.9rem, env(safe-area-inset-right));
+  height: min(37rem, calc(100dvh - 90px));
+  width: min(25rem, calc(100% - 1.8rem));
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--panel-radius);
+  box-shadow: 0 8px 35px #0006;
+  overflow: hidden;
+}
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  flex: none;
+}
+.chatHeader h2 {
+  margin: 0;
+  font-size: 1.13rem;
+}
+.chatHeader p,
+.chatStatus,
+.messageHead time {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0;
+}
+.chatHeader button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+.messages {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 0.65rem 0.8rem;
+}
+.messages article {
+  padding: 0.35rem 0.5rem;
+  overflow-wrap: anywhere;
+}
+.messages article p {
+  white-space: pre-wrap;
+  margin: 0.25rem 0;
+}
+.announcement {
+  border-left: 3px solid var(--accent);
+  background: var(--raised);
+}
+.messageHead,
+.chatStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+.messageHead button,
+.chatStatus button {
+  padding: 0.18rem 0.4rem;
+  font-size: 0.75rem;
+  margin-left: auto;
+}
+.chatBottom {
+  padding: 0.55rem 0.8rem;
+  border-top: 1px solid var(--line);
+  flex: none;
+  max-height: 62%;
+  overflow: auto;
+}
+.chatBottom p {
+  margin: 0.25rem 0;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+.compose {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+.compose textarea {
+  width: 100%;
+  resize: vertical;
+  max-height: 5rem;
+  min-height: 44px;
+  padding: 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: var(--control-radius);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+}
+.compose button {
+  min-height: 44px;
+}
+.report label {
+  display: block;
+  margin: 0.3rem 0;
+}
+.report input,
+.report select {
+  width: 100%;
+  font-size: 16px;
+}
+@media (max-width: 640px), (max-height: 520px) {
+  .chat {
+    inset: auto 0 var(--chat-offset, 0px);
+    height: var(--chat-viewport, 100dvh);
+    width: 100%;
+    border-radius: 0;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+      env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  .chatBottom {
+    padding-bottom: max(0.55rem, env(safe-area-inset-bottom));
+  }
+}

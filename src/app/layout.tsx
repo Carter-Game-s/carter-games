@@ -3,10 +3,19 @@ import type { Metadata } from "next";
 import { Shell } from "@/components/layout/shell";
 import "@/styles/globals.css";
 export const metadata: Metadata = {
-  title: "Carter Game's · Browse & play",
+  title: {
+    default: "GetMoreMath2.0 · Browse & play",
+    template: "%s | GetMoreMath2.0",
+  },
+  openGraph: {
+    siteName: "GetMoreMath2.0",
+    title: "GetMoreMath2.0 · Browse & play",
+    description:
+      "Play browser games, watch movies, and connect with other players.",
+  },
   description:
-    "Browser games and read-only web browsing, created by Carter with AI assistance from OpenAI Codex.",
-  applicationName: "Carter Game's",
+    "Play browser games, watch movies, and connect with other players. GetMoreMath2.0 is an independent entertainment site and is not affiliated with the Get More Math educational service.",
+  applicationName: "GetMoreMath2.0",
   authors: [{ name: "Carter" }],
   icons: { icon: "/icon.svg" },
 };

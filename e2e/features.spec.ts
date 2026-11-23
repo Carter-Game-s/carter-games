@@ -1,6 +1,11 @@
 import { test, expect } from "@playwright/test";
+import { agreementKey, agreementVersion } from "../src/lib/player-chat/rules";
 let browserErrors: string[] = [];
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(
+    ({ key, version }) => localStorage.setItem(key, version),
+    { key: agreementKey, version: agreementVersion },
+  );
   browserErrors = [];
   page.on("pageerror", (e) => browserErrors.push(e.message));
   page.on("dialog", (d) => void d.accept());
@@ -192,7 +197,7 @@ test("chat edit, regenerate, local history and temporary messages", async ({
   });
   await page.goto("/chat");
   await page
-    .getByLabel("Message Carter AI", { exact: true })
+    .getByLabel("Message GetMoreMath2.0 AI", { exact: true })
     .fill("First question");
   await page.getByRole("button", { name: "Send message", exact: true }).click();
   await expect(
@@ -223,7 +228,7 @@ test("chat edit, regenerate, local history and temporary messages", async ({
   ).toBeVisible();
   await page.getByLabel("Temporary chat", { exact: true }).check();
   await page
-    .getByLabel("Message Carter AI", { exact: true })
+    .getByLabel("Message GetMoreMath2.0 AI", { exact: true })
     .fill("Temporary secret");
   await page.getByRole("button", { name: "Send message", exact: true }).click();
   await expect(

@@ -166,7 +166,7 @@ export function HomeCustomizer({
         <h2>AI Chat</h2>
         <p>Continue a conversation or start a new question.</p>
         <Link className="button" href="/chat">
-          Open Carter AI
+          Open GetMoreMath2.0 AI
         </Link>
       </section>
     );

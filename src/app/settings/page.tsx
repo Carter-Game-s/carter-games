@@ -5,6 +5,7 @@ function readAppearance() {
   const v = readStorage("appearance", defaultAppearance);
   return validAppearance(v) ? v : defaultAppearance;
 }
+import { ReviewRules } from "@/components/player/agreement";
 import Link from "next/link";
 import { QuickHideSettings } from "@/components/features/quick-hide-settings";
 import { BackupSettings } from "@/components/features/backup-settings";
@@ -86,6 +87,10 @@ export default function SettingsPage() {
           Game save backups
         </Link>
       </div>
+      <section className="panel">
+        <h2>Player agreement</h2>
+        <ReviewRules />
+      </section>
       <QuickHideSettings />
       <BackupSettings />
       <h2 className="mt-8">Start fresh</h2>

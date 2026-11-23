@@ -247,7 +247,7 @@ export function Chat() {
   );
   return (
     <div className="page">
-      <h1>Carter AI</h1>
+      <h1>GetMoreMath2.0 AI</h1>
       <p className="muted">Ask a question, get game ideas, or just chat.</p>
       <div className="chat-layout">
         <aside className="panel conversation-sidebar">
@@ -446,7 +446,9 @@ export function Chat() {
                 key={index}
                 className={`${styles.message} ${message.role === "user" ? styles.user : ""}`}
               >
-                <span>{message.role === "user" ? "You" : "Carter AI"}</span>
+                <span>
+                  {message.role === "user" ? "You" : "GetMoreMath2.0 AI"}
+                </span>
                 {edit === index ? (
                   <form
                     onSubmit={(e) => {
@@ -554,8 +556,8 @@ export function Chat() {
             }}
           >
             <textarea
-              aria-label="Message Carter AI"
-              placeholder="Message Carter AI…"
+              aria-label="Message GetMoreMath2.0 AI"
+              placeholder="Message GetMoreMath2.0 AI…"
               maxLength={4000}
               rows={2}
               value={input}
