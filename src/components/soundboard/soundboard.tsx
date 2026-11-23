@@ -24,6 +24,9 @@ export function Soundboard() {
   const [volume, setVolume] = useState(0.6);
   const [playing, setPlaying] = useState<number | null>(null);
   const [message, setMessage] = useState("");
+  const [retry, setRetry] = useState<
+    readonly [string, number, string, number] | null
+  >(null);
   const [busy, setBusy] = useState(false);
   const audio = useRef<HTMLAudioElement | null>(null);
   const search = useRef<AbortController | null>(null);
@@ -39,7 +42,10 @@ export function Soundboard() {
         setTotal(data.total);
       })
       .catch((error) => {
-        if (!controller.signal.aborted) setMessage(error.message);
+        if (!controller.signal.aborted) {
+          setMessage(error.message);
+          setRetry(["", 0, "all", 0]);
+        }
       })
       .finally(() => {
         if (search.current === controller) setBusy(false);
@@ -60,6 +66,7 @@ export function Soundboard() {
   async function play(sound: Sound) {
     stop();
     setMessage("");
+    setRetry(null);
     const next = audio.current;
     if (!next) return;
     next.src = soundAudioURL(sound);
@@ -94,6 +101,7 @@ export function Soundboard() {
     search.current = controller;
     setBusy(true);
     setMessage("");
+    setRetry(null);
     setFavoriteOnly(false);
     try {
       const response = await fetch(
@@ -110,7 +118,10 @@ export function Soundboard() {
       setCategory(nextCategory);
       setJump(String(nextPage + 1));
     } catch (e) {
-      if (!controller.signal.aborted) setMessage((e as Error).message);
+      if (!controller.signal.aborted) {
+        setMessage((e as Error).message);
+        setRetry([text, nextPage, nextMode, nextCategory]);
+      }
     } finally {
       if (search.current === controller) setBusy(false);
     }
@@ -222,6 +233,9 @@ export function Soundboard() {
         <p className="error" role="alert">
           {message}
         </p>
+      )}
+      {retry && !busy && (
+        <button onClick={() => void load(...retry)}>Retry sound search</button>
       )}
       <div className={styles.grid}>
         {visible.map((sound) => {

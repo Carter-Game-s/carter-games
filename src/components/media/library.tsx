@@ -11,18 +11,17 @@ export function MediaLibrary({ entries }: { entries: MediaEntry[] }) {
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState("");
   const [view, setView] = useState("all");
+  const [sort, setSort] = useState("default");
   const [favorites] = useStorage<string[]>("media-favorites", []);
   const [watchlist] = useStorage<string[]>("media-watchlist", []);
   const [progress] = useStorage<Progress>("media-progress", {});
   const genres = [...new Set(entries.flatMap((entry) => entry.genres))].sort();
-  const resumeKey = (entry: MediaEntry) =>
-    Object.keys(progress).findLast(
-      (key) => key === entry.id || key.startsWith(entry.id + "/"),
-    );
-  const hasProgress = (entry: MediaEntry) => !!resumeKey(entry);
+  const latest = new Map<string,{ key:string; index:number }>();
+  Object.keys(progress).forEach((key,index)=>latest.set(key.split("/")[0],{key,index}));
+  const hasProgress = (entry: MediaEntry) => latest.has(entry.id);
   function detailHref(entry: MediaEntry, resume: boolean) {
     const href = `/movies/${entry.id}`;
-    const key = resume && entry.kind === "show" ? resumeKey(entry) : undefined;
+    const key = resume && entry.kind === "show" ? latest.get(entry.id)?.key : undefined;
     if (!key) return href;
     const [, season, episode] = key.split("/");
     return /^\d+$/.test(season) && /^\d+$/.test(episode)
@@ -42,14 +41,27 @@ export function MediaLibrary({ entries }: { entries: MediaEntry[] }) {
         .toLowerCase()
         .includes(query.trim().toLowerCase()),
   );
-  const browsing = !query.trim() && !genre && view === "all";
+  if (sort === "newest")
+    matches.sort((a, b) => b.released.localeCompare(a.released));
+  if (sort === "title")
+    matches.sort((a, b) => a.title.localeCompare(b.title, "en-US"));
+  const browsing =
+    !query.trim() && !genre && view === "all" && sort === "default";
   function section(title: string, items: MediaEntry[], resume = false) {
     if (!items.length) return null;
+    const ordered = resume && sort === "default"
+      ? [...items].sort((a,b)=>(latest.get(b.id)?.index ?? -1)-(latest.get(a.id)?.index ?? -1))
+      : items;
+    return (
+            keys.indexOf(resumeKey(b) ?? "") - keys.indexOf(resumeKey(a) ?? "")
+          );
+        })
+      : items;
     return (
       <section className={styles.section}>
         <h2>{title}</h2>
         <div className="cards">
-          {items.map((entry) => (
+          {ordered.map((entry) => (
             <article
               className={`game-card ${styles.posterCard}`}
               key={entry.id}
@@ -109,6 +121,27 @@ export function MediaLibrary({ entries }: { entries: MediaEntry[] }) {
           <option value="favorites">Favorites</option>
           <option value="watchlist">Watchlist</option>
         </select>
+        <select
+          aria-label="Sort movies and TV"
+          value={sort}
+          onChange={(event) => setSort(event.target.value)}
+        >
+          <option value="default">Default order</option>
+          <option value="newest">Newest release</option>
+          <option value="title">Title A–Z</option>
+        </select>
+        {!browsing && (
+          <button
+            onClick={() => {
+              setQuery("");
+              setGenre("");
+              setView("all");
+              setSort("default");
+            }}
+          >
+            Reset movie filters
+          </button>
+        )}
       </div>
       {!matches.length && (
         <p role="status" className="muted">

@@ -22,6 +22,8 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     const pages = [
       ["Home", "/"],
       ["Games", "/games"],
+      ["Movies & TV", "/movies"],
+      ["Soundboard", "/soundboard"],
       ["AI Chat", "/chat"],
       ["Browser", "/browser"],
       ["Settings", "/settings"],
@@ -29,7 +31,16 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
       ["Achievements", "/games/achievements"],
       ["Gaming statistics", "/games/statistics"],
       ["Themes & Appearance", "/settings/appearance"],
-    ].map(([name, href]) => ({ id: href, name, run: () => router.push(href) }));
+      ["Game save backups", "/settings/saves"],
+    ].map(([name, href]) => ({
+      id: href,
+      name,
+      run: () => {
+        if (href === "/browser")
+          window.location.assign(new URL(href, window.location.origin));
+        else router.push(href);
+      },
+    }));
     let currentSession = restoreSession(read("browser-session", null));
     try {
       currentSession =
@@ -46,7 +57,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
           window.dispatchEvent(
             new CustomEvent("orbit-browser-tab", { detail: t.id }),
           );
-          router.push("/browser");
+          window.location.assign(new URL("/browser", window.location.origin));
         },
       })) || [];
     const toggle = {
@@ -85,7 +96,9 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
       .slice(0, 30);
   }, [deferred, router]);
   function execute(index: number) {
-    entries[index]?.run();
+    const selected = entries[index];
+    if (!selected) return;
+    selected.run();
     onClose();
   }
   return (

@@ -354,6 +354,20 @@ footer {
 .library-search input {
   flex: 1;
 }
+.game-library-controls {
+  flex-wrap: wrap;
+}
+.game-library-controls input {
+  min-width: min(100%, 10rem);
+}
+.game-library-controls select {
+  max-width: 100%;
+}
+@media (max-width: 480px) {
+  .game-library-controls select {
+    flex: 1 1 40%;
+  }
+}
 .panel {
   border: 1px solid var(--line);
   border-radius: var(--panel-radius);
