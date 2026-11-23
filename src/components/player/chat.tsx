@@ -1,7 +1,11 @@
 "use client";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { MessageCircle, X } from "lucide-react";
-import { agreementVersion, type PlayerMessage } from "@/lib/player-chat/rules";
+import {
+  agreementVersion,
+  type PlayerMessage,
+  type RoomControls,
+} from "@/lib/player-chat/rules";
 import { RulesDialog } from "./agreement";
 import styles from "./player.module.css";
 
@@ -31,6 +35,12 @@ export function GlobalChat() {
   const [messages, setMessages] = useState<PlayerMessage[]>([]);
   const [online, setOnline] = useState(0);
   const [unread, setUnread] = useState(0);
+  const [room, setRoom] = useState<RoomControls>({
+    locked: false,
+    slow: 0,
+    pinned: null,
+  });
+  const [warning, setWarning] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [state, setState] = useState("Connecting…");
   const [note, setNote] = useState("");
@@ -71,6 +81,8 @@ export function GlobalChat() {
         stream.onerror = () => setState("Reconnecting…");
         stream.addEventListener("snapshot", ({ data }) => {
           const snapshot = JSON.parse(data) as {
+            room: RoomControls;
+            warning: string | null;
             name: string;
             messages: PlayerMessage[];
             online: number;
@@ -86,6 +98,8 @@ export function GlobalChat() {
             snapshot.messages.at(-1)?.id ?? 0,
           );
           setName(snapshot.name);
+          setRoom(snapshot.room);
+          setWarning(snapshot.warning);
           setOnline(snapshot.online);
           setMessages(
             snapshot.messages.filter((item) => item.id > hiddenThrough.current),
@@ -110,6 +124,25 @@ export function GlobalChat() {
           latest.current = item.id;
           setMessages((items) => [...items, item].slice(-220));
           if (!showing.current) setUnread((n) => n + 1);
+        });
+        stream.addEventListener("room", ({ data }) =>
+          setRoom(JSON.parse(data)),
+        );
+        stream.addEventListener("warning", ({ data }) =>
+          setWarning(JSON.parse(data)),
+        );
+        stream.addEventListener("purged", ({ data }) => {
+          const removed = new Set<number>(JSON.parse(data));
+          setMessages((items) => items.filter((item) => !removed.has(item.id)));
+        });
+        stream.addEventListener("restored", ({ data }) => {
+          const item = JSON.parse(data) as PlayerMessage;
+          if (item.id <= hiddenThrough.current) return;
+          setMessages((items) =>
+            items.some((m) => m.id === item.id)
+              ? items
+              : [...items, item].sort((a, b) => a.id - b.id).slice(-220),
+          );
         });
         stream.addEventListener("deleted", ({ data }) =>
           setMessages((items) =>
@@ -333,6 +366,27 @@ export function GlobalChat() {
               <X size={20} />
             </button>
           </header>
+          {(room.locked || room.slow > 0 || room.pinned || warning) && (
+            <aside className={styles.roomNotice} aria-label="Chat notices">
+              {room.locked && (
+                <p role="status">Posting is paused by moderators.</p>
+              )}
+              {!room.locked && room.slow > 0 && (
+                <p>Slow mode · {room.slow}s between messages</p>
+              )}
+              {room.pinned && (
+                <p>
+                  <strong>Pinned · {room.pinned.name}</strong>{" "}
+                  {room.pinned.text}
+                </p>
+              )}
+              {warning && (
+                <p role="status">
+                  <strong>Moderator warning</strong> {warning}
+                </p>
+              )}
+            </aside>
+          )}
           <div
             ref={list}
             className={styles.messages}

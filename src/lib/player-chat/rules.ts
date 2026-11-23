@@ -22,3 +22,9 @@ export type PlayerMessage = {
   created: number;
   announcement: number;
 };
+
+export type RoomControls = {
+  locked: boolean;
+  slow: number;
+  pinned: PlayerMessage | null;
+};

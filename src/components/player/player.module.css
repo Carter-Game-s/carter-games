@@ -212,3 +212,19 @@
     padding-bottom: max(0.55rem, env(safe-area-inset-bottom));
   }
 }
+
+.roomNotice {
+  background: var(--raised);
+  padding: 0.4rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+  max-height: 24%;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+.roomNotice p {
+  margin: 0.2rem 0;
+  font-size: 0.82rem;
+}
+.roomNotice strong {
+  margin-right: 0.35rem;
+}

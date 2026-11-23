@@ -1,0 +1,196 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+.hero {
+  padding: clamp(1.2rem, 4vw, 2.5rem);
+  border: 1px solid var(--line);
+  border-radius: var(--panel-radius);
+  background:
+    radial-gradient(
+      ellipse at top left,
+      color-mix(in srgb, var(--accent) 16%, var(--panel)),
+      transparent 70%
+    ),
+    var(--panel);
+}
+.identity,
+.row,
+.actions,
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+.row {
+  justify-content: space-between;
+}
+.identity {
+  flex-wrap: nowrap;
+}
+.hero h1 {
+  margin: 0;
+  font-size: clamp(1.45rem, 4vw, 2.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.hero p {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+}
+.shield {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex: none;
+  border-radius: var(--control-radius);
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.metrics,
+.players {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.metrics div,
+.card {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--panel-radius);
+  background: var(--panel);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.metrics div {
+  display: grid;
+  gap: 0.3rem;
+}
+.metrics span,
+.meta,
+.card small {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+.metrics strong {
+  font-size: clamp(1rem, 3vw, 1.55rem);
+}
+.tabs {
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--panel-radius);
+  background: var(--panel);
+}
+.tabs button {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 42px;
+}
+.tabs button[aria-pressed="true"],
+.player[aria-pressed="true"] {
+  border-color: var(--accent);
+}
+.tabs span {
+  padding: 0 0.4rem;
+  border-radius: 1rem;
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.section,
+.list {
+  display: grid;
+  gap: 0.7rem;
+  align-content: start;
+  min-width: 0;
+}
+.section h2,
+.card h3 {
+  margin: 0;
+}
+.card p,
+.card blockquote {
+  margin: 0.55rem 0;
+  white-space: pre-wrap;
+}
+.card blockquote {
+  border-inline-start: 2px solid var(--accent);
+  padding-inline-start: 0.8rem;
+  color: var(--muted);
+}
+.card .actions,
+.card form button {
+  margin-top: 0.65rem;
+}
+.card label {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+.page input,
+.page select,
+.page textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+.page textarea {
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--control-radius);
+  padding: 0.6rem;
+  font: inherit;
+  resize: vertical;
+}
+.login {
+  width: min(100%, 29rem);
+}
+.login h2 {
+  margin: 0 0 0.75rem;
+}
+.login button {
+  margin-top: 1rem;
+}
+.players {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  align-items: start;
+}
+.player {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.feedback {
+  margin: 0;
+  padding: 0.65rem 0.85rem;
+  border-inline-start: 3px solid var(--accent);
+  background: var(--panel);
+}
+.feedback[role="alert"] {
+  border-color: #ca6e68;
+}
+@media (max-width: 660px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .players {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .players > .list:first-child {
+    max-height: 18rem;
+    overflow: auto;
+  }
+  .page button {
+    min-height: 42px;
+  }
+  .page input,
+  .page select,
+  .page textarea {
+    font-size: 16px;
+  }
+}
