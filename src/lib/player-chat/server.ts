@@ -436,9 +436,15 @@ export function moderate(action: string, target: unknown, value: unknown) {
     auditTarget = action === "slow" ? `Global Chat · ${value}s` : "Global Chat";
     broadcast("room", roomControls());
   } else if (
-    ["delete", "restore", "pin", "resolve", "reopen", "dismiss"].includes(
-      action,
-    )
+    [
+      "delete",
+      "hide",
+      "restore",
+      "pin",
+      "resolve",
+      "reopen",
+      "dismiss",
+    ].includes(action)
   ) {
     const id = Number(target);
     if (!Number.isSafeInteger(id) || id < 1)
@@ -458,10 +464,14 @@ export function moderate(action: string, target: unknown, value: unknown) {
         )
         .get(id);
       if (!message) throw new Error("Message not found.");
-      if (action === "delete") {
-        db()
-          .prepare("INSERT OR IGNORE INTO hidden_messages(id) VALUES(?)")
-          .run(id);
+      if (action === "delete" || action === "hide") {
+        if (action === "delete") {
+          db().prepare("DELETE FROM messages WHERE id=?").run(id);
+          db().prepare("DELETE FROM hidden_messages WHERE id=?").run(id);
+        } else
+          db()
+            .prepare("INSERT OR IGNORE INTO hidden_messages(id) VALUES(?)")
+            .run(id);
         db()
           .prepare("UPDATE room_controls SET pinned=NULL WHERE pinned=?")
           .run(id);

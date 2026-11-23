@@ -370,7 +370,15 @@ export default function ModerationPage() {
                         <>
                           {m.hidden
                             ? button("Restore message", "restore", m.id)
-                            : button("Hide message", "delete", m.id)}
+                            : button("Hide message", "hide", m.id)}
+                          {m.hidden &&
+                            button(
+                              "Permanently delete",
+                              "delete",
+                              m.id,
+                              undefined,
+                              "Permanently delete this message? It can no longer be restored.",
+                            )}
                           {!m.hidden &&
                             (overview.room.pinned?.id === m.id
                               ? button("Unpin message", "unpin")
@@ -422,11 +430,7 @@ export default function ModerationPage() {
                           {overview.messages.some(
                             (m) => m.id === r.message && !m.hidden,
                           ) &&
-                            button(
-                              "Hide reported message",
-                              "delete",
-                              r.message,
-                            )}
+                            button("Hide reported message", "hide", r.message)}
                           <button onClick={() => player(r.user)}>
                             Manage player
                           </button>
