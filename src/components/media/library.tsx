@@ -16,12 +16,15 @@ export function MediaLibrary({ entries }: { entries: MediaEntry[] }) {
   const [watchlist] = useStorage<string[]>("media-watchlist", []);
   const [progress] = useStorage<Progress>("media-progress", {});
   const genres = [...new Set(entries.flatMap((entry) => entry.genres))].sort();
-  const latest = new Map<string,{ key:string; index:number }>();
-  Object.keys(progress).forEach((key,index)=>latest.set(key.split("/")[0],{key,index}));
+  const latest = new Map<string, { key: string; index: number }>();
+  Object.keys(progress).forEach((key, index) =>
+    latest.set(key.split("/")[0], { key, index }),
+  );
   const hasProgress = (entry: MediaEntry) => latest.has(entry.id);
   function detailHref(entry: MediaEntry, resume: boolean) {
     const href = `/movies/${entry.id}`;
-    const key = resume && entry.kind === "show" ? latest.get(entry.id)?.key : undefined;
+    const key =
+      resume && entry.kind === "show" ? latest.get(entry.id)?.key : undefined;
     if (!key) return href;
     const [, season, episode] = key.split("/");
     return /^\d+$/.test(season) && /^\d+$/.test(episode)
@@ -49,14 +52,13 @@ export function MediaLibrary({ entries }: { entries: MediaEntry[] }) {
     !query.trim() && !genre && view === "all" && sort === "default";
   function section(title: string, items: MediaEntry[], resume = false) {
     if (!items.length) return null;
-    const ordered = resume && sort === "default"
-      ? [...items].sort((a,b)=>(latest.get(b.id)?.index ?? -1)-(latest.get(a.id)?.index ?? -1))
-      : items;
-    return (
-            keys.indexOf(resumeKey(b) ?? "") - keys.indexOf(resumeKey(a) ?? "")
-          );
-        })
-      : items;
+    const ordered =
+      resume && sort === "default"
+        ? [...items].sort(
+            (a, b) =>
+              (latest.get(b.id)?.index ?? -1) - (latest.get(a.id)?.index ?? -1),
+          )
+        : items;
     return (
       <section className={styles.section}>
         <h2>{title}</h2>
