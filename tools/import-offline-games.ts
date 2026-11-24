@@ -50,6 +50,15 @@ try {
   if (!(error instanceof Error && "code" in error && error.code === "ENOENT"))
     throw error;
 }
+// Editors may replace generated assets and refine the initial metadata after import.
+async function seedFile(file: string, contents: string) {
+  try {
+    await writeFile(file, contents, { flag: "wx" });
+  } catch (error) {
+    if (!(error instanceof Error && "code" in error && error.code === "EEXIST"))
+      throw error;
+  }
+}
 for (const line of lines) {
   const match = /^100644 blob ([a-f0-9]{40})\toffline\/(.+\.html?)$/.exec(line);
   if (!match) throw new Error(`Unsafe game inventory entry: ${line}`);
@@ -102,9 +111,9 @@ for (const line of lines) {
   const logo = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="${safe}"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="hsl(${hue} 50% 25%)"/><stop offset="1" stop-color="#121b24"/></linearGradient></defs><rect width="320" height="320" rx="24" fill="url(#g)"/><circle cx="280" cy="30" r="100" fill="hsl(${hue} 80% 65%)" opacity=".13"/><path d="M24 45h32m-16-16v32M264 233h32" stroke="hsl(${hue} 80% 72%)" stroke-width="3"/><g stroke="hsl(${hue} 90% 78%)" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">${icons[category]}</g>${rows.map((text, i) => `<text x="160" y="${250 + i * 25}" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="${rows.length > 2 ? 16 : 20}" font-weight="700">${text}</text>`).join("")}<text x="24" y="27" fill="#ffffff88" font-family="Arial,sans-serif" font-size="10" letter-spacing="3">CARTER GAME’S / PLAY</text></svg>`;
   const dir = path.join(root, "public/external-games", slug);
   await mkdir(dir, { recursive: true });
-  await writeFile(path.join(dir, "thumbnail.svg"), logo + "\n");
-  await writeFile(
-    path.join(dir, "metadata.json"),
+  const metadataPath = path.join(dir, "metadata.json");
+  await seedFile(
+    metadataPath,
     JSON.stringify(
       {
         slug,
@@ -131,6 +140,9 @@ for (const line of lines) {
       2,
     ) + "\n",
   );
+  const metadata = JSON.parse(await readFile(metadataPath, "utf8"));
+  if (metadata.thumbnail === `/external-games/${slug}/thumbnail.svg`)
+    await seedFile(path.join(dir, "thumbnail.svg"), logo + "\n");
   await writeFile(
     path.join(dir, "index.html"),
     `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${safe}</title><p>Loading ${safe}…</p><script>location.replace('/api/offline-games/${slug}'+location.hash)</script></html>\n`,
@@ -148,6 +160,4 @@ await writeFile(
     2,
   ) + "\n",
 );
-console.log(
-  `Imported ${Object.keys(manifest).length} games and SVG logos from ${commit}.`,
-);
+console.log(`Imported ${Object.keys(manifest).length} games from ${commit}.`);
