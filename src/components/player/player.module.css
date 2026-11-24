@@ -338,3 +338,27 @@
   margin: 0;
   overflow-wrap: anywhere;
 }
+
+.rules[open] {
+  animation: var(--motion-pop) var(--motion-in) var(--motion-ease) both;
+}
+.rules[open]::backdrop {
+  animation: var(--motion-backdrop) 180ms ease-out both;
+}
+.chat,
+.options,
+.siteNotice,
+.jump,
+.report {
+  animation: var(--motion-arrive) var(--motion-in) var(--motion-ease) both;
+}
+.launch span,
+.messages article:nth-last-child(-n + 4) {
+  animation: var(--motion-pop) 190ms var(--motion-ease) both;
+}
+
+@media (max-width: 640px), (max-height: 520px) {
+  .chat {
+    animation: var(--motion-backdrop) var(--motion-fast) ease-out both;
+  }
+}

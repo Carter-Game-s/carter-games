@@ -124,3 +124,17 @@
     height: 56px;
   }
 }
+
+.card:nth-child(-n + 8) {
+  animation: var(--motion-arrive) var(--motion-in) var(--motion-ease) both;
+}
+.card:nth-child(2n):nth-child(-n + 8) {
+  animation-delay: 35ms;
+}
+.pad {
+  transition:
+    background-color var(--motion-fast) ease-out,
+    border-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out,
+    scale var(--motion-fast) var(--motion-ease);
+}

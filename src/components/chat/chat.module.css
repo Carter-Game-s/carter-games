@@ -94,3 +94,8 @@
     flex-wrap: wrap;
   }
 }
+
+.message:nth-last-child(-n + 4),
+.empty {
+  animation: var(--motion-arrive) var(--motion-in) var(--motion-ease) both;
+}

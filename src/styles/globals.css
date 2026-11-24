@@ -1371,3 +1371,142 @@ html[data-animations="true"] body {
     flex-basis: 12rem;
   }
 }
+
+/* Shared motion for page content, overlays and interactive controls. */
+:root {
+  --motion-fast: 150ms;
+  --motion-in: 280ms;
+  --motion-arrive: ui-arrive;
+  --motion-pop: ui-pop;
+  --motion-backdrop: ui-backdrop;
+  --motion-ease: cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+
+@keyframes ui-arrive {
+  from {
+    opacity: 0.55;
+    translate: 0 7px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes ui-pop {
+  from {
+    opacity: 0.4;
+    scale: 0.975;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes ui-backdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.page > h1,
+.hero-copy,
+.section-head,
+.roulette-result,
+.feature-toast,
+.browser-page .interactive-dialog {
+  animation: ui-arrive var(--motion-in) var(--motion-ease) backwards;
+}
+
+.feature-dialog[open] {
+  animation: ui-pop var(--motion-in) var(--motion-ease) backwards;
+}
+
+.feature-dialog[open]::backdrop {
+  animation: ui-backdrop 180ms ease-out both;
+}
+
+/* Keep the entrance localized to the first visible portion of large lists. */
+.cards > .game-card:nth-child(-n + 8),
+.feature-grid > .panel:nth-child(-n + 6),
+.theme-gallery > .theme-card:nth-child(-n + 6) {
+  animation: ui-arrive var(--motion-in) var(--motion-ease) backwards;
+}
+.cards > .game-card:nth-child(2n):nth-child(-n + 8) {
+  animation-delay: 30ms;
+}
+.cards > .game-card:nth-child(3n):nth-child(-n + 8) {
+  animation-delay: 55ms;
+}
+.cards > .game-card:last-child:focus-within {
+  animation-delay: 0ms;
+}
+
+button,
+.button,
+.topbar nav a {
+  transition:
+    background-color var(--motion-fast) ease-out,
+    border-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out,
+    box-shadow var(--motion-fast) ease-out,
+    scale var(--motion-fast) var(--motion-ease);
+}
+
+button:not(:disabled):active,
+.button:active {
+  scale: 0.975;
+}
+
+.searchbox,
+.library-search,
+.game-card,
+.theme-card,
+.hero-game {
+  transition:
+    background-color var(--motion-fast) ease-out,
+    border-color var(--motion-fast) ease-out,
+    box-shadow var(--motion-fast) ease-out,
+    translate var(--motion-fast) var(--motion-ease);
+}
+
+.searchbox:focus-within,
+.library-search:focus-within {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 27%, transparent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .game-card:hover,
+  .theme-card:hover,
+  .hero-game:hover {
+    translate: 0 -3px;
+    box-shadow: 0 9px 20px rgb(0 0 0 / 0.14);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:not(:disabled):active,
+  .button:active,
+  .game-card:hover,
+  .theme-card:hover,
+  .hero-game:hover {
+    scale: none;
+    translate: none;
+  }
+}
+
+html[data-motion="reduced"]
+  :is(
+    button:not(:disabled):active,
+    .button:active,
+    .game-card:hover,
+    .theme-card:hover,
+    .hero-game:hover
+  ) {
+  scale: none;
+  translate: none;
+}

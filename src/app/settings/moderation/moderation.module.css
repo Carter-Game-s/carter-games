@@ -194,3 +194,10 @@
     font-size: 16px;
   }
 }
+
+.hero,
+.metrics,
+.login,
+.card:nth-child(-n + 6) {
+  animation: var(--motion-arrive) var(--motion-in) var(--motion-ease) both;
+}
