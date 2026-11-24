@@ -25,6 +25,7 @@ type Player = {
 };
 type Overview = {
   asOf: number;
+  totals?: { openReports: number; restrictedPlayers: number };
   online: number;
   room: RoomControls;
   site: SiteStatus;
@@ -209,7 +210,10 @@ export default function ModerationPage() {
     : [];
   const chosen = roster.find((p) => p.id === selected);
   const restriction = duration === "permanent" ? duration : Number(duration);
-  const openReports = overview?.reports.filter((r) => !r.resolved).length ?? 0;
+  const openReports =
+    overview?.totals?.openReports ??
+    overview?.reports.filter((r) => !r.resolved).length ??
+    0;
 
   return (
     <div className={`page ${styles.page}`}>
@@ -284,7 +288,10 @@ export default function ModerationPage() {
             </div>
             <div>
               <span>Active restrictions</span>
-              <strong>{overview.restricted.length}</strong>
+              <strong>
+                {overview.totals?.restrictedPlayers ??
+                  overview.restricted.length}
+              </strong>
             </div>
             <div>
               <span>Room status</span>

@@ -470,6 +470,13 @@ export function review() {
     online: connected(),
     site: siteStatus(),
     room: roomControls(),
+    totals: db()
+      .prepare(
+        `SELECT
+        (SELECT count(*) FROM reports WHERE resolved=0) AS openReports,
+        (SELECT count(*) FROM players WHERE mute>? OR ban>?) AS restrictedPlayers`,
+      )
+      .get(asOf, asOf),
     players: db()
       .prepare(
         "SELECT id,name,seen,mute,ban FROM players ORDER BY seen DESC LIMIT 100",
