@@ -90,16 +90,20 @@ export function allowRequest(
       ? Math.min(Math.floor(limit), 600)
       : 120;
   const now = Date.now();
-  if (budgets.size > 2000)
-    for (const [k, v] of budgets) if (now - v.start > 60000) budgets.delete(k);
-  if (budgets.size > 4000) return false;
-  let b = budgets.get(key);
-  if (!b || now - b.start > 60000) {
-    b = { start: now, count: 0 };
-    budgets.set(key, b);
+  const current = budgets.get(key);
+  if (current && now - current.start <= 60000) {
+    current.count++;
+    return current.count <= limit;
   }
-  b.count++;
-  return b.count <= limit;
+  // Insert renewed windows at the end so the first entry expires first.
+  if (current) budgets.delete(key);
+  if (budgets.size >= 4000) {
+    const oldest = budgets.entries().next().value;
+    if (!oldest || now - oldest[1].start <= 60000) return false;
+    budgets.delete(oldest[0]);
+  }
+  budgets.set(key, { start: now, count: 1 });
+  return 1 <= limit;
 }
 export function sameOrigin(request: Request) {
   const origin = request.headers.get("origin");
