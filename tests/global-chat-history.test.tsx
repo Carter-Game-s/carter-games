@@ -5,16 +5,12 @@ import { GlobalChat } from "@/components/player/chat";
 afterEach(() => vi.unstubAllGlobals());
 
 it("keeps the newest message and the selected report target when paging to the limit", async () => {
-  let stream!: EventTarget;
+  const stream = Object.assign(new EventTarget(), { close: vi.fn() });
   vi.stubGlobal(
     "EventSource",
-    class extends EventTarget {
-      constructor() {
-        super();
-        stream = this;
-      }
-      close() {}
-    },
+    vi.fn(function () {
+      return stream;
+    }),
   );
   const messages = (start: number, end: number) =>
     Array.from({ length: end - start + 1 }, (_, i) => ({
