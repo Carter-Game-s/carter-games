@@ -74,13 +74,15 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         });
       },
     };
+    const term = deferred.trim().toLowerCase();
+    const commands = [...pages, ...tabs, toggle].filter((entry) =>
+      entry.name.toLowerCase().includes(term),
+    );
     const games = allGames
-      .filter(
-        (g) =>
-          !deferred ||
-          `${g.metadata.title} ${g.metadata.tags?.join(" ")}`
-            .toLowerCase()
-            .includes(deferred.toLowerCase()),
+      .filter((g) =>
+        `Play ${g.metadata.title} ${g.metadata.tags?.join(" ") ?? ""}`
+          .toLowerCase()
+          .includes(term),
       )
       .slice(0, 20)
       .map((g) => ({
@@ -88,12 +90,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         name: `Play ${g.metadata.title}`,
         run: () => router.push("/games/" + g.metadata.slug),
       }));
-    return [...pages, ...tabs, toggle, ...games]
-      .filter(
-        (e) =>
-          !deferred || e.name.toLowerCase().includes(deferred.toLowerCase()),
-      )
-      .slice(0, 30);
+    return [...commands, ...games].slice(0, 30);
   }, [deferred, router]);
   function execute(index: number) {
     const selected = entries[index];
@@ -121,6 +118,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
             setActive(0);
           }}
           onKeyDown={(e) => {
+            if (e.nativeEvent.isComposing) return;
             if (e.key === "ArrowDown") {
               e.preventDefault();
               setActive((i) => (i + 1) % Math.max(entries.length, 1));
@@ -133,7 +131,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
             }
             if (e.key === "Enter") {
               e.preventDefault();
-              execute(active);
+              if (query === deferred) execute(active);
             }
           }}
         />
@@ -147,6 +145,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         {entries.map((e, i) => (
           <button
             role="option"
+            tabIndex={-1}
             aria-selected={active === i}
             id={"command-" + i}
             key={e.id}
@@ -156,8 +155,8 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
             {e.name}
           </button>
         ))}
-        {!entries.length && <p>No matching commands or games.</p>}
       </div>
+      {!entries.length && <p role="status">No matching commands or games.</p>}
     </Modal>
   );
 }

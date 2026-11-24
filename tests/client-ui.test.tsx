@@ -140,3 +140,15 @@ it("stops the active chat request through its AbortSignal", async () => {
     expect(screen.getByRole("button", { name: "Send message" })).toBeTruthy(),
   );
 });
+
+it("finds games by tag and keeps IME confirmation from launching a result", async () => {
+  render(<CommandPalette onClose={() => {}} />);
+  const search = screen.getByRole("combobox");
+  fireEvent.change(search, { target: { value: " offline-pack " } });
+  const options = await screen.findAllByRole("option");
+  expect(options[0]).toHaveTextContent("Play ");
+  fireEvent.keyDown(search, { key: "Enter", isComposing: true });
+  expect(push).not.toHaveBeenCalled();
+  fireEvent.keyDown(search, { key: "Enter" });
+  expect(push).toHaveBeenCalledWith(expect.stringMatching(/^\/games\/pack-/));
+});
