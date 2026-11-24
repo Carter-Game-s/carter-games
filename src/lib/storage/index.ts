@@ -27,12 +27,32 @@ export function read<T>(key: string, fallback: T): T {
     const parsed = JSON.parse(raw);
     if (key === "settings") return normalizeSettings(parsed) as T;
     if (
-      ["favorites", "recentGames", "searches", "browsing"].includes(key) &&
+      [
+        "favorites",
+        "recentGames",
+        "searches",
+        "browsing",
+        "media-favorites",
+        "media-watchlist",
+      ].includes(key) &&
       (!Array.isArray(parsed) ||
         parsed.length > 1000 ||
         parsed.some((v) => typeof v !== "string" || v.length > 4096))
     )
       return fallback;
+    if (key === "media-progress") {
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed))
+        return fallback;
+      return Object.fromEntries(
+        Object.entries(parsed).filter(
+          ([id, seconds]) =>
+            /^[a-z0-9][a-z0-9-]{0,79}(?:\/\d{1,5}\/\d{1,5})?$/.test(id) &&
+            typeof seconds === "number" &&
+            Number.isFinite(seconds) &&
+            seconds >= 0,
+        ),
+      ) as T;
+    }
     return parsed as T;
   } catch {
     return fallback;
