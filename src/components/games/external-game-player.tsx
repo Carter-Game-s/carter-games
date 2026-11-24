@@ -17,14 +17,14 @@ export function ExternalGamePlayer({
   const packed = Object.hasOwn(manifest.games, metadata.slug);
   const [save, setSave] = useState<string | null>(null);
   const check = useRef<AbortController | null>(null);
-  const [status, setStatus] = useState<"loading" | "loaded" | "error">(
+  const [status, setStatus] = useState<"loading" | "loaded" | "slow" | "error">(
     "loading",
   );
   useEffect(() => {
     setStatus("loading");
     check.current = new AbortController();
     const timer = setTimeout(
-      () => setStatus((s) => (s === "loading" ? "error" : s)),
+      () => setStatus((s) => (s === "loading" ? "slow" : s)),
       packed ? 150000 : 12000,
     );
     return () => {
@@ -73,6 +73,11 @@ export function ExternalGamePlayer({
         <button onClick={() => setAttempt((a) => a + 1)}>Reload game</button>
       </div>
       {status === "loading" && <p role="status">Loading game…</p>}
+      {status === "slow" && (
+        <p role="status">
+          Still loading. You can keep waiting or reload the game.
+        </p>
+      )}
       {status === "error" && (
         <p role="alert" className="error">
           The game could not load. Reload to try again.

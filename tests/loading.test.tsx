@@ -84,7 +84,7 @@ it("external player isolates HTML, times out and reloads", async () => {
   expect(screen.getByRole("status")).toBeInTheDocument();
   const { act } = await import("@testing-library/react");
   act(() => vi.advanceTimersByTime(12001));
-  expect(screen.getByRole("alert")).toHaveTextContent("could not load");
+  expect(screen.getByRole("status")).toHaveTextContent("Still loading");
   fireEvent.click(screen.getByRole("button", { name: "Reload game" }));
   expect(screen.getByRole("status")).toBeInTheDocument();
   await act(async () => {
@@ -166,4 +166,18 @@ it("imported games persist only their own bounded saves and ignore messages from
     gameState: "tile state",
   });
   expect(read("settings", null)).toBeNull();
+});
+
+it("accepts a packed game that finishes loading after the slow-load notice", async () => {
+  vi.useFakeTimers();
+  const game = allGames.find((item) => item.metadata.slug === "pack-2048")!;
+  if (game.metadata.kind !== "external") throw new Error("fixture");
+  const ready = vi.fn();
+  render(<ExternalGamePlayer metadata={game.metadata} onReady={ready} />);
+  const { act } = await import("@testing-library/react");
+  act(() => vi.advanceTimersByTime(150001));
+  expect(screen.getByRole("status")).toHaveTextContent("Still loading");
+  fireEvent.load(screen.getByTitle(game.metadata.title));
+  expect(ready).toHaveBeenCalledTimes(1);
+  expect(screen.queryByRole("status")).toBeNull();
 });
