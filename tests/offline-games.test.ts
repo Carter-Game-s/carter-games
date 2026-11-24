@@ -38,12 +38,21 @@ it("imports all 352 original files once and pins their immutable Git hashes", as
         await readFile(`public/external-games/${slug}/metadata.json`, "utf8"),
       );
       expect(metadata.slug).toBe(slug);
-      const logo = await readFile(
-        `public/external-games/${slug}/thumbnail.svg`,
-        "utf8",
-      );
-      expect(logo).toContain("<svg");
-      expect(logo).not.toMatch(/<script|(?:src|href)=["']https?:\/\//g);
+      const base = `/external-games/${slug}/thumbnail`;
+      expect([base + ".svg", base + ".webp"]).toContain(metadata.thumbnail);
+      const logo = await readFile("public" + metadata.thumbnail);
+      if (metadata.thumbnail.endsWith(".webp")) {
+        expect(logo.toString("ascii", 0, 4)).toBe("RIFF");
+        expect(logo.readUInt32LE(4)).toBe(logo.length - 8);
+        expect(logo.toString("ascii", 8, 12)).toBe("WEBP");
+        expect(["VP8 ", "VP8L", "VP8X"]).toContain(
+          logo.toString("ascii", 12, 16),
+        );
+      } else {
+        const svg = logo.toString("utf8");
+        expect(svg).toContain("<svg");
+        expect(svg).not.toMatch(/<script|(?:src|href)=["']https?:\/\//g);
+      }
     }),
   );
 });
