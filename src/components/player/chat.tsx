@@ -265,8 +265,7 @@ export function GlobalChat() {
       };
       setMessages((current) =>
         [...page.filter((m) => m.id < (current[0]?.id ?? 0)), ...current].slice(
-          0,
-          220,
+          -220,
         ),
       );
       setOlder(page.length === 35 && messages.length + page.length < 220);
@@ -533,7 +532,10 @@ export function GlobalChat() {
                     <option value="">Choose a message</option>
                     {messages
                       .filter((m) => !m.announcement)
-                      .slice(-35)
+                      .filter(
+                        (m, index, items) =>
+                          m.id === selected || index >= items.length - 35,
+                      )
                       .reverse()
                       .map((m) => (
                         <option key={m.id} value={m.id}>
