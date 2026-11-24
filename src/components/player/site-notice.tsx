@@ -10,26 +10,37 @@ export function SiteNotice() {
     pauses: {},
   });
   useEffect(() => {
-    const controller = new AbortController();
+    let active: AbortController | undefined;
     async function refresh() {
+      if (document.visibilityState !== "visible" || active) return;
+      const controller = new AbortController();
+      active = controller;
       try {
         const response = await fetch("/api/site-status", {
           signal: controller.signal,
           cache: "no-store",
         });
-        if (response.ok) setStatus(await response.json());
-      } catch {}
+        if (response.ok) {
+          const snapshot: SiteStatus = await response.json();
+          if (!controller.signal.aborted) setStatus(snapshot);
+        }
+      } catch {
+        // A later refresh or live update can recover the current status.
+      } finally {
+        if (active === controller) active = undefined;
+      }
     }
-    const update = (event: Event) =>
+    const update = (event: Event) => {
+      active?.abort();
+      active = undefined;
       setStatus((event as CustomEvent<SiteStatus>).detail);
+    };
     window.addEventListener("player-site-status", update);
     void refresh();
-    const timer = setInterval(() => {
-      if (document.visibilityState === "visible") void refresh();
-    }, 60000);
+    const timer = setInterval(refresh, 60000);
     document.addEventListener("visibilitychange", refresh);
     return () => {
-      controller.abort();
+      active?.abort();
       clearInterval(timer);
       window.removeEventListener("player-site-status", update);
       document.removeEventListener("visibilitychange", refresh);
