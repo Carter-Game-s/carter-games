@@ -138,7 +138,7 @@ export default function ModerationPage() {
       });
       const result = await response.json();
       if (!response.ok) {
-        if (response.status === 403) setOverview(null);
+        if (response.status === 403) signOut();
         throw new Error(result.error || "Moderation request failed.");
       }
       setOverview(result);
@@ -159,8 +159,25 @@ export default function ModerationPage() {
     setFilter("all");
     setQuery("");
   }
-  function player(id: string) {
+  function selectPlayer(id: string) {
+    if (selected !== id) {
+      setPrivateText("");
+      setDuration("60");
+    }
     setSelected(id);
+  }
+  function signOut() {
+    setKey("");
+    setOverview(null);
+    setStatus("");
+    setError("");
+    selectPlayer("");
+    setAnnouncement("");
+    setSiteText("");
+    choose("Messages");
+  }
+  function player(id: string) {
+    selectPlayer(id);
     choose("Players");
   }
   const button = (
@@ -215,16 +232,7 @@ export default function ModerationPage() {
               <button disabled={busy} onClick={() => void request()}>
                 Refresh
               </button>
-              <button
-                disabled={busy}
-                onClick={() => {
-                  setKey("");
-                  setOverview(null);
-                  setStatus("");
-                  setSelected("");
-                  choose("Messages");
-                }}
-              >
+              <button disabled={busy} onClick={signOut}>
                 Sign out
               </button>
             </div>
@@ -480,7 +488,7 @@ export default function ModerationPage() {
                         key={p.id}
                         className={styles.player}
                         aria-pressed={chosen?.id === p.id}
-                        onClick={() => setSelected(p.id)}
+                        onClick={() => selectPlayer(p.id)}
                       >
                         <span>{p.name}</span>
                         <small>
