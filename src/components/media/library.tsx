@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import type { MediaEntry } from "@/lib/media/catalog";
 import { useStorage } from "@/lib/storage/use-storage";
+import { officialEpisodes } from "@/lib/media/official-episodes";
 import styles from "./media.module.css";
 
 export type Progress = Record<string, number>;
@@ -48,6 +49,17 @@ export function MediaLibrary({ entries }: { entries: MediaEntry[] }) {
     matches.sort((a, b) => b.released.localeCompare(a.released));
   if (sort === "title")
     matches.sort((a, b) => a.title.localeCompare(b.title, "en-US"));
+  const episodes =
+    (view === "all" || view === "show") &&
+    (!genre || ["Animation", "Comedy"].includes(genre))
+      ? officialEpisodes.filter((item) =>
+          `South Park ${item.title} ${item.description} S${item.season} E${item.episode} Animation Comedy`
+            .toLowerCase()
+            .includes(query.trim().toLowerCase()),
+        )
+      : [];
+  if (sort === "title")
+    episodes.sort((a, b) => a.title.localeCompare(b.title, "en-US"));
   const browsing =
     !query.trim() && !genre && view === "all" && sort === "default";
   function section(title: string, items: MediaEntry[], resume = false) {
@@ -145,10 +157,37 @@ export function MediaLibrary({ entries }: { entries: MediaEntry[] }) {
           </button>
         )}
       </div>
-      {!matches.length && (
+      {!matches.length && !episodes.length && (
         <p role="status" className="muted">
           No titles match this view.
         </p>
+      )}
+      {episodes.length > 0 && (
+        <section className={styles.section} aria-labelledby="official-episodes">
+          <h2 id="official-episodes">South Park on South Park Studios</h2>
+          <p className="muted">
+            TV-MA · Mature audiences. Watch on the official site. Availability
+            varies by region.
+          </p>
+          <div className="cards">
+            {episodes.map((item) => (
+              <article key={item.path} className="game-card">
+                <a href={`https://southpark.cc.com/episodes/${item.path}`}>
+                  <div className="card-body">
+                    <span className="tag">
+                      Season {item.season} · Episode {item.episode}
+                    </span>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                    <span className={styles.source}>
+                      Watch on South Park Studios ↗
+                    </span>
+                  </div>
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
       )}
       {browsing ? (
         <>
