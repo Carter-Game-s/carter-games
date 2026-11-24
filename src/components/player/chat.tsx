@@ -56,6 +56,7 @@ export function GlobalChat() {
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
   const [draft, setDraft] = useState("");
+  const pendingSend = useRef<{ text: string; nonce: string } | null>(null);
   const [reason, setReason] = useState("");
   const [selected, setSelected] = useState<number | null>(null);
   const [reporting, setReporting] = useState(false);
@@ -284,9 +285,12 @@ export function GlobalChat() {
     setNote("");
     setBusy(true);
     try {
-      if (!text.startsWith("/"))
-        await act("send", { text, nonce: crypto.randomUUID() });
-      else {
+      if (!text.startsWith("/")) {
+        if (pendingSend.current?.text !== text)
+          pendingSend.current = { text, nonce: crypto.randomUUID() };
+        await act("send", pendingSend.current);
+        pendingSend.current = null;
+      } else {
         const [command, ...args] = text.split(/\s+/);
         const value = args.join(" ");
         switch (command.toLowerCase()) {
@@ -323,7 +327,7 @@ export function GlobalChat() {
             throw new Error("Unknown command. Use /help.");
         }
       }
-      setDraft("");
+      setDraft((current) => (current === draft ? "" : current));
     } catch (error) {
       setError((error as Error).message);
     } finally {
