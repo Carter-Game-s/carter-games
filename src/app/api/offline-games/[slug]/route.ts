@@ -16,7 +16,7 @@ const headers = {
   "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
 };
 let bootstrap: Promise<{ prefix: string; revision: string }> | undefined;
-const inFlight = new Map<string, Promise<Uint8Array<ArrayBuffer>>>();
+const inFlight = new Map<string, Promise<Blob>>();
 
 export async function GET(
   request: Request,
@@ -45,7 +45,12 @@ export async function GET(
       ETag: etag,
       "Cache-Control": "private, max-age=300",
     };
-    if (request.headers.get("if-none-match")?.split(/,\s*/).includes(etag))
+    if (
+      request.headers
+        .get("if-none-match")
+        ?.split(/,\s*/)
+        .some((tag) => tag === "*" || tag.replace(/^W\//, "") === etag)
+    )
       return new Response(null, { status: 304, headers: responseHeaders });
     let body = hotGame(key);
     if (!body) {
@@ -54,9 +59,7 @@ export async function GET(
         if (inFlight.size >= 3) throw new Error("Game delivery is busy");
         pending = loadGame(slug)
           .then((data) => {
-            const html = new TextEncoder().encode(
-              prefix + data.toString("utf8"),
-            );
+            const html = new Blob([prefix, data as Uint8Array<ArrayBuffer>]);
             rememberGame(key, html);
             return html;
           })

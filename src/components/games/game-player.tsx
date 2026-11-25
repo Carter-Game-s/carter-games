@@ -9,7 +9,13 @@ import { ExternalGamePlayer } from "./external-game-player";
 import { usePlaytime } from "@/lib/client/use-playtime";
 import { recordScore, beginGame } from "@/lib/client/gaming";
 import type { GameRuntime } from "@/games/types";
-export function GamePlayer({ slug }: { slug: string }) {
+export function GamePlayer({
+  slug,
+  packed,
+}: {
+  slug: string;
+  packed: boolean;
+}) {
   const definition = getGameBySlug(slug);
   const stage = useRef<HTMLDivElement>(null);
   const [score, setScore] = useState(0);
@@ -119,6 +125,7 @@ export function GamePlayer({ slug }: { slug: string }) {
           <NativeGameLoader definition={definition} runtime={runtime} />
         ) : m.kind === "external" ? (
           <ExternalGamePlayer
+            packed={packed}
             metadata={m}
             onReady={() => {
               beginGame(slug, session);

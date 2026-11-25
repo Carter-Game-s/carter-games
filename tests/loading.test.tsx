@@ -76,7 +76,7 @@ it("external player isolates HTML, times out and reloads", async () => {
   );
   const g = allGames.find((g) => g.metadata.kind === "external")!;
   if (g.metadata.kind !== "external") throw new Error("fixture");
-  render(<ExternalGamePlayer metadata={g.metadata} />);
+  render(<ExternalGamePlayer packed={false} metadata={g.metadata} />);
   const frame = screen.getByTitle(g.metadata.title);
   expect(frame).toHaveAttribute("sandbox", "allow-scripts");
   expect(frame).not.toHaveAttribute("srcdoc");
@@ -134,7 +134,7 @@ it("external player reports missing documents rather than accepting a 404 iframe
   );
   const g = allGames.find((g) => g.metadata.kind === "external")!;
   if (g.metadata.kind !== "external") throw new Error("fixture");
-  render(<ExternalGamePlayer metadata={g.metadata} />);
+  render(<ExternalGamePlayer packed={false} metadata={g.metadata} />);
   fireEvent.load(screen.getByTitle(g.metadata.title));
   expect(await screen.findByRole("alert")).toHaveTextContent("could not load");
 });
@@ -142,7 +142,7 @@ it("external player reports missing documents rather than accepting a 404 iframe
 it("imported games persist only their own bounded saves and ignore messages from other windows", () => {
   const g = allGames.find((game) => game.metadata.slug === "pack-2048")!;
   if (g.metadata.kind !== "external") throw new Error("fixture");
-  render(<ExternalGamePlayer metadata={g.metadata} />);
+  render(<ExternalGamePlayer packed metadata={g.metadata} />);
   const frame = screen.getByTitle(g.metadata.title) as HTMLIFrameElement;
   expect(frame.getAttribute("sandbox")).not.toContain("allow-same-origin");
   expect(frame.getAttribute("src")).toContain("/api/offline-games/pack-2048");
@@ -173,7 +173,9 @@ it("accepts a packed game that finishes loading after the slow-load notice", asy
   const game = allGames.find((item) => item.metadata.slug === "pack-2048")!;
   if (game.metadata.kind !== "external") throw new Error("fixture");
   const ready = vi.fn();
-  render(<ExternalGamePlayer metadata={game.metadata} onReady={ready} />);
+  render(
+    <ExternalGamePlayer packed metadata={game.metadata} onReady={ready} />,
+  );
   const { act } = await import("@testing-library/react");
   act(() => vi.advanceTimersByTime(150001));
   expect(screen.getByRole("status")).toHaveTextContent("Still loading");

@@ -8,15 +8,15 @@ vi.mock("@/components/games/external-game-player", () => ({
 }));
 import { GamePlayer } from "@/components/games/game-player";
 it("selects native loader for native metadata", () => {
-  render(<GamePlayer slug="snake" />);
+  render(<GamePlayer packed={false} slug="snake" />);
   expect(screen.getByText("Native player selected")).toBeInTheDocument();
 });
 it("selects external iframe for external metadata", () => {
-  render(<GamePlayer slug="color-tap" />);
+  render(<GamePlayer packed={false} slug="color-tap" />);
   expect(screen.getByText("External player selected")).toBeInTheDocument();
 });
 it("unknown slugs show not-found and are not recorded as recently played", () => {
-  render(<GamePlayer slug="missing-game" />);
+  render(<GamePlayer packed={false} slug="missing-game" />);
   expect(screen.getByText("Game not found.")).toBeInTheDocument();
   expect(window.localStorage.getItem("orbit:recentGames")).toBeNull();
 });

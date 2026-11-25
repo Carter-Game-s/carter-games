@@ -2,19 +2,19 @@
 import { useState, useEffect, useRef } from "react";
 import type { ExternalGameMetadata } from "@/games/types";
 import { read, write } from "@/lib/storage";
-import manifest from "@/lib/offline-games/manifest.json";
 export function ExternalGamePlayer({
   metadata,
+  packed,
   onReady,
 }: {
   metadata: ExternalGameMetadata;
+  packed: boolean;
   onReady?: () => void;
 }) {
   const [attempt, setAttempt] = useState(0);
   const frame = useRef<HTMLIFrameElement>(null);
   const readyRef = useRef(onReady);
   readyRef.current = onReady;
-  const packed = Object.hasOwn(manifest.games, metadata.slug);
   const [save, setSave] = useState<string | null>(null);
   const check = useRef<AbortController | null>(null);
   const [status, setStatus] = useState<"loading" | "loaded" | "slow" | "error">(
