@@ -1,5 +1,8 @@
 # Carter Games
 
+Development and production track `master`. Push changes to `origin/master` and verify the Validate Carter Games workflow before deploying its commit with `/usr/local/sbin/carter-games-update <full-commit-sha>` on the VPS. The public site is [play.pageflare.net](https://play.pageflare.net).
+
+
 Browser games, a soundboard, AI chat, and an experimental web browser, created by **Carter (carteraccs)** with **AI assistance from OpenAI Codex**. Carter directed the project; Codex helped with implementation, debugging, testing, documentation, and deployment. Imported games remain credited to their original creators.
 
 The Codespaces startup script supervises the production app, restarts it every 35 minutes, and recovers after repeated failed health checks. This operates while the Codespace is running; it cannot restart a stopped Codespace or override GitHub's idle timeout. Scheduled restarts briefly interrupt active requests.
