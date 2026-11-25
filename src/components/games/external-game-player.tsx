@@ -123,7 +123,7 @@ export function ExternalGamePlayer({
           className="external-frame"
           src={
             packed
-              ? `/api/offline-games/${metadata.slug}?delivery=2#orbit-save=${save}`
+              ? `/api/offline-games/${metadata.slug}?delivery=2${attempt ? `&retry=${attempt}` : ""}#orbit-save=${save}`
               : `${metadata.sourcePath}index.html`
           }
           title={metadata.title}

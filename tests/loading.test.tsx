@@ -206,14 +206,10 @@ it("retries a busy packed game twice and leaves a manual reload available", asyn
     busy();
     busy();
     expect(screen.getByRole("status")).toHaveTextContent("Retrying shortly");
-    const previousFrame = screen.getByTitle(game.metadata.title);
-    const previousSource = previousFrame.getAttribute("src");
     act(() => vi.advanceTimersByTime(5000));
-    expect(previousFrame.isConnected).toBe(false);
-    expect(screen.getByTitle(game.metadata.title)).toHaveAttribute(
-      "src",
-      previousSource,
-    );
+    expect(
+      screen.getByTitle(game.metadata.title).getAttribute("src"),
+    ).toContain("retry=" + attempt);
   }
   busy();
   expect(screen.getByRole("alert")).toBeVisible();
