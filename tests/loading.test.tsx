@@ -183,3 +183,37 @@ it("accepts a packed game that finishes loading after the slow-load notice", asy
   expect(ready).toHaveBeenCalledTimes(1);
   expect(screen.queryByRole("status")).toBeNull();
 });
+
+it("retries a busy packed game twice and leaves a manual reload available", async () => {
+  vi.useFakeTimers();
+  const game = allGames.find((g) => g.metadata.slug === "pack-2048")!;
+  if (game.metadata.kind !== "external") throw new Error("fixture");
+  const { act } = await import("@testing-library/react");
+  render(<ExternalGamePlayer packed metadata={game.metadata} />);
+  const busy = () => {
+    const frame = screen.getByTitle(game.metadata.title) as HTMLIFrameElement;
+    fireEvent(
+      window,
+      new MessageEvent("message", {
+        origin: "null",
+        source: frame.contentWindow,
+        data: { type: "orbit-game-busy" },
+      }),
+    );
+    fireEvent.load(frame);
+  };
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    busy();
+    busy();
+    expect(screen.getByRole("status")).toHaveTextContent("Retrying shortly");
+    act(() => vi.advanceTimersByTime(5000));
+    expect(
+      screen.getByTitle(game.metadata.title).getAttribute("src"),
+    ).toContain("retry=" + attempt);
+  }
+  busy();
+  expect(screen.getByRole("alert")).toBeVisible();
+  fireEvent.click(screen.getByText("Reload game"));
+  busy();
+  expect(screen.getByRole("status")).toHaveTextContent("Retrying shortly");
+});

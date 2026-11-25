@@ -56,7 +56,11 @@ export async function GET(
     if (!body) {
       let pending = inFlight.get(key);
       if (!pending) {
-        if (inFlight.size >= 3) throw new Error("Game delivery is busy");
+        if (inFlight.size >= 3)
+          return new Response(
+            '<!doctype html><title>Game service busy</title><p>Other games are loading. Please try again shortly.</p><script>parent.postMessage({type:"orbit-game-busy"},"*")</script>',
+            { status: 503, headers: { ...headers, "Retry-After": "2" } },
+          );
         pending = loadGame(slug)
           .then((data) => {
             const html = new Blob([prefix, data as Uint8Array<ArrayBuffer>]);

@@ -12,14 +12,15 @@ export function ExternalGamePlayer({
   onReady?: () => void;
 }) {
   const [attempt, setAttempt] = useState(0);
+  const retries = useRef(0);
   const frame = useRef<HTMLIFrameElement>(null);
   const readyRef = useRef(onReady);
   readyRef.current = onReady;
   const [save, setSave] = useState<string | null>(null);
   const check = useRef<AbortController | null>(null);
-  const [status, setStatus] = useState<"loading" | "loaded" | "slow" | "error">(
-    "loading",
-  );
+  const [status, setStatus] = useState<
+    "loading" | "loaded" | "slow" | "retrying" | "error"
+  >("loading");
   useEffect(() => {
     setStatus("loading");
     check.current = new AbortController();
@@ -42,12 +43,27 @@ export function ExternalGamePlayer({
       {},
     );
     setSave(encodeURIComponent(JSON.stringify(values)));
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
     const message = (event: MessageEvent) => {
       if (
         event.source !== frame.current?.contentWindow ||
         event.origin !== "null"
       )
         return;
+      if (event.data?.type === "orbit-game-busy") {
+        if (retryTimer) return;
+        if (retries.current >= 2) {
+          setStatus("error");
+          return;
+        }
+        retries.current++;
+        setStatus("retrying");
+        retryTimer = setTimeout(
+          () => setAttempt((value) => value + 1),
+          2000 * retries.current + Math.random() * 500,
+        );
+        return;
+      }
       if (event.data?.type === "orbit-game-error") setStatus("error");
       if (event.data?.type !== "orbit-game-storage") return;
       const value: unknown = event.data.values;
@@ -64,18 +80,31 @@ export function ExternalGamePlayer({
         write(`game:${metadata.slug}:html-save`, value);
     };
     window.addEventListener("message", message);
-    return () => window.removeEventListener("message", message);
+    return () => {
+      clearTimeout(retryTimer);
+      window.removeEventListener("message", message);
+    };
   }, [metadata.slug, packed, attempt]);
   return (
     <section aria-label={metadata.title} className="w-full">
       <div className="game-toolbar">
         <h2>{metadata.title}</h2>
-        <button onClick={() => setAttempt((a) => a + 1)}>Reload game</button>
+        <button
+          onClick={() => {
+            retries.current = 0;
+            setAttempt((a) => a + 1);
+          }}
+        >
+          Reload game
+        </button>
       </div>
       {status === "loading" && (
         <p className="game-loading" role="status">
           Loading game…
         </p>
+      )}
+      {status === "retrying" && (
+        <p role="status">Other games are loading. Retrying shortly…</p>
       )}
       {status === "slow" && (
         <p role="status">
@@ -107,7 +136,9 @@ export function ExternalGamePlayer({
           onLoad={() => {
             if (packed) {
               setStatus((current) =>
-                current === "error" ? current : "loaded",
+                current === "error" || current === "retrying"
+                  ? current
+                  : "loaded",
               );
               return;
             }
