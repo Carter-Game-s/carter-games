@@ -15,6 +15,8 @@ export const allGames: readonly GameDefinition[] = Object.freeze([
   ...nativeGames,
   ...externalGames,
 ]);
+const gamesBySlug = new Map(allGames.map((game) => [game.metadata.slug, game]));
+
 export function getGameBySlug(slug: string): GameDefinition | undefined {
-  return allGames.find((g) => g.metadata.slug === slug);
+  return gamesBySlug.get(slug);
 }

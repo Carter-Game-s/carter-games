@@ -8,9 +8,10 @@ export function filterGames(
   return games.filter(
     ({ metadata: m }) =>
       (category === "all" || m.category === category) &&
-      [m.title, m.description, ...(m.tags ?? [])]
-        .join(" ")
-        .toLowerCase()
-        .includes(q),
+      (!q ||
+        [m.title, m.description, ...(m.tags ?? [])]
+          .join(" ")
+          .toLowerCase()
+          .includes(q)),
   );
 }

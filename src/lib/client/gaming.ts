@@ -146,18 +146,12 @@ export function checkAchievements(stats = getStats()) {
   const state = validAchievements(saved)
     ? { ...saved, unlocked: { ...saved.unlocked } }
     : { version: 1 as const, unlocked: {} };
-  const favorites = read<string[]>("favorites", []);
+  const favorites = read<string[]>("favorites", []).filter(
+    (slug) => !!getGameBySlug(slug),
+  );
   const newly: string[] = [];
   for (const a of achievementDefinitions)
-    if (
-      !state.unlocked[a.id] &&
-      a.progress(
-        stats,
-        Array.isArray(favorites)
-          ? favorites.filter((slug) => !!getGameBySlug(slug))
-          : [],
-      ) >= a.target
-    ) {
+    if (!state.unlocked[a.id] && a.progress(stats, favorites) >= a.target) {
       state.unlocked[a.id] = Date.now();
       newly.push(a.name);
     }
