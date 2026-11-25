@@ -35,3 +35,16 @@
 .source {
   text-decoration: underline;
 }
+
+.surface {
+  position: relative;
+}
+.buffering {
+  position: absolute;
+  inset: 12px auto auto 12px;
+  padding: 4px 10px;
+  color: white;
+  background: #171717eb;
+  border-radius: var(--panel-radius);
+  pointer-events: none;
+}

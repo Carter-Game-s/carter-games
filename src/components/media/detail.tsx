@@ -17,7 +17,8 @@ function Video({
 }) {
   const [index, setIndex] = useState(0);
   const [attempt, setAttempt] = useState(0);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const [buffering, setBuffering] = useState(false);
   const lastWrite = useRef(0);
   const element = useRef<HTMLVideoElement>(null);
   const source = video.sources[index];
@@ -36,19 +37,20 @@ function Video({
         .then(({ default: Hls }) => {
           if (canceled) return;
           if (!Hls.isSupported()) {
-            setError(true);
+            setError("This browser cannot play this streaming format.");
             return;
           }
           const hls = new Hls({ maxBufferLength: 20 });
           cleanup = () => hls.destroy();
           hls.on(Hls.Events.ERROR, (_event, data) => {
-            if (data.fatal) setError(true);
+            if (data.fatal && !canceled)
+              setError("The stream stopped before playback could finish.");
           });
           hls.loadSource(source.url);
           hls.attachMedia(player);
         })
         .catch(() => {
-          if (!canceled) setError(true);
+          if (!canceled) setError("The streaming player could not start.");
         });
     }
     return () => {
@@ -78,7 +80,8 @@ function Video({
             value={index}
             onChange={(event) => {
               save();
-              setError(false);
+              setError("");
+              setBuffering(false);
               setIndex(Number(event.target.value));
             }}
           >
@@ -102,44 +105,71 @@ function Video({
         />
       ) : (
         <>
-          <video
-            ref={element}
-            controls
-            playsInline
-            preload="metadata"
-            aria-label={title}
-            crossOrigin={
-              video.subtitles?.some((track) => track.url.startsWith("https:"))
-                ? "anonymous"
-                : undefined
-            }
-            onError={() => setError(true)}
-            onLoadedMetadata={(event) => {
-              const position = read<Progress>("media-progress", {})[mediaId];
-              const player = event.currentTarget;
-              if (position > 0 && position < player.duration - 5)
-                player.currentTime = position;
-            }}
-            onTimeUpdate={() => {
-              if (Date.now() - lastWrite.current > 5000) {
-                lastWrite.current = Date.now();
-                save();
+          <div className={styles.surface}>
+            <video
+              ref={element}
+              controls
+              playsInline
+              preload="metadata"
+              aria-label={title}
+              crossOrigin={
+                video.subtitles?.some((track) => track.url.startsWith("https:"))
+                  ? "anonymous"
+                  : undefined
               }
-            }}
-            onSeeked={() => save()}
-            onPause={() => save()}
-            onEnded={() => save(true)}
-          >
-            {video.subtitles?.map((track) => (
-              <track
-                key={track.url}
-                kind="subtitles"
-                label={track.label}
-                srcLang={track.language}
-                src={track.url}
-              />
-            ))}
-          </video>
+              onWaiting={(event) => setBuffering(!event.currentTarget.paused)}
+              onPlaying={() => {
+                setBuffering(false);
+                setError("");
+              }}
+              onCanPlay={() => setBuffering(false)}
+              onError={(event) => {
+                const code = event.currentTarget.error?.code;
+                if (code === 1) return;
+                setBuffering(false);
+                setError(
+                  code === 2
+                    ? "The connection to the video source was interrupted."
+                    : code === 3
+                      ? "The browser could not decode this video."
+                      : "This video source is unavailable or unsupported.",
+                );
+              }}
+              onLoadedMetadata={(event) => {
+                const position = read<Progress>("media-progress", {})[mediaId];
+                const player = event.currentTarget;
+                if (position > 0 && position < player.duration - 5)
+                  player.currentTime = position;
+              }}
+              onTimeUpdate={() => {
+                if (Date.now() - lastWrite.current > 5000) {
+                  lastWrite.current = Date.now();
+                  save();
+                }
+              }}
+              onSeeked={() => save()}
+              onPause={() => {
+                setBuffering(false);
+                save();
+              }}
+              onEnded={() => save(true)}
+            >
+              {video.subtitles?.map((track) => (
+                <track
+                  key={track.url}
+                  kind="subtitles"
+                  label={track.label}
+                  srcLang={track.language}
+                  src={track.url}
+                />
+              ))}
+            </video>
+            {buffering && !error && (
+              <span className={styles.buffering} role="status">
+                Buffering video…
+              </span>
+            )}
+          </div>
           <label>
             Playback speed{" "}
             <select
@@ -160,11 +190,11 @@ function Video({
       )}
       {error && (
         <div role="alert" className="error">
-          This source could not start. Try again or select another source if
-          available.{" "}
+          {error}{" "}
           <button
             onClick={() => {
-              setError(false);
+              setError("");
+              setBuffering(false);
               setAttempt((value) => value + 1);
             }}
           >
