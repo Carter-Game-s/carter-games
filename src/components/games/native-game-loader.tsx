@@ -58,7 +58,7 @@ export function NativeGameLoader({
   }, [definition, attempt]);
   if (!mounted)
     return (
-      <div role="status" className="status">
+      <div role="status" className="status game-loading">
         Loading {definition.metadata.title}…
       </div>
     );
@@ -72,7 +72,7 @@ export function NativeGameLoader({
     >
       <Suspense
         fallback={
-          <div role="status" className="status">
+          <div role="status" className="status game-loading">
             Loading {definition.metadata.title}…
           </div>
         }

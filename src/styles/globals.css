@@ -1510,3 +1510,28 @@ html[data-motion="reduced"]
   scale: none;
   translate: none;
 }
+
+.game-loading::before {
+  content: "";
+  display: inline-block;
+  inline-size: 0.8em;
+  block-size: 0.8em;
+  margin-inline-end: 0.55em;
+  vertical-align: -0.04em;
+  border: 2px solid var(--line);
+  border-inline-start-color: var(--accent);
+  border-radius: 50%;
+  animation: game-loading-turn 900ms linear 5;
+}
+
+@keyframes game-loading-turn {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.page .empty,
+.page .error[role="alert"],
+.command-results + [role="status"] {
+  animation: var(--motion-backdrop) var(--motion-fast) ease-out both;
+}

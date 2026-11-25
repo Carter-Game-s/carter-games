@@ -72,7 +72,11 @@ export function ExternalGamePlayer({
         <h2>{metadata.title}</h2>
         <button onClick={() => setAttempt((a) => a + 1)}>Reload game</button>
       </div>
-      {status === "loading" && <p role="status">Loading game…</p>}
+      {status === "loading" && (
+        <p className="game-loading" role="status">
+          Loading game…
+        </p>
+      )}
       {status === "slow" && (
         <p role="status">
           Still loading. You can keep waiting or reload the game.
