@@ -4,6 +4,9 @@ import { MediaLibrary } from "@/components/media/library";
 
 it("shows four provider links, filters episodes by title and excludes them from movies", () => {
   render(<MediaLibrary entries={[]} />);
+  expect(
+    screen.getByText(/Embedded playback is unavailable here/),
+  ).toBeVisible();
   const links = screen.getAllByRole("link");
   expect(links).toHaveLength(4);
   for (const link of links)

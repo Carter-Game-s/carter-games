@@ -167,7 +167,7 @@ export function MediaLibrary({ entries }: { entries: MediaEntry[] }) {
           <h2 id="official-episodes">South Park on South Park Studios</h2>
           <p className="muted">
             TV-MA · Mature audiences. Watch on the official site. Availability
-            varies by region.
+            varies by region. Embedded playback is unavailable here.
           </p>
           <div className="cards">
             {episodes.map((item) => (
